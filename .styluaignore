@@ -1,0 +1,7 @@
+src/client/net.luau
+src/server/net.luau
+src/shared/net.luau
+src/shared/assets.luau
+src/shared/libs/*.luau
+out/
+include/

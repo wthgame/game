@@ -1,0 +1,18 @@
+std = "roblox"
+exclude = [
+    # blink
+    "src/client/net.luau",
+    "src/server/net.luau",
+    "src/shared/net.luau",
+    # asphalt
+    "src/shared/assets.luau",
+    # libs
+    "src/shared/libs/*.luau",
+    # rbxts
+    "include/**",
+    "node_modules/**",
+    "out/**",
+]
+
+[config]
+global_usage = { ignore_pattern = "^__" }

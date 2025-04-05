@@ -1,0 +1,11 @@
+[creator]
+type = "group"
+id = 12787072
+
+[codegen]
+typescript = true
+style = "nested"
+
+[inputs.assets]
+path = "assets/**/*"
+output_path = "src/shared"
