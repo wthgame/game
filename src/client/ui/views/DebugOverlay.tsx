@@ -1,6 +1,9 @@
 import Vide, { read, Derivable } from "@rbxts/vide";
 import { Text, TextStyle } from "../components/Text";
 import { SemVer } from "@rbxts/semver";
+import { TriangularButton } from "../components/TriangularButton";
+import { ButtonStyle } from "../components/Button";
+import { MainViewController } from "client/controllers/ui/main-view";
 
 export interface DebugOverlayProps {
 	fps: Derivable<number>;
@@ -9,9 +12,18 @@ export interface DebugOverlayProps {
 	realname: Derivable<string>;
 	codename: Derivable<string>;
 	version: Derivable<SemVer>;
+	toggleMainView: () => void;
 }
 
-export function DebugOverlay({ fps, memoryMegabytes, today, realname, codename, version }: DebugOverlayProps) {
+export function DebugOverlay({
+	fps,
+	memoryMegabytes,
+	today,
+	realname,
+	codename,
+	version,
+	toggleMainView,
+}: DebugOverlayProps) {
 	let layoutOrder = 0;
 
 	return (
@@ -40,6 +52,17 @@ export function DebugOverlay({ fps, memoryMegabytes, today, realname, codename, 
 			<Text
 				text={() => `Today is ${read(today).FormatUniversalTime("LL", "vi-vn")} in Vietnam`}
 				textStyle={TextStyle.Text}
+				layoutOrder={layoutOrder++}
+			/>
+			<TriangularButton
+				buttonStyle={ButtonStyle.Primary}
+				buttonLabel="Toggle Main View"
+				layoutOrder={layoutOrder++}
+				onClick={toggleMainView}
+			/>
+			<TriangularButton
+				buttonStyle={ButtonStyle.Primary}
+				buttonLabel="Toggle Debug Overlay"
 				layoutOrder={layoutOrder++}
 			/>
 		</frame>

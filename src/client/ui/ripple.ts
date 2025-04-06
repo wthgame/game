@@ -19,7 +19,7 @@ export const tween = memoize(
 );
 
 export function useToggleTween<T extends MotionGoal>(
-	toggle: Source<unknown>,
+	toggle: Source<any>,
 	truthy: T,
 	falsy: T,
 	tween?: TweenOptions,

@@ -1,10 +1,16 @@
+asset_dir = "assets"
+exclude_assets = ["assets/**/*.md"]
+write_dir = "src/shared"
+
 [creator]
 type = "group"
 id = 12787072
 
 [codegen]
+output_name = "assets"
 typescript = true
 style = "nested"
+strip_extension = true
 
 [inputs.assets]
 path = "assets/**/*"

@@ -4,10 +4,14 @@ import { Players, RunService, Stats } from "@rbxts/services";
 import { DebugOverlay } from "client/ui/views/DebugOverlay";
 import { CODE_NAME, REAL_NAME, VERSION } from "shared/constants/common";
 import { useEventListener } from "@rbxts/pretty-vide-utils";
+import { MainViewController } from "./main-view";
+import { debug } from "shared/log";
 // import { scope } from "shared/scope";
 
 @Controller()
 export class DebugOverlayController implements OnStart {
+	constructor(private mainViewController: MainViewController) {}
+
 	onStart(): void {
 		mount(() => {
 			const memoryMegabytes = source(0);
@@ -31,6 +35,10 @@ export class DebugOverlayController implements OnStart {
 						realname={REAL_NAME}
 						codename={CODE_NAME}
 						version={VERSION}
+						toggleMainView={() => {
+							debug("TOGGLING");
+							this.mainViewController.isMainViewOpen(!this.mainViewController.isMainViewOpen());
+						}}
 					/>
 				</screengui>
 			);

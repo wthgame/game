@@ -1,0 +1,30 @@
+option ClientOutput = "src/client/net.luau"
+option ServerOutput = "src/server/net.luau"
+option Typescript = true
+option PromiseLibrary = "ReplicatedStorage.WTHShared.include.Promise"
+option Casing = Camel
+
+scope mechanics {
+    enum DamageKind = {
+        -- Equivalant to EToH's normal damage
+        Normal,
+        -- Equivalant to EToH's ouch damage
+        Harmful,
+        -- Equivalant to EToH's instakill damage, or just kills the player
+        Lethal
+    }
+
+    event damageSelfVariable {
+        from: Client,
+        type: Reliable,
+        call: ManyAsync,
+        data: u32
+    }
+
+    event damageSelf {
+        from: Client,
+        type: Reliable,
+        call: ManyAsync,
+        data: DamageKind
+    }
+}

@@ -9,6 +9,8 @@ export enum TextStyle {
 	Subtitle,
 	Text,
 	Label,
+	ButtonPrimaryLabel,
+	ButtonSecondaryLabel,
 }
 
 export type TextAlignX = "left" | "center" | "right";
@@ -31,6 +33,8 @@ export const TEXT_STYLE_PALLETE = table.freeze({
 	[TextStyle.Subtitle]: "fgDark",
 	[TextStyle.Text]: "fg",
 	[TextStyle.Label]: "fgDarker",
+	[TextStyle.ButtonPrimaryLabel]: "fgDarkest",
+	[TextStyle.ButtonSecondaryLabel]: "fgLight",
 } satisfies Record<TextStyle, keyof Palette>);
 
 export const TEXT_STYLE_SIZES = table.freeze({
@@ -38,6 +42,8 @@ export const TEXT_STYLE_SIZES = table.freeze({
 	[TextStyle.Subtitle]: 18,
 	[TextStyle.Text]: 16,
 	[TextStyle.Label]: 12,
+	[TextStyle.ButtonPrimaryLabel]: 16,
+	[TextStyle.ButtonSecondaryLabel]: 16,
 } satisfies Record<TextStyle, number>);
 
 export const TEXT_STYLE_FONTS = table.freeze({
@@ -45,6 +51,8 @@ export const TEXT_STYLE_FONTS = table.freeze({
 	[TextStyle.Subtitle]: sans(Enum.FontWeight.SemiBold),
 	[TextStyle.Text]: sans(),
 	[TextStyle.Label]: sans(Enum.FontWeight.Regular, Enum.FontStyle.Italic),
+	[TextStyle.ButtonPrimaryLabel]: sans(Enum.FontWeight.Bold),
+	[TextStyle.ButtonSecondaryLabel]: sans(Enum.FontWeight.Bold),
 } satisfies Record<TextStyle, Font>);
 
 export function Text({

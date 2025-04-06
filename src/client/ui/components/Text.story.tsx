@@ -11,6 +11,7 @@ const STORY_TEXT_STYLES: Array<[label: string, value: TextStyle]> = [
 	["Subtitle", TextStyle.Subtitle],
 	["Text", TextStyle.Text],
 	["Label", TextStyle.Label],
+	["ButtonPrimaryLabel", TextStyle.ButtonPrimaryLabel],
 ];
 
 const MAP_STORY_TEXT_STYLES = new Map(STORY_TEXT_STYLES);
@@ -26,22 +27,24 @@ export = CreateVideStory(
 		vide: Vide,
 		controls: {
 			text: TOCAV_WIKI_PAGE,
-			// textStyle: Choose(STORY_TEXT_STYLES.map(([v]) => v)),
-			// textAlignX: Choose(["left", "center", "right"], 0),
-			// textAlignY: Choose(["top", "center", "bottom"], 0),
+			textStyle: Choose(
+				STORY_TEXT_STYLES.map(([v]) => v),
+				3,
+			),
+			textAlignX: Choose(["left", "center", "right"], 1),
+			textAlignY: Choose(["top", "center", "bottom"], 1),
 		},
 	},
 	({ controls }) => {
 		setWTHAsDefaultLogger();
-		// effect(() => debug(`TEXT STYLE: ${read(controls.textStyle)}`));
 		return (
 			<Text
 				text={controls.text}
-				// text={TOCAV_WIKI_PAGE}
-				textStyle={TextStyle.Text}
-				// textStyle={() => MAP_STORY_TEXT_STYLES.get(read(controls.textStyle))!}
-				// textAlignX={controls.textAlignX as never}
-				// textAlignY={controls.textAlignY as never}
+				textStyle={() => MAP_STORY_TEXT_STYLES.get(read(controls.textStyle))!}
+				textAlignX={controls.textAlignX as never}
+				textAlignY={controls.textAlignY as never}
+				anchorPoint={new Vector2(0.5, 0.5)}
+				position={UDim2.fromScale(0.5, 0.5)}
 			/>
 		);
 	},

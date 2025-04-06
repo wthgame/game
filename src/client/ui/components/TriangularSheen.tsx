@@ -2,13 +2,12 @@ import Vide, { Derivable, PropsWithChildren, read } from "@rbxts/vide";
 import assets from "shared/assets";
 import { BaseProps, LayoutProps } from "../types";
 
-export const TRIANGULAR_SURFACE_IMAGE = assets.ui.triangularSurface;
-export const TRIANGULAR_SURFACE_SLICE_CENTER = new Rect(new Vector2(100, 100), new Vector2(412, 412));
+export const TRIANGULAR_SHEEN_IMAGE = assets.ui.triangularBorderSheen;
+export const TRIANGULAR_SHEEN_SLICE_CENTER = new Rect(new Vector2(100, 100), new Vector2(412, 412));
 
-export const TRIANGULAR_SURFACE_CORNER_SIZE_PX = 100;
+export const TRIANGULAR_SHEEN_CORNER_SIZE_PX = 100;
 
-export interface TriangularSurfaceProps extends BaseProps, LayoutProps, PropsWithChildren {
-	color?: Derivable<Color3>;
+export interface TriangularSheenProps extends BaseProps, LayoutProps, PropsWithChildren {
 	visibility?: Derivable<number>;
 	radiusPx?: Derivable<number>;
 	onClick?: () => void;
@@ -16,32 +15,30 @@ export interface TriangularSurfaceProps extends BaseProps, LayoutProps, PropsWit
 	onHoverEnd?: () => void;
 }
 
-/// A surface with triangular corners.
-export function TriangularSurface({
+/// Sheen with triangular corners.
+export function TriangularSheen({
 	name,
 	zIndex,
 	layoutOrder,
 
 	position,
 	anchorPoint,
-	size,
+	size = UDim2.fromScale(1, 1),
 	automaticSize,
 
 	children,
 
-	color,
-	visibility = 0,
-	radiusPx = 0,
+	visibility = 0.5,
+	radiusPx = TRIANGULAR_SHEEN_CORNER_SIZE_PX,
 	onClick,
 	onHover,
 	onHoverEnd,
-}: TriangularSurfaceProps) {
+}: TriangularSheenProps) {
 	const isPassthrough = (onClick || onHover || onHoverEnd) === undefined;
-	const defaultName = isPassthrough ? "TriangularSurface (passthrough)" : "TriangularSurface";
 
 	return isPassthrough ? (
 		<imagelabel
-			Name={name ?? defaultName}
+			Name={name ?? "TriangularSheen (passthrough)"}
 			ZIndex={zIndex}
 			LayoutOrder={layoutOrder}
 			Position={position}
@@ -49,19 +46,18 @@ export function TriangularSurface({
 			Size={size}
 			AutomaticSize={automaticSize}
 			BackgroundTransparency={1}
-			Image={TRIANGULAR_SURFACE_IMAGE}
-			ImageColor3={color}
+			Image={TRIANGULAR_SHEEN_IMAGE}
 			ImageTransparency={visibility}
 			Visible={() => read(visibility) < 0.995}
 			ScaleType={Enum.ScaleType.Slice}
-			SliceCenter={TRIANGULAR_SURFACE_SLICE_CENTER}
-			SliceScale={() => read(radiusPx) / TRIANGULAR_SURFACE_CORNER_SIZE_PX}
+			SliceCenter={TRIANGULAR_SHEEN_SLICE_CENTER}
+			SliceScale={() => read(radiusPx) / TRIANGULAR_SHEEN_CORNER_SIZE_PX}
 		>
 			{children}
 		</imagelabel>
 	) : (
 		<imagebutton
-			Name={name ?? defaultName}
+			Name={name ?? "TriangularSheen"}
 			ZIndex={zIndex}
 			LayoutOrder={layoutOrder}
 			Position={position}
@@ -69,13 +65,12 @@ export function TriangularSurface({
 			Size={size}
 			AutomaticSize={automaticSize}
 			BackgroundTransparency={1}
-			Image={TRIANGULAR_SURFACE_IMAGE}
-			ImageColor3={color}
+			Image={TRIANGULAR_SHEEN_IMAGE}
 			ImageTransparency={visibility}
 			Visible={() => read(visibility) < 0.995}
 			ScaleType={Enum.ScaleType.Slice}
-			SliceCenter={TRIANGULAR_SURFACE_SLICE_CENTER}
-			SliceScale={() => read(radiusPx) / TRIANGULAR_SURFACE_CORNER_SIZE_PX}
+			SliceCenter={TRIANGULAR_SHEEN_SLICE_CENTER}
+			SliceScale={() => read(radiusPx) / TRIANGULAR_SHEEN_CORNER_SIZE_PX}
 			Activated={onClick}
 			MouseEnter={onHover}
 			MouseLeave={onHoverEnd}
