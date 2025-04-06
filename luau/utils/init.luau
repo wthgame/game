@@ -4,14 +4,19 @@
 local t = require(script.t)
 local types = require(script.types)
 
-export type Mechanic<Config> = types.Mechanic<Config>
+export type MechanicDescription<Attributes, Instance> = types.MechanicDescription<Attributes, Instance>
+export type MechanizeScope<MechanicAttributes, MechanicInstance> = types.MechanizeScope<
+	MechanicAttributes,
+	MechanicInstance
+>
+export type TouchConfig = types.TouchConfig
 
-local MechanicUtils = table.freeze({
+local utils = table.freeze({
+	checkTouched = require(script.checkTouched),
+
+	--- Runtime typechecking utilities.
+	--- See: https://github.com/osyrisrblx/t
 	t = table.freeze(t),
-
-	mechanic = function<C>(x: Mechanic<C>)
-		return table.freeze(x)
-	end,
 })
 
-return MechanicUtils
+return utils

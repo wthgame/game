@@ -1179,7 +1179,10 @@ end
 
 	@returns A function that will return true iff the condition is passed
 **--]]
-function t.instanceOf(className, childTable)
+function t.instanceOf(
+	className,
+	childTable: { [unknown]: (unknown) -> (boolean, string?) }?
+): (unknown) -> (boolean, string?)
 	assert(t.string(className))
 
 	local childrenCheck
@@ -1217,7 +1220,10 @@ t.instance = t.instanceOf
 
 	@returns A function that will return true iff the condition is passed
 **--]]
-function t.instanceIsA(className, childTable)
+function t.instanceIsA(
+	className,
+	childTable: { [unknown]: (unknown) -> (boolean, string?) }?
+): (unknown) -> (boolean, string?)
 	assert(t.string(className))
 
 	local childrenCheck

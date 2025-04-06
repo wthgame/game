@@ -6,46 +6,47 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local net = require(ReplicatedStorage:WaitForChild("WTHClient"):WaitForChild("net"))
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
-type LavaConfig = {
+type LavaAttributes = {
 	Amount: number | "Normal" | "Harmful" | "Lethal",
 }
 
-local self = {} :: utils.Mechanic<LavaConfig>
-self.type = "Mechanic"
+local LAVA_TOUCH_CONFIG: utils.TouchConfig = {
+	passLocalPlayerCharacters = true,
+}
+
+local self = {} :: utils.MechanicDescription<LavaAttributes, BasePart>
+self.type = "MechanicDescription"
 self.name = "Lava"
 
-self.configCheck = {
+self.attributes = {
 	Amount = utils.t.union(
 		utils.t.numberPositive,
 		utils.t.unionList({ utils.t.literal("Normal"), utils.t.literal("Harmful"), utils.t.literal("Lethal") })
 	),
 }
 
+self.defaultAttributes = {
+	Amount = "Normal",
+}
+
 self.instanceCheck = utils.t.instanceIsA("BasePart")
 
-function self:attach(mech)
-	local parent = mech.parent
-	assert(parent:IsA("BasePart"), "Luau")
-
-	-- TODO: touch utility
-	parent.Touched:Connect(function(otherPart)
-		local character = otherPart.Parent
-		if not character then
+function self:mechanize(scope: utils.MechanizeScope<LavaAttributes, BasePart>)
+	print("GOT", scope.instance:GetFullName())
+	scope:insertTasks(scope.instance.Touched:Connect(function(toucher)
+		if not utils.checkTouched(toucher, LAVA_TOUCH_CONFIG) then
 			return
 		end
 
-		local humanoid = character:FindFirstChildWhichIsA("Humanoid")
-		if not humanoid then
-			return
-		end
+		print("diddied")
 
-		local amountNow = mech.config.Amount
+		local amountNow = scope:getAttribute("Amount" :: "Amount")
 		if typeof(amountNow) == "string" then
 			net.mechanics.damageSelf.fire(amountNow :: never)
 		else
-			net.mechanics.damageSelfVariable.fire(amountNow)
+			net.mechanics.damageSelfVariable.fire(amountNow :: number)
 		end
-	end)
+	end))
 end
 
-return utils.mechanic(self)
+return self

@@ -6,7 +6,7 @@
       "dependencies": {
         "@flamework/core": "^1.2.4",
         "@rbxts/charm": "^0.10.0",
-        "@rbxts/flamework-meta-utils": "^1.0.3",
+        "@rbxts/flamework-meta-utils": "1.0.1",
         "@rbxts/iris": "2.3.1-ts.1",
         "@rbxts/lapis": "^0.3.8",
         "@rbxts/lazy": "^1.0.1",
@@ -77,7 +77,7 @@
 
     "@rbxts/compiler-types": ["@rbxts/compiler-types@3.0.0-types.0", "", {}, "sha512-VGOHJPoL7+56NTatMGqQj3K7xWuzEV+aP4QD5vZiHu+bcff3kiTmtoadaF6NkJrmwfFAvbsd4Dg764ZjWNceag=="],
 
-    "@rbxts/flamework-meta-utils": ["@rbxts/flamework-meta-utils@1.0.3", "", { "dependencies": { "@flamework/components": "^1.2.3", "@flamework/core": "^1.2.3", "@rbxts/t": "^3.2.1" } }, "sha512-XWXqsN09dxvNBf1oeSMfFLLD+uON+px8gSv9s1A8F8Putn9Pe5SzbzfS0cb+YA8OopCPZS2svMu96xS9/3MqkA=="],
+    "@rbxts/flamework-meta-utils": ["@rbxts/flamework-meta-utils@1.0.1", "", { "dependencies": { "@flamework/components": "^1.2.3", "@flamework/core": "^1.2.3" } }, "sha512-vsg3B7LKWoVaK5BPJ9J6idEyiW3Y6x125SIOB4AzPuaSKM9/ECMHxAvDFqMq8/WiCbHzKGfzbC338vQ0AxTt7A=="],
 
     "@rbxts/iris": ["@rbxts/iris@2.3.1-ts.1", "", {}, "sha512-L/lja+ugKNH3ywdz5c8omXUS34L9oGKlul3yVifzTfQVJS4ryePU/hS6IdMaSbIwNda+qEOehXbSxglF9qxa/A=="],
 

@@ -5,7 +5,7 @@
 
 [tools]
 blink = "1Axen/blink@0.17.0"
-luau-lsp = "JohnnyMorganz/luau-lsp@1.42.0"
+luau-lsp = "JohnnyMorganz/luau-lsp@1.42.1"
 stylua = "JohnnyMorganz/StyLua@2.0.2"
 lune = "lune-org/lune@0.8.9"
 rojo = "rojo-rbx/rojo@7.4.4"
