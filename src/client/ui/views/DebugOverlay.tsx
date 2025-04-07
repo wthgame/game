@@ -4,6 +4,7 @@ import { SemVer } from "@rbxts/semver";
 import { TriangularButton } from "../components/TriangularButton";
 import { ButtonStyle } from "../components/Button";
 import { MainViewController } from "client/controllers/ui/main-view";
+import { CollectionService, Players } from "@rbxts/services";
 
 export interface DebugOverlayProps {
 	fps: Derivable<number>;
@@ -65,6 +66,20 @@ export function DebugOverlay({
 				buttonLabel="Toggle Debug Overlay"
 				layoutOrder={layoutOrder++}
 			/>
+			<Text text="Dev Teleporters:" textStyle={TextStyle.Text} layoutOrder={layoutOrder++} />
+			{CollectionService.GetTagged("DevTeleporter")
+				.filter((v): v is BasePart => v.IsA("BasePart"))
+				.sort((lhs, rhs) => lhs.Name < rhs.Name)
+				.map((v) => (
+					<TriangularButton
+						buttonStyle={ButtonStyle.Primary}
+						buttonLabel={v.Name}
+						layoutOrder={layoutOrder++}
+						onClick={() => {
+							Players.LocalPlayer.Character?.PivotTo(v.CFrame);
+						}}
+					/>
+				))}
 		</frame>
 	);
 }

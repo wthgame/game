@@ -1,6 +1,6 @@
 --!strict
 
--- WELCOME TO HELL: COMMENT MECHANIC WARNING
+-- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local net = require(ReplicatedStorage:WaitForChild("WTHClient"):WaitForChild("net"))
@@ -14,8 +14,8 @@ local LAVA_TOUCH_CONFIG: utils.TouchConfig = {
 	passLocalPlayerCharacters = true,
 }
 
-local self = {} :: utils.MechanicDescription<LavaAttributes, BasePart>
-self.type = "MechanicDescription"
+local self = {} :: utils.Mechanic<LavaAttributes, BasePart>
+self.type = "Mechanic"
 self.name = "Lava"
 
 self.attributes = {
@@ -31,16 +31,13 @@ self.defaultAttributes = {
 
 self.instanceCheck = utils.t.instanceIsA("BasePart")
 
-function self:mechanize(scope: utils.MechanizeScope<LavaAttributes, BasePart>)
-	print("GOT", scope.instance:GetFullName())
-	scope:insertTasks(scope.instance.Touched:Connect(function(toucher)
+function self:mechanize(ctx: utils.MechanizeContext<LavaAttributes, BasePart>)
+	ctx:pushTasks(ctx.instance.Touched:Connect(function(toucher)
 		if not utils.checkTouched(toucher, LAVA_TOUCH_CONFIG) then
 			return
 		end
 
-		print("diddied")
-
-		local amountNow = scope:getAttribute("Amount" :: "Amount")
+		local amountNow = ctx:getAttribute("Amount" :: "Amount")
 		if typeof(amountNow) == "string" then
 			net.mechanics.damageSelf.fire(amountNow :: never)
 		else

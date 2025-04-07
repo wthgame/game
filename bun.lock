@@ -8,6 +8,7 @@
         "@rbxts/charm": "^0.10.0",
         "@rbxts/flamework-meta-utils": "1.0.1",
         "@rbxts/iris": "2.3.1-ts.1",
+        "@rbxts/jecs": "^0.6.0-rc.1",
         "@rbxts/lapis": "^0.3.8",
         "@rbxts/lazy": "^1.0.1",
         "@rbxts/libopen-event": "^1.0.1",
@@ -80,6 +81,8 @@
     "@rbxts/flamework-meta-utils": ["@rbxts/flamework-meta-utils@1.0.1", "", { "dependencies": { "@flamework/components": "^1.2.3", "@flamework/core": "^1.2.3" } }, "sha512-vsg3B7LKWoVaK5BPJ9J6idEyiW3Y6x125SIOB4AzPuaSKM9/ECMHxAvDFqMq8/WiCbHzKGfzbC338vQ0AxTt7A=="],
 
     "@rbxts/iris": ["@rbxts/iris@2.3.1-ts.1", "", {}, "sha512-L/lja+ugKNH3ywdz5c8omXUS34L9oGKlul3yVifzTfQVJS4ryePU/hS6IdMaSbIwNda+qEOehXbSxglF9qxa/A=="],
+
+    "@rbxts/jecs": ["@rbxts/jecs@0.6.0-rc.1", "", {}, "sha512-0u7wf/buozH/u5ZBtNnuuN85UqQ8i4HZzc14W4lFdELogpM9XimfH7vQLuf94Gul+HhmPYkMh+LWLWdjJZMtzg=="],
 
     "@rbxts/lapis": ["@rbxts/lapis@0.3.8", "", { "peerDependencies": { "@rbxts/t": "*" } }, "sha512-SQTVdSp47Rh7nzuI/ArUsGssz2+KmciPlue4Qlj3i9iO2p3Xgf1ZsgfhvMemPih/kFdjSH47E8wHGA4dY/Y+AA=="],
 
