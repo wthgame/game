@@ -60,13 +60,13 @@ function self:mechanize(ctx)
 	end
 
 	local debounce = false
-	ctx:pushTasks(button.Touched:Connect(function(toucher)
+	ctx.trove:add(button.Touched:Connect(function(toucher)
 		if debounce then
 			return
 		end
 
 		local touchConfig = {
-			passLocalPlayerCharacters = ctx:getAttribute("PassLocalPlayerCharacter"),
+			passLocalPlayerCharacters = ctx.getAttribute("PassLocalPlayerCharacter"),
 		}
 
 		if not utils.checkTouched(toucher, touchConfig) then
@@ -77,14 +77,14 @@ function self:mechanize(ctx)
 
 		debounce = true
 
-		task.wait(ctx:getAttribute("SpawnCooldownSeconds"))
+		task.wait(ctx.getAttribute("SpawnCooldownSeconds"))
 
 		debounce = false
 	end))
 
 	pushbox.Parent = nil
 
-	if not ctx:getAttribute("DoNotSpawnFirst") then
+	if not ctx.getAttribute("DoNotSpawnFirst") then
 		spawnPushbox()
 	end
 end

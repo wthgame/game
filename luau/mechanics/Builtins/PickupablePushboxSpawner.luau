@@ -87,7 +87,7 @@ local function calculatePushboxCFrame(
 	if string.lower(pickupType) == "overhead" then
 		return pushbox.CFrame * CFrame.new(0, -pushbox.Size.Y + 0.5, 0)
 	elseif string.lower(pickupType) == "frontfacing" then
-		return pushbox.CFrame * CFrame.new(0, -(pushbox.Size.Y / 4), pushbox.Size.Z / 2 + 1.5)
+		return pushbox.CFrame * CFrame.new(0, -(pushbox.Size.Y / 4), pushbox.Size.Z / 2 + 2.5)
 	end
 
 	return pushbox.CFrame * CFrame.new(customOffset)
@@ -117,7 +117,7 @@ function self:mechanize(ctx)
 	local isCarrying = false
 	local isThrown = false
 
-	local animation = ctx:pushTasks(Instance.new("Animation"), script)
+	local animation = ctx.trove:add(Instance.new("Animation"), script)
 	local animator: Animator = utils.getHumanoid():WaitForChild("Animator") :: Animator
 	local button, pushbox = ctx.instance.Button, ctx.instance.Pushbox
 
@@ -147,13 +147,13 @@ function self:mechanize(ctx)
 		newPushbox.Parent = ctx.instance
 		currentPushbox = newPushbox
 
-		-- changePushboxBasePartProperties(newPushbox, "Anchored", ctx:getAttribute("StartsAnchored"))
+		-- changePushboxBasePartProperties(newPushbox, "Anchored", ctx.pushTasks("StartsAnchored"))
 		changePushboxBasePartProperties(newPushbox, "AssemblyLinearVelocity", Vector3.zero)
 
 		-- TODO: utils.createPrompt() utility
 		promptAttachment = newPushbox:FindFirstChild("PromptAttachment") :: Attachment
 		if not promptAttachment or promptAttachment:IsA("Attachment") == false then
-			local newPromptAttachment = ctx:pushTasks(Instance.new("Attachment"))
+			local newPromptAttachment = ctx.trove:add(Instance.new("Attachment"))
 			newPromptAttachment.Name = "PromptAttachment"
 			newPromptAttachment.Parent = newPushbox
 			promptAttachment = newPromptAttachment
@@ -161,7 +161,7 @@ function self:mechanize(ctx)
 
 		local proximityPrompt: ProximityPrompt = promptAttachment:FindFirstChild("ProximityPrompt") :: ProximityPrompt
 		if not proximityPrompt or proximityPrompt:IsA("ProximityPrompt") == false then
-			local newProximityPrompt = ctx:pushTasks(Instance.new("ProximityPrompt"))
+			local newProximityPrompt = ctx.trove:add(Instance.new("ProximityPrompt"))
 			newProximityPrompt.ActionText = "Pickup"
 			newProximityPrompt.ObjectText = ""
 			newProximityPrompt.HoldDuration = 0
@@ -169,7 +169,7 @@ function self:mechanize(ctx)
 			proximityPrompt = newProximityPrompt
 		end
 
-		animation.AnimationId = ANIMATIONS[ctx:getAttribute("PickupType")] or "rbxassetid://16951389063"
+		animation.AnimationId = ANIMATIONS[ctx.getAttribute("PickupType")] or "rbxassetid://16951389063"
 		animationTrack = animator:LoadAnimation(animation)
 
 		isDisengaged = false
@@ -187,7 +187,7 @@ function self:mechanize(ctx)
 
 		isCarrying = false
 		proximityPrompt.Enabled = true
-		ctx:pushTasks(proximityPrompt.Triggered:Connect(function(playerWhoTriggered)
+		ctx.trove:add(proximityPrompt.Triggered:Connect(function(playerWhoTriggered)
 			if playerWhoTriggered ~= Players.LocalPlayer then
 				return
 			end
@@ -202,8 +202,8 @@ function self:mechanize(ctx)
 			animationTrack:Play(0, 1, 1)
 			utils.getHumanoid():SetStateEnabled(Enum.HumanoidStateType.Jumping, false)
 
-			local pickupBehavior: PickupBehavior = ctx:getAttribute("PickupBehavior")
-			local pickupType: PickupType = ctx:getAttribute("PickupType")
+			local pickupBehavior: PickupBehavior = ctx.getAttribute("PickupBehavior")
+			local pickupType: PickupType = ctx.getAttribute("PickupType")
 			local humanoidRootPart = utils.getHumanoidRootPart()
 			local character = utils.getCharacter()
 
@@ -223,7 +223,7 @@ function self:mechanize(ctx)
 					humanoidRootPart,
 					pickupBehavior,
 					pickupType,
-					ctx:getAttribute("PushboxHoldOffset")
+					ctx.getAttribute("PushboxHoldOffset")
 				)
 
 				for _, descendant in character:GetDescendants() do
@@ -238,7 +238,7 @@ function self:mechanize(ctx)
 					humanoidRootPart,
 					pickupBehavior,
 					pickupType,
-					ctx:getAttribute("PushboxHoldOffset")
+					ctx.getAttribute("PushboxHoldOffset")
 				)
 			end
 
@@ -254,7 +254,7 @@ function self:mechanize(ctx)
 			isThrown = false
 			local jumpRequest: RBXScriptConnection = nil
 
-			if ctx:getAttribute("Throwable") then
+			if ctx.getAttribute("Throwable") then
 				jumpRequest = UserInputService.JumpRequest:Connect(function()
 					if isThrown ~= true then
 						-- SoundService:PlayLocalSound(Throwable_Throw)
@@ -268,8 +268,8 @@ function self:mechanize(ctx)
 					linearVelocity.Attachment0 = promptAttachment
 					linearVelocity.MaxForce = math.huge
 					linearVelocity.VectorVelocity = (
-						utils.getHumanoidRootPart().CFrame.LookVector + ctx:getAttribute("PushboxHoldOffset")
-					) * ctx:getAttribute("ThrowForce")
+						utils.getHumanoidRootPart().CFrame.LookVector + ctx.getAttribute("PushboxHoldOffset")
+					) * ctx.getAttribute("ThrowForce")
 					linearVelocity.Enabled = true
 
 					task.wait(0.1)
@@ -293,7 +293,7 @@ function self:mechanize(ctx)
 				weld:Destroy()
 			end
 
-			task.wait(ctx:getAttribute("CooldownSeconds"))
+			task.wait(ctx.getAttribute("CooldownSeconds"))
 
 			proximityPrompt.Enabled = true
 			isDisengaged = false
@@ -302,13 +302,13 @@ function self:mechanize(ctx)
 	end
 
 	local debounce = false
-	ctx:pushTasks(button.Touched:Connect(function(toucher)
+	ctx.trove:add(button.Touched:Connect(function(toucher)
 		if debounce then
 			return
 		end
 
 		local touchConfig = {
-			passLocalPlayerCharacters = ctx:getAttribute("PassLocalPlayerCharacter"),
+			passLocalPlayerCharacters = ctx.getAttribute("PassLocalPlayerCharacter"),
 		}
 
 		if not utils.checkTouched(toucher, touchConfig) then
@@ -319,14 +319,14 @@ function self:mechanize(ctx)
 
 		debounce = true
 
-		task.wait(ctx:getAttribute("SpawnCooldownSeconds"))
+		task.wait(ctx.getAttribute("SpawnCooldownSeconds"))
 
 		debounce = false
 	end))
 
 	pushbox.Parent = nil
 
-	if not ctx:getAttribute("DoNotSpawnFirst") then
+	if not ctx.getAttribute("DoNotSpawnFirst") then
 		spawnPushbox()
 	end
 end

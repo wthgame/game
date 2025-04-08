@@ -4,7 +4,7 @@ import ty from "@rbxts/libopen-ty";
 import { ReplicatedStorage, Workspace } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
 import { panic } from "shared/flamework";
-import { debug, err, info, trace, warn } from "shared/log";
+import { err, info, trace, warn } from "shared/log";
 
 export interface Mechanic<A extends Record<string, AttributeValue>, I extends Instance> {
 	type: "Mechanic";
@@ -57,9 +57,9 @@ export class MechanicsController implements OnInit, OnStart {
 	private modules!: Map<Tag, AnyMechanic>;
 
 	onInit(): void {
-		debug("Collecting Mechanics");
+		trace("Collecting Mechanics");
 		this.modules = this.collectChildrenMechanicModules(MECHANICS_MODULES_PARENT.getValue());
-		debug("Finished");
+		trace("Finished");
 	}
 
 	onStart(): void {
@@ -132,6 +132,8 @@ export class MechanicsController implements OnInit, OnStart {
 				task.spawn(
 					(description, mechanicsFolder, instance, id) => {
 						trace("Mechanizing description", description.name);
+						debug.setmemorycategory(description.name);
+
 						description.mechanize(
 							table.freeze({
 								mechanicsFolder,
@@ -162,7 +164,7 @@ export class MechanicsController implements OnInit, OnStart {
 								},
 
 								logDebug: (...args) => {
-									debug(`Mechanic:${description.name} -`, ...args);
+									// debug(`Mechanic:${description.name} -`, ...args);
 								},
 
 								logInfo: (...args) => {
