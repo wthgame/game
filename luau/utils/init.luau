@@ -3,16 +3,23 @@
 -- We write the MechanicLib in Luau to enable using Luau type definitions
 -- Inspired by http://github.com/znotfireman/jtoh-kit
 
+local Players = game:GetService("Players")
+
 local character = require(script.character)
+local checkTouched = require(script.checkTouched)
+local geometry = require(script.geometry)
 local t = require(script.t)
 local types = require(script.types)
 
-export type Mechanic<Attributes, Instance> = types.Mechanic<Attributes, Instance>
+export type Mechanic<Attributes, Instance, Methods = {}> = types.Mechanic<Attributes, Instance, Methods>
 export type MechanizeContext<MechanicAttributes, MechanicInstance> = types.MechanizeContext<
 	MechanicAttributes,
 	MechanicInstance
 >
+export type Character = types.Character
 export type TouchConfig = types.TouchConfig
+export type Trove = types.Trove
+export type TroveTrackable = types.TroveTrackable
 
 local utils = table.freeze({
 	getMaybeCharacter = character.getMaybeCharacter,
@@ -24,7 +31,13 @@ local utils = table.freeze({
 	getHumanoid = character.getHumanoid,
 	isCharacterAlive = character.isCharacterAlive,
 
-	checkTouched = require(script.checkTouched),
+	checkTouched = checkTouched,
+
+	getRandomPointInBox = geometry.getRandomPointInBox,
+	getRandomPointInSphere = geometry.getRandomPointInSphere,
+	isPointInObject = geometry.isPointInObject,
+
+	localPlayer = Players.LocalPlayer,
 
 	--- Runtime typechecking utilities.
 	--- See: https://github.com/osyrisrblx/t
