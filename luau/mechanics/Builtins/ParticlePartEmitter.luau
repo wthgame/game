@@ -10,9 +10,9 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 type Particle = {
 	when: number,
-	part: Part,
-	billboard: BillboardGui,
-	image: ImageLabel,
+	attachment0: Attachment,
+	attachment1: Attachment,
+	beam: Beam,
 	speed: number,
 	lifetimeSeconds: number,
 	startingRotation: number,
@@ -206,109 +206,111 @@ local function calculateUDim2ScaleFromSquash(squash: number): UDim2
 	return UDim2.fromScale(1, 1)
 end
 
+-- shit is not working
 function self:mechanize(ctx)
-	local instance = ctx.instance
-	local lastEmission = os.clock()
-	local random = Random.new(os.time())
-	local particles: { [Particle]: true } = {}
+	-- local instance = ctx.instance
+	-- local lastEmission = os.clock()
+	-- local random = Random.new(os.time())
+	-- local particles: { [Particle]: true } = {}
 
-	local function emit(amount: number?)
-		local amount = amount or 1
+	-- local function emit(amount: number?)
+	-- 	local amount = amount or 1
 
-		local attributes = ctx.getAllAttributes()
+	-- 	local attributes = ctx.getAllAttributes()
 
-		local lifetimeSeconds = attributes.LifetimeSeconds
-		local speed = attributes.Speed
-		local rotation = attributes.Rotation
-		local rotationSpeed = attributes.RotationSpeed
+	-- 	local lifetimeSeconds = attributes.LifetimeSeconds
+	-- 	local speed = attributes.Speed
+	-- 	local rotation = attributes.Rotation
+	-- 	local rotationSpeed = attributes.RotationSpeed
 
-		for index = 1, amount do
-			local now = os.clock()
+	-- 	for index = 1, amount do
+	-- 		local now = os.clock()
 
-			local part = ctx.trove:add(Instance.new("Part"))
-			part.Name = "ParticlePart"
-			part.Anchored = true
-			part.CanCollide = false
-			part.CastShadow = false
-			part.Size = Vector3.zero
-			part.Transparency = 1
+	-- 		local attachment0 = ctx.trove:add(Instance.new("Attachment"))
+	-- 		attachment0.Parent = instance
 
-			local billboard = ctx.trove:add(Instance.new("BillboardGui"))
-			billboard.Adornee = part
-			billboard.Size = UDim2.fromOffset(200, 200)
-			billboard.Parent = part
+	-- 		local attachment1 = ctx.trove:add(Instance.new("Attachment"))
+	-- 		attachment1.Parent = instance
 
-			local image = ctx.trove:add(Instance.new("ImageLabel"))
-			image.BackgroundTransparency = 1
-			image.AnchorPoint = Vector2.new(0.5, 0.5)
-			image.Position = UDim2.fromScale(0.5, 0.5)
-			image.Size = calculateUDim2ScaleFromSquash(evaluateNumberSequence(attributes.Squash, 0))
-			image.Image = attributes.Image
-			image.ImageColor3 = evaluateColorSequence(attributes.Color, 0)
-			image.Parent = part
+	-- 		ctx.trove:add(Instance.new("ParticleEmitter", attachment0)).Speed = NumberRange.new(0)
+	-- 		ctx.trove:add(Instance.new("ParticleEmitter", attachment1)).Speed = NumberRange.new(0)
 
-			part.Parent = instance
+	-- 		local beam = ctx.trove:add(Instance.new("Beam"))
+	-- 		beam.Attachment0 = attachment0
+	-- 		beam.Attachment1 = attachment1
+	-- 		beam.Width0 = 1
+	-- 		beam.Width1 = 1
+	-- 		beam.Texture = attributes.Image
+	-- 		beam.Color = ColorSequence.new(evaluateColorSequence(attributes.Color, 0))
+	-- 		beam.Parent = instance
+	-- 		beam.FaceCamera = true
+	-- 		beam.Segments = 1
 
-			local particle: Particle = {
-				when = now,
-				part = part,
-				billboard = billboard,
-				image = image,
-				speed = random:NextNumber(speed.Min, speed.Max),
-				lifetimeSeconds = random:NextNumber(lifetimeSeconds.Min, lifetimeSeconds.Max),
-				startingRotation = random:NextNumber(rotation.Min, rotation.Max),
-				rotationSpeed = random:NextNumber(rotationSpeed.Min, rotationSpeed.Max),
-				-- temp
-				startingCFrame = instance.CFrame,
-			}
+	-- 		local particle: Particle = {
+	-- 			when = now,
+	-- 			attachment0 = attachment0,
+	-- 			attachment1 = attachment1,
+	-- 			beam = beam,
+	-- 			speed = random:NextNumber(speed.Min, speed.Max),
+	-- 			lifetimeSeconds = random:NextNumber(lifetimeSeconds.Min, lifetimeSeconds.Max),
+	-- 			startingRotation = random:NextNumber(rotation.Min, rotation.Max),
+	-- 			rotationSpeed = random:NextNumber(rotationSpeed.Min, rotationSpeed.Max),
+	-- 			startingCFrame = CFrame.new(),
+	-- 		}
 
-			particles[particle] = true
-		end
-	end
+	-- 		particles[particle] = true
+	-- 	end
+	-- end
 
-	local function destroyParticle(particle: Particle)
-		particles[particle] = nil
-		particle.image:Destroy()
-		particle.billboard:Destroy()
-		particle.part:Destroy()
-	end
+	-- local function destroyParticle(particle: Particle)
+	-- 	particles[particle] = nil
+	-- 	particle.attachment0:Destroy()
+	-- 	particle.attachment1:Destroy()
+	-- 	particle.beam:Destroy()
+	-- end
 
-	ctx.trove:add(RunService.PreRender:Connect(function()
-		debug.profilebegin("ParticlePartEmitter")
-		local now = os.clock()
-		local rate = ctx.getAttribute("Rate")
-		if ctx.getAttribute("Enabled") and now - lastEmission >= 1 / rate then
-			local emitCount = math.floor(rate * (now - lastEmission))
-			if emitCount > 0 then
-				emit(emitCount)
-				lastEmission = now
-			end
-		end
+	-- ctx.trove:add(RunService.PreRender:Connect(function()
+	-- 	debug.profilebegin("ParticlePartEmitter")
+	-- 	local now = os.clock()
+	-- 	local rate = ctx.getAttribute("Rate")
+	-- 	if ctx.getAttribute("Enabled") and now - lastEmission >= 1 / rate then
+	-- 		local emitCount = math.floor(rate * (now - lastEmission))
+	-- 		if emitCount > 0 then
+	-- 			emit(emitCount)
+	-- 			lastEmission = now
+	-- 		end
+	-- 	end
 
-		local bulkMoveParts, bulkMoveCFrames = {}, {}
+	-- 	-- local bulkMoveParts, bulkMoveCFrames = {}, {}
 
-		for particle in particles do
-			local elapsedSeconds = os.clock() - particle.when
-			if elapsedSeconds >= particle.lifetimeSeconds then
-				destroyParticle(particle)
-				continue
-			end
+	-- 	for particle in particles do
+	-- 		local elapsedSeconds = os.clock() - particle.when
+	-- 		if elapsedSeconds >= particle.lifetimeSeconds then
+	-- 			destroyParticle(particle)
+	-- 			continue
+	-- 		end
 
-			local progress = elapsedSeconds / particle.lifetimeSeconds
-			-- TODO: account normals
-			local speed = Vector3.new(0, particle.speed * elapsedSeconds, 0)
+	-- 		-- local progress = elapsedSeconds / particle.lifetimeSeconds
+	-- 		-- TODO: account normals
+	-- 		local speed = Vector3.new(0, particle.speed * elapsedSeconds, 0)
 
-			table.insert(bulkMoveParts, particle.part)
-			table.insert(bulkMoveCFrames, particle.startingCFrame + speed)
-		end
+	-- 		local center = CFrame.lookAt(workspace.CurrentCamera.CFrame.Position, speed)
+	-- 		particle.attachment0.CFrame = CFrame.new(0, 0.5, 0):ToObjectSpace(center)
+	-- 		particle.attachment1.CFrame = CFrame.new(0, -0.5, 0):ToObjectSpace(center)
 
-		workspace:BulkMoveTo(bulkMoveParts, bulkMoveCFrames)
-		debug.profileend()
-	end))
+	-- 		-- particle.part.CFrame = CFrame.lookAt(workspace.CurrentCamera, particle.startingCFrame * speed)
 
-	print(ctx)
+	-- 		-- table.insert(bulkMoveParts, particle.part)
+	-- 		-- table.insert(bulkMoveCFrames, particle.startingCFrame + speed)
+	-- 	end
 
-	print(ctx.getAllAttributes())
+	-- 	-- workspace:BulkMoveTo(bulkMoveParts, bulkMoveCFrames)
+	-- 	debug.profileend()
+	-- end))
+
+	-- print(ctx)
+
+	-- print(ctx.getAllAttributes())
 end
 
 return self

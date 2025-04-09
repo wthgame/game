@@ -6,25 +6,73 @@ import { CODE_NAME, REAL_NAME, VERSION } from "shared/constants/common";
 import { useEventListener } from "@rbxts/pretty-vide-utils";
 import { MainViewController } from "./main-view";
 import { debug } from "shared/log";
+import { CharacterController } from "../character";
 // import { scope } from "shared/scope";
 
 @Controller()
 export class DebugOverlayController implements OnStart {
-	constructor(private mainViewController: MainViewController) {}
+	constructor(
+		private mainViewController: MainViewController,
+		private characterController: CharacterController,
+	) {}
 
 	onStart(): void {
 		mount(() => {
 			const memoryMegabytes = source(0);
 			const delta = source(0);
 			const fps = source(0);
+			const humanoidRootPartPosition = source(Vector3.zero);
 
-			useEventListener(RunService.PreRender, (dlt) => {
-				const framed = 1 / dlt;
-				fps(math.floor(((1 / delta() + framed) / 2) * 10) / 10);
-				delta(dlt);
+			let lastIteration: number;
+			let start = os.clock();
+			const frameUpdateTable = new Map<number, number>();
 
-				memoryMegabytes(Stats.GetTotalMemoryUsageMb());
+			useEventListener(RunService.PostSimulation, () => {
+				lastIteration = os.clock();
+
+				for (const index of $range(frameUpdateTable.size(), 1, -1)) {
+					if (frameUpdateTable.get(index)! >= lastIteration - 1) {
+						frameUpdateTable.set(index + 1, frameUpdateTable.get(index)!);
+					} else {
+						frameUpdateTable.delete(index + 1);
+					}
+				}
+
+				frameUpdateTable.set(1, lastIteration);
+				fps(
+					math.floor(
+						os.clock() - start >= 1
+							? frameUpdateTable.size()
+							: frameUpdateTable.size() / (os.clock() - start),
+					),
+				);
 			});
+
+			useEventListener(RunService.RenderStepped, (dlt) => {
+				memoryMegabytes(Stats.GetTotalMemoryUsageMb());
+
+				const root = this.characterController.getMaybeRoot();
+				if (root) {
+					humanoidRootPartPosition(root.Position);
+				}
+			});
+
+			/*
+
+			local LastIteration, Start
+local FrameUpdateTable = {}
+
+local function HeartbeatUpdate()
+				LastIteration = TimeFunction()
+				for Index = #FrameUpdateTable, 1, -1 do
+					FrameUpdateTable[Index + 1] = FrameUpdateTable[Index] >= LastIteration - 1 and FrameUpdateTable[Index] or nil
+				end
+
+				FrameUpdateTable[1] = LastIteration
+				FpsLabel.Text = tostring(math.floor(TimeFunction() - Start >= 1 and #FrameUpdateTable or #FrameUpdateTable / (TimeFunction() - Start))) .. " FPS"
+end
+
+Start = TimeFunction()*/
 
 			return (
 				<screengui Name="DebugOverlay" ResetOnSpawn={false}>
@@ -35,6 +83,7 @@ export class DebugOverlayController implements OnStart {
 						realname={REAL_NAME}
 						codename={CODE_NAME}
 						version={VERSION}
+						humanoidRootPartPosition={humanoidRootPartPosition}
 						toggleMainView={() => {
 							debug("TOGGLING");
 							this.mainViewController.isMainViewOpen(!this.mainViewController.isMainViewOpen());

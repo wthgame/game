@@ -13,6 +13,7 @@ export interface DebugOverlayProps {
 	realname: Derivable<string>;
 	codename: Derivable<string>;
 	version: Derivable<SemVer>;
+	humanoidRootPartPosition: Derivable<Vector3>;
 	toggleMainView: () => void;
 }
 
@@ -23,6 +24,7 @@ export function DebugOverlay({
 	realname,
 	codename,
 	version,
+	humanoidRootPartPosition,
 	toggleMainView,
 }: DebugOverlayProps) {
 	let layoutOrder = 0;
@@ -35,8 +37,29 @@ export function DebugOverlay({
 				HorizontalAlignment={Enum.HorizontalAlignment.Left}
 				SortOrder={Enum.SortOrder.LayoutOrder}
 			/>
+			<Text text="Dev Teleporters:" textStyle={TextStyle.Text} layoutOrder={layoutOrder++} />
+			{CollectionService.GetTagged("DevTeleporter")
+				.filter((v): v is BasePart => v.IsA("BasePart"))
+				.sort((lhs, rhs) => lhs.Name < rhs.Name)
+				.map((v) => (
+					<TriangularButton
+						buttonStyle={ButtonStyle.Primary}
+						buttonLabel={v.Name}
+						layoutOrder={layoutOrder++}
+						onClick={() => {
+							Players.LocalPlayer.Character?.PivotTo(v.CFrame);
+						}}
+					/>
+				))}
 			<Text
 				text={() => `${read(realname)} (${read(codename)}) v${read(version).toString()}`}
+				textStyle={TextStyle.Text}
+				layoutOrder={layoutOrder++}
+			/>
+			<Text
+				text={() =>
+					`XYZ: ${math.round(read(humanoidRootPartPosition).X * 10) / 10} ${math.round(read(humanoidRootPartPosition).Y * 10) / 10} ${math.round(read(humanoidRootPartPosition).Z * 10) / 10}`
+				}
 				textStyle={TextStyle.Text}
 				layoutOrder={layoutOrder++}
 			/>
@@ -61,25 +84,6 @@ export function DebugOverlay({
 				layoutOrder={layoutOrder++}
 				onClick={toggleMainView}
 			/>
-			<TriangularButton
-				buttonStyle={ButtonStyle.Primary}
-				buttonLabel="Toggle Debug Overlay"
-				layoutOrder={layoutOrder++}
-			/>
-			<Text text="Dev Teleporters:" textStyle={TextStyle.Text} layoutOrder={layoutOrder++} />
-			{CollectionService.GetTagged("DevTeleporter")
-				.filter((v): v is BasePart => v.IsA("BasePart"))
-				.sort((lhs, rhs) => lhs.Name < rhs.Name)
-				.map((v) => (
-					<TriangularButton
-						buttonStyle={ButtonStyle.Primary}
-						buttonLabel={v.Name}
-						layoutOrder={layoutOrder++}
-						onClick={() => {
-							Players.LocalPlayer.Character?.PivotTo(v.CFrame);
-						}}
-					/>
-				))}
 		</frame>
 	);
 }
