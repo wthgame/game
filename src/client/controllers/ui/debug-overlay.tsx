@@ -57,23 +57,6 @@ export class DebugOverlayController implements OnStart {
 				}
 			});
 
-			/*
-
-			local LastIteration, Start
-local FrameUpdateTable = {}
-
-local function HeartbeatUpdate()
-				LastIteration = TimeFunction()
-				for Index = #FrameUpdateTable, 1, -1 do
-					FrameUpdateTable[Index + 1] = FrameUpdateTable[Index] >= LastIteration - 1 and FrameUpdateTable[Index] or nil
-				end
-
-				FrameUpdateTable[1] = LastIteration
-				FpsLabel.Text = tostring(math.floor(TimeFunction() - Start >= 1 and #FrameUpdateTable or #FrameUpdateTable / (TimeFunction() - Start))) .. " FPS"
-end
-
-Start = TimeFunction()*/
-
 			return (
 				<screengui Name="DebugOverlay" ResetOnSpawn={false}>
 					<DebugOverlay
