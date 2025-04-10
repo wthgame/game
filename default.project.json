@@ -16,7 +16,11 @@
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
             "Mechanics": {
-                "$path": "luau/mechanics"
+                "$className": "Folder",
+                "$ignoreUnknownInstances": true,
+                "Core": {
+                    "$path": "luau/mechanics"
+                }
             },
             "MechanicUtils": {
                 "$path": "luau/utils"
