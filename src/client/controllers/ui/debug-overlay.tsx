@@ -7,7 +7,8 @@ import { useEventListener } from "@rbxts/pretty-vide-utils";
 import { MainViewController } from "./main-view";
 import { debug } from "shared/log";
 import { CharacterController } from "../character";
-// import { scope } from "shared/scope";
+import { MechanicController } from "../mechanics";
+import { useAtom } from "@rbxts/vide-charm";
 
 @Controller()
 export class DebugOverlayController implements OnStart {
@@ -68,7 +69,6 @@ export class DebugOverlayController implements OnStart {
 						version={VERSION}
 						humanoidRootPartPosition={humanoidRootPartPosition}
 						toggleMainView={() => {
-							debug("TOGGLING");
 							this.mainViewController.isMainViewOpen(!this.mainViewController.isMainViewOpen());
 						}}
 					/>

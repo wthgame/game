@@ -2,10 +2,10 @@ local jecs = require(script.Parent.jecs)
 
 export type Typechecker = (value: unknown) -> (boolean, string?)
 
-export type MechanicComponent<Attributes, Instance> = jecs.Entity<{
-	attributes: Attributes,
-	instance: Instance,
-}>
+export type MechanicComponent<Attributes, Instance> = {
+	attributes: jecs.Entity<Attributes>,
+	instance: jecs.Entity<Attributes>,
+}
 
 export type Mechanic = {
 	type: "Mechanic",
@@ -15,14 +15,13 @@ export type Mechanic = {
 
 export type WelcomeToHell = {
 	world: jecs.World,
-	createMechanicComponent: <Attributes, Instance>(
-		{
-			tag: string,
-			attributeChecks: { [string]: Typechecker },
-			defaultAttributes: Attributes,
-			instanceCheck: Typechecker,
-		}
-	) -> jecs.Entity<MechanicComponent<Attributes, Instance>>,
+	-- FIXME: Roblox is stinky doo doo so i have to downtype this
+	createMechanicTag: (tag: string, instanceCheck: Typechecker?) -> any,
+	createMechanicAttributes: (
+		tag: any,
+		attributeChecks: { [string]: Typechecker },
+		defaultAttributes: { [string]: any }
+	) -> any,
 	pushSystems: (...() -> ()) -> (),
 }
 
