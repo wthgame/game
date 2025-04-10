@@ -6,7 +6,7 @@
 local Players = game:GetService("Players")
 
 local character = require(script.character)
-local checkTouched = require(script.checkTouched)
+local checks = require(script.checks)
 local geometry = require(script.geometry)
 local t = require(script.t)
 local types = require(script.types)
@@ -31,7 +31,7 @@ local utils = table.freeze({
 	getHumanoid = character.getHumanoid,
 	isCharacterAlive = character.isCharacterAlive,
 
-	checkTouched = checkTouched,
+	checkTouched = checks.checkTouched,
 
 	getRandomPointInBox = geometry.getRandomPointInBox,
 	getRandomPointInSphere = geometry.getRandomPointInSphere,
