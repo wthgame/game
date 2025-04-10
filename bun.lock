@@ -6,6 +6,7 @@
       "dependencies": {
         "@flamework/core": "^1.2.4",
         "@rbxts/charm": "^0.10.0",
+        "@rbxts/cullthrottle": "^0.1.0-rc.3",
         "@rbxts/flamework-meta-utils": "1.0.1",
         "@rbxts/iris": "2.3.1-ts.1",
         "@rbxts/jecs": "^0.6.0-rc.1",
@@ -78,6 +79,8 @@
     "@rbxts/charm": ["@rbxts/charm@0.10.0", "", {}, "sha512-pcGpNyqNOcJ7r9UbAjFaUqU0F9Q+wCr4/2kUs8L0hh4dVhUN7t6ur4P7zAMzNuMJQG8YP47a9rq0l0/LlhLuow=="],
 
     "@rbxts/compiler-types": ["@rbxts/compiler-types@3.0.0-types.0", "", {}, "sha512-VGOHJPoL7+56NTatMGqQj3K7xWuzEV+aP4QD5vZiHu+bcff3kiTmtoadaF6NkJrmwfFAvbsd4Dg764ZjWNceag=="],
+
+    "@rbxts/cullthrottle": ["@rbxts/cullthrottle@0.1.0-rc.3", "", {}, "sha512-WPAL/ml1WWlAaWKDFTzFV06OHIrr/LL2Zsutf4ULCriaTWYRgxMdrLMFsvmQ6D5ZwccKfAzuhgtXyzaWhmh7ug=="],
 
     "@rbxts/flamework-meta-utils": ["@rbxts/flamework-meta-utils@1.0.1", "", { "dependencies": { "@flamework/components": "^1.2.3", "@flamework/core": "^1.2.3" } }, "sha512-vsg3B7LKWoVaK5BPJ9J6idEyiW3Y6x125SIOB4AzPuaSKM9/ECMHxAvDFqMq8/WiCbHzKGfzbC338vQ0AxTt7A=="],
 

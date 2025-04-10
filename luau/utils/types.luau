@@ -15,11 +15,13 @@ export type Mechanic = {
 
 export type WelcomeToHell = {
 	world: jecs.World,
-	createMechanic: <Attributes, Instance>(
-		tag: string,
-		attributeChecks: { [string]: Typechecker },
-		defaultAttributes: Attributes,
-		instanceCheck: Typechecker
+	createMechanicComponent: <Attributes, Instance>(
+		{
+			tag: string,
+			attributeChecks: { [string]: Typechecker },
+			defaultAttributes: Attributes,
+			instanceCheck: Typechecker,
+		}
 	) -> jecs.Entity<MechanicComponent<Attributes, Instance>>,
 	pushSystems: (...() -> ()) -> (),
 }

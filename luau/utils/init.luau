@@ -5,8 +5,12 @@ export type Mechanic = types.Mechanic
 export type MechanicComponent<Attributes, Instance> = types.MechanicComponent<Attributes, Instance>
 
 return {
-	Mechanic = function(x: Mechanic)
-		return x
+	createMechanic = function(name: string, attach: (wth: types.WelcomeToHell) -> ()): Mechanic
+		return table.freeze({
+			type = "Mechanic" :: "Mechanic",
+			name = name,
+			attach = attach,
+		})
 	end,
 
 	--- Runtime typechecking utilities.

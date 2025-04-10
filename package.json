@@ -32,6 +32,7 @@
     "dependencies": {
         "@flamework/core": "^1.2.4",
         "@rbxts/charm": "^0.10.0",
+        "@rbxts/cullthrottle": "^0.1.0-rc.3",
         "@rbxts/flamework-meta-utils": "1.0.1",
         "@rbxts/iris": "2.3.1-ts.1",
         "@rbxts/jecs": "^0.6.0-rc.1",
