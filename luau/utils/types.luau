@@ -1,3 +1,7 @@
+--!strict
+
+-- Core
+
 type Maybe<T> = T | nil
 type Typechecker = (value: unknown) -> (boolean, string?)
 
@@ -54,6 +58,8 @@ export type Character = Model & {
 	Animate: LocalScript,
 	Head: BasePart,
 }
+
+-- Trove
 
 export type Trove = {
 	extend: (self: Trove) -> Trove,
