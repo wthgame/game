@@ -6,8 +6,10 @@
       "dependencies": {
         "@flamework/core": "^1.2.4",
         "@rbxts/charm": "^0.10.0",
+        "@rbxts/cullthrottle": "^0.1.0-rc.3",
         "@rbxts/flamework-meta-utils": "1.0.1",
         "@rbxts/iris": "2.3.1-ts.1",
+        "@rbxts/jabby": "^0.2.1",
         "@rbxts/jecs": "^0.6.0-rc.1",
         "@rbxts/lapis": "^0.3.8",
         "@rbxts/lazy": "^1.0.1",
@@ -21,8 +23,10 @@
         "@rbxts/semver": "^1.0.0",
         "@rbxts/services": "^1.5.5",
         "@rbxts/sift": "^0.0.9",
+        "@rbxts/t": "^3.2.1",
         "@rbxts/trove": "^1.3.0",
         "@rbxts/vide": "^0.5.7",
+        "@rbxts/vide-charm": "^0.3.0",
       },
       "devDependencies": {
         "@rbxts/compiler-types": "latest",
@@ -79,9 +83,13 @@
 
     "@rbxts/compiler-types": ["@rbxts/compiler-types@3.0.0-types.0", "", {}, "sha512-VGOHJPoL7+56NTatMGqQj3K7xWuzEV+aP4QD5vZiHu+bcff3kiTmtoadaF6NkJrmwfFAvbsd4Dg764ZjWNceag=="],
 
+    "@rbxts/cullthrottle": ["@rbxts/cullthrottle@0.1.0-rc.3", "", {}, "sha512-WPAL/ml1WWlAaWKDFTzFV06OHIrr/LL2Zsutf4ULCriaTWYRgxMdrLMFsvmQ6D5ZwccKfAzuhgtXyzaWhmh7ug=="],
+
     "@rbxts/flamework-meta-utils": ["@rbxts/flamework-meta-utils@1.0.1", "", { "dependencies": { "@flamework/components": "^1.2.3", "@flamework/core": "^1.2.3" } }, "sha512-vsg3B7LKWoVaK5BPJ9J6idEyiW3Y6x125SIOB4AzPuaSKM9/ECMHxAvDFqMq8/WiCbHzKGfzbC338vQ0AxTt7A=="],
 
     "@rbxts/iris": ["@rbxts/iris@2.3.1-ts.1", "", {}, "sha512-L/lja+ugKNH3ywdz5c8omXUS34L9oGKlul3yVifzTfQVJS4ryePU/hS6IdMaSbIwNda+qEOehXbSxglF9qxa/A=="],
+
+    "@rbxts/jabby": ["@rbxts/jabby@0.2.1", "", { "dependencies": { "@rbxts/pebble": "0.1.2", "@rbxts/vide": "^0.5.2" }, "peerDependencies": { "@rbxts/jecs": "^0.5.1" } }, "sha512-kFLPqThgUHvSNnXdDLs/2YNaRfNTVJLyuUJpCSKa106PJuGnZO3ipMeweEF/eNlbeV8dsKYWE30cIHQ8aBqmXQ=="],
 
     "@rbxts/jecs": ["@rbxts/jecs@0.6.0-rc.1", "", {}, "sha512-0u7wf/buozH/u5ZBtNnuuN85UqQ8i4HZzc14W4lFdELogpM9XimfH7vQLuf94Gul+HhmPYkMh+LWLWdjJZMtzg=="],
 
@@ -100,6 +108,8 @@
     "@rbxts/maid": ["@rbxts/maid@1.1.0", "", {}, "sha512-bVWXZ0p2M3OJzPzvN5fY0T4s37ezUMY7EX31Xspp7Ds4C/K9yE4MHMRXjtlNvsYVPmoc5tdhAbpZY02Veix5lg=="],
 
     "@rbxts/object-utils": ["@rbxts/object-utils@1.0.4", "", {}, "sha512-dLLhf022ipV+9i910sOE7kl9losKHoon0WgeerHqVMQA5EYsLUsVT2AxhJuhk8MiDn5oJ2GiFofE/LadY9TpJQ=="],
+
+    "@rbxts/pebble": ["@rbxts/pebble@0.1.2", "", { "dependencies": { "@rbxts/vide": "^0.5.0" } }, "sha512-mlsWya5odOuXoyRLmn9idNXfDd8WpWAayDSAW6qwjrTgbGwJp8HRm2dfyeWY8pmmezqZNSWu9k1qf32OPH3NVA=="],
 
     "@rbxts/pretty-vide-utils": ["@rbxts/pretty-vide-utils@0.0.5", "", { "dependencies": { "@rbxts/ripple": "^0.9.0", "@rbxts/services": "^1.5.1", "@rbxts/set-timeout": "^1.1.2", "@rbxts/vide": "^0.5.0" } }, "sha512-zPfuL7Qt5wEox9zh8XNjXnhb7SuqHtaLpPvBYPw/a8RnpIymCDhLY2J/mJUKAwTqVJxH+7opZIhw4C4MWa13bg=="],
 
@@ -126,6 +136,8 @@
     "@rbxts/ui-labs": ["@rbxts/ui-labs@2.3.8", "", {}, "sha512-W9HpPG80GXbCs3kOngA8oL3y4HlR7P5QteoLw7vBqZIG/QpRgPfWGnmaYDn8QBtmhe0w0vs8AeoYEwNMl/SAJA=="],
 
     "@rbxts/vide": ["@rbxts/vide@0.5.7", "", {}, "sha512-Q9R7ybzuHK1phtLicBHgAjQnlJ/dMsXDs2k296PIMLgLqK9aX/f1skOP7F1K/vo7IrSE0jCG3B3XTOtQL1Sb0Q=="],
+
+    "@rbxts/vide-charm": ["@rbxts/vide-charm@0.3.0", "", { "peerDependencies": { "@rbxts/charm": "0.10.0", "@rbxts/vide": "*" } }, "sha512-leefLurc48uaJ72HAUBe0JsDcdvr4qib+XWC5196hkbDAOqdjqyjt8e1qY7WK8myG+QKOrU4U3M1hGFVJKdbKg=="],
 
     "@roblox-ts/luau-ast": ["@roblox-ts/luau-ast@2.0.0", "", {}, "sha512-cmMi093IdwBOLVxwuordhM8AmtbyTIyRpsTbB0D/JauidW4SXsQRQowSwWjHo4QP0DRJBXvOIlxtqEQi50uNzQ=="],
 

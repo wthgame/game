@@ -32,8 +32,10 @@
     "dependencies": {
         "@flamework/core": "^1.2.4",
         "@rbxts/charm": "^0.10.0",
+        "@rbxts/cullthrottle": "^0.1.0-rc.3",
         "@rbxts/flamework-meta-utils": "1.0.1",
         "@rbxts/iris": "2.3.1-ts.1",
+        "@rbxts/jabby": "^0.2.1",
         "@rbxts/jecs": "^0.6.0-rc.1",
         "@rbxts/lapis": "^0.3.8",
         "@rbxts/lazy": "^1.0.1",
@@ -47,8 +49,10 @@
         "@rbxts/semver": "^1.0.0",
         "@rbxts/services": "^1.5.5",
         "@rbxts/sift": "^0.0.9",
+        "@rbxts/t": "^3.2.1",
         "@rbxts/trove": "^1.3.0",
-        "@rbxts/vide": "^0.5.7"
+        "@rbxts/vide": "^0.5.7",
+        "@rbxts/vide-charm": "^0.3.0"
     },
     "patchedDependencies": {
         "@rbxts/semver@1.0.0": "patches/@rbxts%2Fsemver@1.0.0.patch"

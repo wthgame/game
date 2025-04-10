@@ -2,12 +2,15 @@
 
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
-local jecs = require(script.jecs)
-local t = require(script.t)
-local types = require(script.types)
-
-export type Mechanic = types.Mechanic
-export type MechanicComponent<Attributes, Instance> = types.MechanicComponent<Attributes, Instance>
+local jecs = require(
+	game:GetService("ReplicatedStorage")
+		:WaitForChild("WTHShared")
+		:WaitForChild("include")
+		:WaitForChild("node_modules")
+		:WaitForChild("@rbxts")
+		:WaitForChild("jecs")
+		:WaitForChild("jecs")
+)
 
 export type Archetype = jecs.Archetype
 export type Archetypes = jecs.Archetypes
@@ -26,16 +29,4 @@ export type QueryInner = jecs.QueryInner
 export type Record = jecs.Record
 export type World = jecs.World
 
-return table.freeze({
-	createMechanic = function(name: string, attach: (wth: types.WelcomeToHell) -> ()): Mechanic
-		return table.freeze({
-			type = "Mechanic" :: "Mechanic",
-			name = name,
-			attach = attach,
-		})
-	end,
-
-	--- Runtime typechecking utilities.
-	--- See: https://github.com/osyrisrblx/t
-	t = table.freeze(t),
-})
+return jecs
