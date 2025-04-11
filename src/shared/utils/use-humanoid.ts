@@ -1,4 +1,4 @@
-import { useCharacter } from "./useCharacter";
+import { useCharacter } from "./use-character";
 
 export function useHumanoid(): () => Maybe<Humanoid> {
 	const character = useCharacter();

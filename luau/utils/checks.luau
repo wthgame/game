@@ -1,5 +1,7 @@
 --!strict
 
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local Players = game:GetService("Players")
 
 local Types = require(script.Parent.Types)

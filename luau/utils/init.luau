@@ -5,10 +5,12 @@
 local Character = require(script.Character)
 local Checks = require(script.Checks)
 local CullThrottle = require(script.CullThrottle)
+local InstanceAttributeReconciler = require(script.InstanceAttributeReconciler)
 local Jecs = require(script.Jecs)
 local t = require(script.t)
 local types = require(script.Types)
 
+export type InstanceAttributeReconciler<T> = types.InstanceAttributeReconciler<T>
 export type Mechanic = types.Mechanic
 export type MechanicComponent<Attributes, Instance> = types.MechanicComponent<Attributes, Instance>
 export type TouchConfig = types.TouchConfig
@@ -43,6 +45,8 @@ return table.freeze({
 	isCharacterAlive = Character.isCharacterAlive,
 
 	checkTouched = Checks.checkTouched,
+
+	InstanceAttributeReconciler = InstanceAttributeReconciler,
 
 	CullThrottle = CullThrottle,
 	--- See: https://github.com/Ukendio/jecs

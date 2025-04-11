@@ -1,6 +1,11 @@
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local Jecs = require(script.Parent.Jecs)
 
 export type Typechecker = (value: unknown) -> (boolean, string?)
+export type Cleanup = () -> ()
 
 export type MechanicComponent<Attributes, Instance> = {
 	attributes: Jecs.Entity<Attributes>,
@@ -24,6 +29,12 @@ export type WthApi = {
 		defaultAttributes: { [string]: any }
 	) -> any,
 	pushSystems: (...() -> ()) -> (),
+
+	logTrace: (...unknown) -> (),
+	logDebug: (...unknown) -> (),
+	logInfo: (...unknown) -> (),
+	logWarn: (...unknown) -> (),
+	logError: (...unknown) -> (),
 }
 
 export type TouchConfig = {
@@ -41,6 +52,15 @@ export type Character = Model & {
 	PrimaryPart: BasePart,
 	Animate: LocalScript,
 	Head: BasePart,
+}
+
+export type InstanceAttributeReconciler<T> = {
+	type: "InstanceAttributeReconciler",
+	check: Typechecker,
+	attributeName: string,
+	defaultValue: T,
+	reconcile: (self: InstanceAttributeReconciler<T>, instance: Instance) -> T,
+	destroy: (self: InstanceAttributeReconciler<T>) -> (),
 }
 
 -- Trove

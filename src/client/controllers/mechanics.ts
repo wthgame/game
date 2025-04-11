@@ -1,9 +1,4 @@
-//!native
-//!optimize 2
-
-// WELCOME TO HELL: COMMENT CORE RBXTS SCRIPT WARNING
-
-import { Controller, OnInit, OnPhysics, OnStart, OnTick } from "@flamework/core";
+import { Controller, OnInit, OnStart, OnTick } from "@flamework/core";
 import CullThrottle from "@rbxts/cullthrottle";
 import { Entity, Name, OnAdd, OnRemove, World } from "@rbxts/jecs";
 import { Lazy } from "@rbxts/lazy";
@@ -13,7 +8,7 @@ import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
 import { world } from "shared/ecs";
 import { panic } from "shared/flamework";
-import { trace, warn } from "shared/log";
+import { debug, err, info, trace, warn } from "shared/log";
 
 type Typechecker = (value: unknown) => LuaTuple<[boolean, Maybe<string>]>;
 
@@ -21,7 +16,7 @@ export interface Mechanic {
 	type: "Mechanic";
 	name: string;
 	/// Used for attaching to Welcome To Hell.
-	attach: (wth: WelcomeToHell) => void;
+	attach: (wth: WthApi) => void;
 	/// Whether this mechanic should "persist" running systems even when it is
 	/// not visible.
 	persistant: boolean;
@@ -54,7 +49,7 @@ export interface MechanicAttribute {
 	defaults: Map<string, AttributeValue>;
 }
 
-export interface WelcomeToHell {
+export interface WthApi {
 	world: World;
 	createMechanicTag: (tag: string, check: Typechecker) => Entity<Instance>;
 	createMechanicAttributes: (
@@ -63,6 +58,12 @@ export interface WelcomeToHell {
 		defaults: InstanceAttributes,
 	) => Entity<InstanceAttributes>;
 	pushSystems: (...systems: Array<() => void>) => void;
+
+	logTrace: (...args: defined[]) => void;
+	logDebug: (...args: defined[]) => void;
+	logInfo: (...args: defined[]) => void;
+	logWarn: (...args: defined[]) => void;
+	logError: (...args: defined[]) => void;
 }
 
 export interface MechanicComponentInner {
@@ -166,7 +167,7 @@ export class MechanicController implements OnInit, OnStart, OnTick {
 		for (const mechanic of mechanics) {
 			const mechanicSystems: Array<() => void> = [];
 
-			const wth = table.freeze<WelcomeToHell>({
+			const wth = table.freeze<WthApi>({
 				world,
 
 				createMechanicTag: (tag: string, check: Typechecker = t.Instance as never) => {
@@ -275,6 +276,26 @@ export class MechanicController implements OnInit, OnStart, OnTick {
 				pushSystems: (...systems) => {
 					for (const s of systems) mechanicSystems.push(s);
 				},
+
+				logTrace: (...args) => {
+					trace(`Mechanic: ${mechanic.name} -`, ...args);
+				},
+
+				logDebug: (...args) => {
+					debug(`Mechanic:${mechanic.name} -`, ...args);
+				},
+
+				logInfo: (...args) => {
+					info(`Mechanic:${mechanic.name} -`, ...args);
+				},
+
+				logWarn: (...args) => {
+					warn(`Mechanic:${mechanic.name} -`, ...args);
+				},
+
+				logError: (...args) => {
+					err(`Mechanic:${mechanic.name} -`, ...args);
+				},
 			});
 
 			const [attachSuccess, attachError] = pcall(mechanic.attach, wth);
@@ -296,7 +317,8 @@ export class MechanicController implements OnInit, OnStart, OnTick {
 	// TODO: collect all known mechanics and only run the attached systems
 	// TODO: cull throttle
 	private loadFromParent(parent: Instance) {
-		debug.profilebegin("MechanicController.loadFromParent");
+		// debug.profilebegin("MechanicController.loadFromParent");
+		debug("Loading mechanics from parent", parent.GetFullName());
 
 		const trove = new Trove();
 
@@ -319,6 +341,8 @@ export class MechanicController implements OnInit, OnStart, OnTick {
 			}
 		}
 
-		debug.profileend();
+		return trove;
+
+		// debug.profileend();
 	}
 }
