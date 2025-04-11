@@ -9,7 +9,7 @@ scope mechanics {
         -- Equivalant to EToH's normal damage
         Normal,
         -- Equivalant to EToH's ouch damage
-        Harmful,
+        Heavy,
         -- Equivalant to EToH's instakill damage, or just kills the player
         Lethal
     }

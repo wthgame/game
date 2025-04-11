@@ -151,7 +151,7 @@ local Queue: any = {
     Unreliable = table.create(256)
 }
 
-export type mechanics_DamageKind = ("Normal" | "Harmful" | "Lethal")
+export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
 local function mechanics_WriteEVENT_damageSelfVariable(Value: number): ()
 	-- Allocate BLOCK: 5 bytes
 	local BLOCK_START = Allocate(5)
@@ -159,18 +159,18 @@ local function mechanics_WriteEVENT_damageSelfVariable(Value: number): ()
 	buffer.writeu32(SendBuffer, BLOCK_START + 1, Value)
 end
 
-local function mechanics_WriteEVENT_damageSelf(Value: ("Normal" | "Harmful" | "Lethal")): ()
+local function mechanics_WriteEVENT_damageSelf(Value: ("Normal" | "Heavy" | "Lethal")): ()
 	-- Allocate BLOCK: 2 bytes
 	local BLOCK_START = Allocate(2)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 1)
 	if Value == "Normal" then
 		buffer.writeu8(SendBuffer, BLOCK_START + 1, 0)
-	elseif Value == "Harmful" then
+	elseif Value == "Heavy" then
 		buffer.writeu8(SendBuffer, BLOCK_START + 1, 1)
 	elseif Value == "Lethal" then
 		buffer.writeu8(SendBuffer, BLOCK_START + 1, 2)
 	else
-		error(`Unexpected enum: {Value}, expected one of "Normal" or "Harmful" or "Lethal".`)
+		error(`Unexpected enum: {Value}, expected one of "Normal" or "Heavy" or "Lethal".`)
 	end
 end
 
@@ -255,7 +255,7 @@ local Returns = table.freeze({
 			end
 		},
 		damageSelf = {
-			fire = function(Value: ("Normal" | "Harmful" | "Lethal")): ()
+			fire = function(Value: ("Normal" | "Heavy" | "Lethal")): ()
 				mechanics_WriteEVENT_damageSelf(Value)
 			end
 		},

@@ -3,11 +3,11 @@
 
 export declare const stepReplication: () => void
 export declare namespace mechanics {
-	type DamageKind = "Normal" | "Harmful" | "Lethal"
+	type DamageKind = "Normal" | "Heavy" | "Lethal"
 	export const damageSelfVariable: {
 		fire: (Value: number) => void
 	}
 	export const damageSelf: {
-		fire: (Value: "Normal" | "Harmful" | "Lethal") => void
+		fire: (Value: "Normal" | "Heavy" | "Lethal") => void
 	}
 }

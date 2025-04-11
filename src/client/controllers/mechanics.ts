@@ -92,7 +92,7 @@ const MECHANICS_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("Mechanic
 const TEMPORARY_MECHANICS_TEST_FOLDER = new Lazy(() => Workspace.WaitForChild("Mechanics"));
 
 @Controller()
-export class MechanicController implements OnInit, OnStart, OnPhysics {
+export class MechanicController implements OnInit, OnStart, OnTick {
 	private mechanics!: Mechanic[];
 	private mechanicSystems = new Map<Mechanic, Array<() => void>>();
 	private mechanicsNeedingToRunSystems = new Set<Mechanic>();
@@ -119,7 +119,7 @@ export class MechanicController implements OnInit, OnStart, OnPhysics {
 		this.loadFromParent(TEMPORARY_MECHANICS_TEST_FOLDER.getValue());
 	}
 
-	onPhysics(): void {
+	onTick(): void {
 		for (const mechanic of this.mechanicsNeedingToRunSystems) {
 			for (const system of this.mechanicSystems.get(mechanic)!) {
 				system();

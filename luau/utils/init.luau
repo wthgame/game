@@ -2,12 +2,16 @@
 
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
+local CullThrottle = require(script.CullThrottle)
+local character = require(script.character)
+local checks = require(script.checks)
 local jecs = require(script.jecs)
 local t = require(script.t)
 local types = require(script.types)
 
 export type Mechanic = types.Mechanic
 export type MechanicComponent<Attributes, Instance> = types.MechanicComponent<Attributes, Instance>
+export type TouchConfig = types.TouchConfig
 
 export type Archetype = jecs.Archetype
 export type Archetypes = jecs.Archetypes
@@ -27,7 +31,18 @@ export type Record = jecs.Record
 export type World = jecs.World
 
 return table.freeze({
-	createMechanic = function(name: string, attach: (wth: types.WelcomeToHell) -> ()): Mechanic
+	getMaybeCharacter = character.getMaybeCharacter,
+	waitForCharacter = character.waitForCharacter,
+	getCharacter = character.getCharacter,
+	getMaybeHumanoidRootPart = character.getMaybeHumanoidRootPart,
+	getHumanoidRootPart = character.getHumanoidRootPart,
+	getMaybeHumanoid = character.getMaybeHumanoid,
+	getHumanoid = character.getHumanoid,
+	isCharacterAlive = character.isCharacterAlive,
+
+	checkTouched = checks.checkTouched,
+
+	createMechanic = function(name: string, attach: (wth: types.WthApi) -> ()): Mechanic
 		return table.freeze({
 			type = "Mechanic" :: "Mechanic",
 			name = name,
@@ -35,7 +50,13 @@ return table.freeze({
 		})
 	end,
 
+	CullThrottle = CullThrottle,
+
 	--- Runtime typechecking utilities.
 	--- See: https://github.com/osyrisrblx/t
 	t = table.freeze(t),
+
+	--- The Entity Component System used in Welcome to Hell.
+	--- See: https://github.com/Ukendio/jecs
+	jecs = table.freeze(jecs),
 })

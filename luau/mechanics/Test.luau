@@ -1,6 +1,4 @@
 --!strict
---!native
---!optimize 2
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))

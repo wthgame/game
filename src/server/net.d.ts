@@ -3,11 +3,11 @@
 
 export declare const stepReplication: () => void
 export declare namespace mechanics {
-	type DamageKind = "Normal" | "Harmful" | "Lethal"
+	type DamageKind = "Normal" | "Heavy" | "Lethal"
 	export const damageSelfVariable: {
 		on: (Listener: (Player: Player, Value: number) => void) => (() => void)
 	}
 	export const damageSelf: {
-		on: (Listener: (Player: Player, Value: "Normal" | "Harmful" | "Lethal") => void) => (() => void)
+		on: (Listener: (Player: Player, Value: "Normal" | "Heavy" | "Lethal") => void) => (() => void)
 	}
 }

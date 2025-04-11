@@ -4,12 +4,12 @@ import { mechanics } from "server/net";
 import { trace } from "shared/log";
 
 export enum DamageType {
-	Normal = 5,
-	Harmful = 20,
-	Lethal = 100,
+	Normal = 2,
+	Heavy = 10,
+	Lethal = math.huge,
 }
 
-const DEBOUNCE_DURATION_SECONDS = 0.05;
+const DEBOUNCE_DURATION_SECONDS = 0.125;
 
 @Service()
 export class DamageService {
@@ -21,7 +21,7 @@ export class DamageService {
 		this.debounce.add(player);
 		trace("Damaging player", player, "by", kind.lower(), "damage");
 		player.Character?.FindFirstChildOfClass("Humanoid")?.TakeDamage(
-			DamageType[kind as "Normal" | "Harmful" | "Lethal"],
+			DamageType[kind as "Normal" | "Heavy" | "Lethal"],
 		);
 		task.wait(DEBOUNCE_DURATION_SECONDS);
 		this.debounce.delete(player);

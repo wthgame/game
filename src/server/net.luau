@@ -156,7 +156,7 @@ Events.Reliable[0] = {}
 Queue.Reliable[0] = table.create(256)
 Events.Reliable[1] = {}
 Queue.Reliable[1] = table.create(256)
-export type mechanics_DamageKind = ("Normal" | "Harmful" | "Lethal")
+export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
 local function mechanics_ReadEVENT_damageSelfVariable(): (number)
 	-- Read BLOCK: 4 bytes
 	local BLOCK_START = Read(4)
@@ -164,7 +164,7 @@ local function mechanics_ReadEVENT_damageSelfVariable(): (number)
 	return Value
 end
 
-local function mechanics_ReadEVENT_damageSelf(): (("Normal" | "Harmful" | "Lethal"))
+local function mechanics_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Lethal"))
 	-- Read BLOCK: 1 bytes
 	local BLOCK_START = Read(1)
 	local Value = true :: any
@@ -172,7 +172,7 @@ local function mechanics_ReadEVENT_damageSelf(): (("Normal" | "Harmful" | "Letha
 	if Index == 0 then
 		Value = "Normal"
 	elseif Index == 1 then
-		Value = "Harmful"
+		Value = "Heavy"
 	elseif Index == 2 then
 		Value = "Lethal"
 	else
@@ -262,7 +262,7 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 				table.insert(Queue.Reliable[0], {Player, Value} :: {any})
 			end
 		elseif Index == 1 then
-			local Value: ("Normal" | "Harmful" | "Lethal") = mechanics_ReadEVENT_damageSelf()
+			local Value: ("Normal" | "Heavy" | "Lethal") = mechanics_ReadEVENT_damageSelf()
 			if #Events.Reliable[1] > 0 then
 				for _, Listener in Events.Reliable[1] do
 					task.spawn(Listener, Player, Value)
@@ -307,7 +307,7 @@ local Returns = table.freeze({
 			end
 		},
 		damageSelf = {
-			on = function(Listener: (Player: Player, Value: ("Normal" | "Harmful" | "Lethal")) -> ()): () -> ()
+			on = function(Listener: (Player: Player, Value: ("Normal" | "Heavy" | "Lethal")) -> ()): () -> ()
 				table.insert(Events.Reliable[1], Listener)
 				for Index, Arguments in Queue.Reliable[1] do
 					task.spawn(Listener, table.unpack(Arguments))
