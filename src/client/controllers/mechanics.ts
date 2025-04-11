@@ -20,7 +20,11 @@ type Typechecker = (value: unknown) => LuaTuple<[boolean, Maybe<string>]>;
 export interface Mechanic {
 	type: "Mechanic";
 	name: string;
+	/// Used for attaching to Welcome To Hell.
 	attach: (wth: WelcomeToHell) => void;
+	/// Whether this mechanic should "persist" running systems even when it is
+	/// not visible.
+	persistant: boolean;
 }
 
 export const Mechanic = ty
@@ -30,6 +34,7 @@ export const Mechanic = ty
 			type: ty.Just("Mechanic"),
 			name: ty.String,
 			attach: ty.Function,
+			persistant: ty.Boolean.IntoDefault(false),
 		},
 	)
 	.Nicknamed("Mechanic")

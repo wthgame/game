@@ -7,7 +7,11 @@ type TestAttributes = {
 	Flash: boolean,
 }
 
-return utils.createMechanic("Test", function(wth)
+local self = {} :: utils.Mechanic
+self.type = "Mechanic"
+self.name = "Test"
+
+function self.attach(wth)
 	local Test: utils.Entity<BasePart> = wth.createMechanicTag("Test", utils.t.instanceIsA("BasePart"))
 
 	local TestAttributes: utils.Entity<TestAttributes> = wth.createMechanicAttributes(Test, {
@@ -28,4 +32,6 @@ return utils.createMechanic("Test", function(wth)
 	end
 
 	wth.pushSystems(updateTest)
-end)
+end
+
+return self

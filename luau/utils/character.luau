@@ -2,53 +2,53 @@
 
 local Players = game:GetService("Players")
 
-local types = require(script.Parent.types)
+local Types = require(script.Parent.Types)
 
-local character = {}
+local Character = {}
 
-function character.getMaybeCharacter(): types.Character?
+function Character.getMaybeCharacter(): Types.Character?
 	return Players.LocalPlayer.Character
 end
 
-function character.waitForCharacter(): types.Character
+function Character.waitForCharacter(): Types.Character
 	return Players.LocalPlayer.CharacterAdded:Wait()
 end
 
-function character.getCharacter(): types.Character
-	return character.getMaybeCharacter() or character.waitForCharacter()
+function Character.getCharacter(): Types.Character
+	return Character.getMaybeCharacter() or Character.waitForCharacter()
 end
 
-function character.getMaybeHumanoidRootPart(): BasePart?
-	local character = character.getMaybeCharacter()
+function Character.getMaybeHumanoidRootPart(): BasePart?
+	local character = Character.getMaybeCharacter()
 	if character then
 		return character:FindFirstChild("HumanoidRootPart") :: BasePart
 	end
 	return nil
 end
 
-function character.getHumanoidRootPart(): BasePart
-	return character.getCharacter():WaitForChild("HumanoidRootPart") :: BasePart
+function Character.getHumanoidRootPart(): BasePart
+	return Character.getCharacter():WaitForChild("HumanoidRootPart") :: BasePart
 end
 
-function character.getMaybeHumanoid(): Humanoid?
-	local character = character.getMaybeCharacter()
+function Character.getMaybeHumanoid(): Humanoid?
+	local character = Character.getMaybeCharacter()
 	if character then
 		return character:FindFirstChild("Humanoid") :: Humanoid
 	end
 	return nil
 end
 
-function character.getHumanoid(): Humanoid
-	return character.getCharacter():WaitForChild("Humanoid") :: Humanoid
+function Character.getHumanoid(): Humanoid
+	return Character.getCharacter():WaitForChild("Humanoid") :: Humanoid
 end
 
-function character.isCharacterAlive(): boolean
-	local humanoid = character.getMaybeHumanoid()
+function Character.isCharacterAlive(): boolean
+	local humanoid = Character.getMaybeHumanoid()
 	return humanoid ~= nil and humanoid.Health > 0
 end
 
 -- TODO: getMaybeAnimator, getAnimator
 -- This will probably come after we implement custom animations
 
-table.freeze(character)
-return character
+table.freeze(Character)
+return Character

@@ -7,7 +7,11 @@ type AlignToCharacterPartsAttributes = {
 	Mode: "Move" | "Align" | "Pivot" | "LookAt",
 }
 
-return utils.createMechanic("AlignToCharacterParts", function(wth)
+local self = {} :: utils.Mechanic
+self.type = "Mechanic"
+self.name = "AlignToCharacterParts"
+
+function self.attach(wth)
 	local AlignToCharacterParts: utils.Entity<Instance> = wth.createMechanicTag("AlignToCharacterParts")
 	local AlignToCharacterPartsAttributes: utils.Entity<AlignToCharacterPartsAttributes> = wth.createMechanicAttributes(
 		AlignToCharacterParts,
@@ -109,4 +113,6 @@ return utils.createMechanic("AlignToCharacterParts", function(wth)
 	end
 
 	wth.pushSystems(updateAlignToCharacterParts)
-end)
+end
+
+return self

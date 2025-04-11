@@ -1,20 +1,21 @@
-local jecs = require(script.Parent.jecs)
+local Jecs = require(script.Parent.Jecs)
 
 export type Typechecker = (value: unknown) -> (boolean, string?)
 
 export type MechanicComponent<Attributes, Instance> = {
-	attributes: jecs.Entity<Attributes>,
-	instance: jecs.Entity<Attributes>,
+	attributes: Jecs.Entity<Attributes>,
+	instance: Jecs.Entity<Attributes>,
 }
 
 export type Mechanic = {
 	type: "Mechanic",
 	name: string,
 	attach: (wth: WthApi) -> (),
+	persistant: boolean?,
 }
 
 export type WthApi = {
-	world: jecs.World,
+	world: Jecs.World,
 	-- FIXME: Roblox is stinky doo doo so i have to downtype this
 	createMechanicTag: (tag: string, instanceCheck: Typechecker?) -> any,
 	createMechanicAttributes: (

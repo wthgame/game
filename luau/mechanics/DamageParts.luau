@@ -8,10 +8,14 @@ local DAMAGE_PART_TOUCH_CONFIG: utils.TouchConfig = {
 	passLocalPlayerCharacters = true,
 }
 
-return utils.createMechanic("DamageParts", function(wth)
+local self = {} :: utils.Mechanic
+self.type = "Mechanic"
+self.name = "DamageParts"
+
+function self.attach(wth)
 	local DamageParts: utils.Entity<Instance> = wth.createMechanicTag("DamageParts")
 	local DamagePartChildren: utils.Entity<{ [BasePart]: true }> = wth.world:component()
-	wth.world:set(DamagePartChildren, utils.jecs.Name, "DamagePartChildren")
+	wth.world:set(DamagePartChildren, utils.Jecs.Name, "DamagePartChildren")
 
 	local queryDamageParts = wth.world:query(DamageParts):cached()
 
@@ -53,4 +57,6 @@ return utils.createMechanic("DamageParts", function(wth)
 	end
 
 	wth.pushSystems(updateDamageParts, checkDamagePartChildren)
-end)
+end
+
+return self

@@ -2,61 +2,51 @@
 
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
+local Character = require(script.Character)
+local Checks = require(script.Checks)
 local CullThrottle = require(script.CullThrottle)
-local character = require(script.character)
-local checks = require(script.checks)
-local jecs = require(script.jecs)
+local Jecs = require(script.Jecs)
 local t = require(script.t)
-local types = require(script.types)
+local types = require(script.Types)
 
 export type Mechanic = types.Mechanic
 export type MechanicComponent<Attributes, Instance> = types.MechanicComponent<Attributes, Instance>
 export type TouchConfig = types.TouchConfig
 
-export type Archetype = jecs.Archetype
-export type Archetypes = jecs.Archetypes
-export type ComponentIndex = jecs.ComponentIndex
-export type ComponentRecord = jecs.ComponentRecord
-export type Entity<T = unknown> = jecs.Entity<T>
-export type EntityIndex = jecs.EntityIndex
-export type Id<T = unknown> = jecs.Id<T>
-export type Item<T...> = jecs.Item<T...>
-export type Iter<T...> = jecs.Iter<T...>
-export type Observable = jecs.Observable
-export type Observer = jecs.Observer
-export type Pair<P, O> = jecs.Pair<P, O>
-export type Query<T...> = jecs.Query<T...>
-export type QueryInner = jecs.QueryInner
-export type Record = jecs.Record
-export type World = jecs.World
+export type Archetype = Jecs.Archetype
+export type Archetypes = Jecs.Archetypes
+export type ComponentIndex = Jecs.ComponentIndex
+export type ComponentRecord = Jecs.ComponentRecord
+export type Entity<T = unknown> = Jecs.Entity<T>
+export type EntityIndex = Jecs.EntityIndex
+export type Id<T = unknown> = Jecs.Id<T>
+export type Item<T...> = Jecs.Item<T...>
+export type Iter<T...> = Jecs.Iter<T...>
+export type Observable = Jecs.Observable
+export type Observer = Jecs.Observer
+export type Pair<P, O> = Jecs.Pair<P, O>
+export type Query<T...> = Jecs.Query<T...>
+export type QueryInner = Jecs.QueryInner
+export type Record = Jecs.Record
+export type World = Jecs.World
+
+export type CullThrottle = CullThrottle.CullThrottle
 
 return table.freeze({
-	getMaybeCharacter = character.getMaybeCharacter,
-	waitForCharacter = character.waitForCharacter,
-	getCharacter = character.getCharacter,
-	getMaybeHumanoidRootPart = character.getMaybeHumanoidRootPart,
-	getHumanoidRootPart = character.getHumanoidRootPart,
-	getMaybeHumanoid = character.getMaybeHumanoid,
-	getHumanoid = character.getHumanoid,
-	isCharacterAlive = character.isCharacterAlive,
+	getMaybeCharacter = Character.getMaybeCharacter,
+	waitForCharacter = Character.waitForCharacter,
+	getCharacter = Character.getCharacter,
+	getMaybeHumanoidRootPart = Character.getMaybeHumanoidRootPart,
+	getHumanoidRootPart = Character.getHumanoidRootPart,
+	getMaybeHumanoid = Character.getMaybeHumanoid,
+	getHumanoid = Character.getHumanoid,
+	isCharacterAlive = Character.isCharacterAlive,
 
-	checkTouched = checks.checkTouched,
-
-	createMechanic = function(name: string, attach: (wth: types.WthApi) -> ()): Mechanic
-		return table.freeze({
-			type = "Mechanic" :: "Mechanic",
-			name = name,
-			attach = attach,
-		})
-	end,
+	checkTouched = Checks.checkTouched,
 
 	CullThrottle = CullThrottle,
-
-	--- Runtime typechecking utilities.
-	--- See: https://github.com/osyrisrblx/t
-	t = table.freeze(t),
-
-	--- The Entity Component System used in Welcome to Hell.
 	--- See: https://github.com/Ukendio/jecs
-	jecs = table.freeze(jecs),
+	Jecs = Jecs,
+	--- See: https://github.com/osyrisrblx/t
+	t = t,
 })
