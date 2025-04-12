@@ -1,21 +1,21 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local lib = require(ReplicatedStorage:WaitForChild("Lib"))
 local net = require(ReplicatedStorage:WaitForChild("WTHClient"):WaitForChild("net"))
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
-local DAMAGE_PART_TOUCH_CONFIG: utils.TouchConfig = {
+local DAMAGE_PART_TOUCH_CONFIG: lib.TouchConfig = {
 	passLocalPlayerCharacters = true,
 }
 
-local self = {} :: utils.Mechanic
+local self = {} :: lib.Mechanic
 self.type = "Mechanic"
 self.name = "DamageParts"
 
 function self.attach(wth)
-	local DamageParts: utils.Entity<Instance> = wth.createMechanicTag("DamageParts")
-	local DamagePartChildren: utils.Entity<{ [BasePart]: true }> = wth.world:component()
-	wth.world:set(DamagePartChildren, utils.Jecs.Name, "DamagePartChildren")
+	local DamageParts: lib.Entity<Instance> = wth.trackCollectionServiceTag("DamageParts")
+	local DamagePartChildren: lib.Entity<{ [BasePart]: true }> = wth.world:component()
+	wth.world:set(DamagePartChildren, lib.Jecs.Name, "DamagePartChildren")
 
 	local queryDamageParts = wth.world:query(DamageParts):cached()
 
@@ -40,10 +40,10 @@ function self.attach(wth)
 			for part in child do
 				local amountNow = part:GetAttribute("Amount")
 				for _, toucher in workspace:GetPartsInPart(part) do
-					if utils.checkTouched(toucher, DAMAGE_PART_TOUCH_CONFIG) then
+					if lib.checkTouched(toucher, DAMAGE_PART_TOUCH_CONFIG) then
 						if typeof(amountNow) == "string" then
 							net.mechanics.damageSelf.fire(amountNow :: never)
-						elseif utils.t.numberPositive(amountNow) then
+						elseif lib.t.numberPositive(amountNow) then
 							net.mechanics.damageSelfVariable.fire(amountNow :: number)
 							-- else
 							-- wth.logWarn("Invalid amount", amountNow, "for DamagePart", part:GetFullName())

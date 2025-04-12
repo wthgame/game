@@ -11,3 +11,8 @@ export declare namespace mechanics {
 		fire: (Value: "Normal" | "Heavy" | "Lethal") => void
 	}
 }
+export declare namespace areas {
+	export const loadArea: {
+		invoke: (Value: string) => Promise<Instance>
+	}
+}

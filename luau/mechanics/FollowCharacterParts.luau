@@ -1,137 +1,134 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local lib = require(ReplicatedStorage:WaitForChild("Lib"))
 
-type FollowCharacterPartsAttributes = {
-	Mode: "Move" | "Align" | "Pivot" | "LookAt",
+type FollowCharacterPartAttributes = {
+	Enabled: boolean,
+	Mode: "MoveToCharacter" | "FollowCharacterRotation" | "PivotToCharacter" | "LookAtCharacter",
+	UseXAxis: boolean,
+	UseYAxis: boolean,
+	UseZAxis: boolean,
+	Lerp: boolean,
+	LerpSmoothness: number,
+	Persistent: boolean,
 }
 
-local self = {} :: utils.Mechanic
-self.type = "Mechanic"
-self.name = "FollowCharacterParts"
+local function applyAxisTransform(
+	originalCFrame: CFrame,
+	targetCFrame: CFrame,
+	attributes: FollowCharacterPartAttributes
+): CFrame
+	local currentPosition = originalCFrame.Position
+	local targetPosition = targetCFrame.Position
 
--- TODO: Lerp and LerpSmoothness attributes
--- TODO: Persistant attribute and cull throttle
--- FIXME: Align and Rotate mode is tweaking
+	local newX = if attributes.UseXAxis then targetPosition.X else currentPosition.X
+	local newY = if attributes.UseYAxis then targetPosition.Y else currentPosition.Y
+	local newZ = if attributes.UseZAxis then targetPosition.Z else currentPosition.Z
+
+	local currentRotation = originalCFrame.Rotation
+	local targetRotation = targetCFrame.Rotation
+
+	local rx, ry, rz = currentRotation:ToEulerAnglesXYZ()
+	local tx, ty, tz = targetRotation:ToEulerAnglesXYZ()
+
+	if not attributes.UseXAxis then
+		tx = rx
+	end
+
+	if not attributes.UseYAxis then
+		ty = ry
+	end
+
+	if not attributes.UseZAxis then
+		tz = rz
+	end
+
+	return CFrame.new(newX, newY, newZ) * CFrame.fromEulerAnglesXYZ(tx, ty, tz)
+end
+
+local self = {} :: lib.Mechanic
+self.type = "Mechanic"
+self.name = "FollowCharacterPart"
+
 function self.attach(wth)
-	local FollowCharacterParts: utils.Entity<Instance> = wth.createMechanicTag("FollowCharacterParts")
-	local FollowCharacterPartsAttributes: utils.Entity<FollowCharacterPartsAttributes> = wth.createMechanicAttributes(
-		FollowCharacterParts,
+	local FollowCharacterPart: lib.Entity<Model | BasePart> = wth.trackCollectionServiceTag(
+		"FollowCharacterPart",
+		lib.t.union(lib.t.instanceIsA("Model"), lib.t.instanceIsA("BasePart"))
+	)
+
+	local FollowCharacterPartAttributes: lib.Entity<FollowCharacterPartAttributes> = wth.createMechanicAttributes(
+		FollowCharacterPart,
 		{
-			Mode = utils.t.literalList({ "Move", "Align", "Pivot", "LookAt" }),
+			Enabled = lib.t.boolean,
+			Mode = lib.t.literalList({
+				"MoveToCharacter",
+				"FollowCharacterRotation",
+				"PivotToCharacter",
+				"LookAtCharacter",
+			}),
+			UseXAxis = lib.t.boolean,
+			UseYAxis = lib.t.boolean,
+			UseZAxis = lib.t.boolean,
+			Lerp = lib.t.boolean,
+			LerpSmoothness = lib.t.numberPositive,
+			Persistent = lib.t.boolean,
 		},
 		{
+			Enabled = true,
 			Mode = "Move",
+			UseXAxis = true,
+			UseYAxis = true,
+			UseZAxis = true,
+			Lerp = true,
+			LerpSmoothness = 40,
+			Persistent = false,
 		}
 	)
 
-	local queryFollowCharacterParts = wth.world:query(FollowCharacterParts):cached()
-
-	local enabled = utils.InstanceAttributeReconciler(utils.t.boolean, true, "Enabled")
-	-- TODO: implement
-	local lerp = utils.InstanceAttributeReconciler(utils.t.boolean, true, "Lerp")
-	local lerpSmoothness = utils.InstanceAttributeReconciler(utils.t.numberPositive, 40, "LerpSmoothness")
-	local persitent = utils.InstanceAttributeReconciler(utils.t.boolean, true, "Persistent")
+	local queryFollowCharacterParts = wth.world:query(FollowCharacterPart):cached()
 
 	local function updateFollowCharacterParts()
-		local root = utils.getMaybeHumanoidRootPart()
+		local root = lib.getMaybeHumanoidRootPart()
 
 		if not root then
 			return
 		end
 
-		for entity, parts in queryFollowCharacterParts:iter() do
-			local attributes = wth.world:get(entity, FollowCharacterPartsAttributes)
+		for entity, pv in queryFollowCharacterParts:iter() do
+			local attributes = wth.world:get(entity, FollowCharacterPartAttributes)
 			if not attributes then
 				continue
 			end
 
-			-- for _, part in parts:GetDescendants() do
-			-- 	if not enabled:reconcile(part) then
-			-- 		continue
-			-- 	end
+			if not attributes.Enabled then
+				continue
+			end
 
-			-- 	if attributes.Mode == "Move" then
-			-- 	    if part:IsA("BasePart") then
-			-- 					if lerp()
-			-- 					end
-			-- 	elseif attributes.Mode == "Align" then
-			-- 	elseif attributes.Mode == "Pivot" then
-			-- 	elseif attributes.Mode == "LookAt" then
-			-- 	end
-			-- end
+			local currentPivot = pv:GetPivot()
 
-			if attributes.Mode == "Move" then
-				local rootPosition = CFrame.new(root.Position.X, root.Position.Y, root.Position.Z)
-				for _, part in parts:GetDescendants() do
-					if not enabled:reconcile(part) then
-						continue
-					end
-
-					if part:IsA("BasePart") then
-						part:PivotTo(rootPosition * part.CFrame.Rotation)
-					elseif part:IsA("Model") then
-						local primaryPart = part.PrimaryPart
-						if not primaryPart then
-							continue
-						end
-						part:PivotTo(rootPosition * primaryPart.CFrame.Rotation)
-					end
-				end
-			elseif attributes.Mode == "Align" then
-				local rootRotation = root.CFrame.Rotation
-				for _, part in parts:GetDescendants() do
-					if not enabled:reconcile(part) then
-						continue
-					end
-
-					if part:IsA("BasePart") then
-						part:PivotTo(CFrame.new(part.Position.X, part.Position.Y, part.Position.Z) * rootRotation)
-					elseif part:IsA("Model") then
-						local primaryPart = part.PrimaryPart
-						if not primaryPart then
-							continue
-						end
-						part:PivotTo(
-							CFrame.new(primaryPart.Position.X, primaryPart.Position.Y, primaryPart.Position.Z)
-								* rootRotation
-						)
-					end
-				end
-			elseif attributes.Mode == "Pivot" then
-				for _, part in parts:GetDescendants() do
-					if not enabled:reconcile(part) then
-						continue
-					end
-
-					if part:IsA("BasePart") then
-						part:PivotTo(root.CFrame)
-					elseif part:IsA("Model") then
-						local primaryPart = part.PrimaryPart
-						if not primaryPart then
-							continue
-						end
-						part:PivotTo(root.CFrame)
-					end
-				end
-			elseif attributes.Mode == "LookAt" then
-				local rootPosition = root.Position
-				for _, part in parts:GetDescendants() do
-					if not enabled:reconcile(part) then
-						continue
-					end
-
-					if part:IsA("BasePart") then
-						part:PivotTo(CFrame.lookAt(part.Position, rootPosition))
-					elseif part:IsA("Model") then
-						local primaryPart = part.PrimaryPart
-						if not primaryPart then
-							continue
-						end
-						part:PivotTo(CFrame.lookAt(primaryPart.Position, rootPosition))
-					end
-				end
+			if attributes.Mode == "MoveToCharacter" then
+				pv:PivotTo(applyAxisTransform(currentPivot, CFrame.new(root.Position), attributes))
+			elseif attributes.Mode == "FollowCharacterRotation" then
+				pv:PivotTo(
+					applyAxisTransform(
+						currentPivot,
+						CFrame.new(currentPivot.Position) * root.CFrame.Rotation,
+						attributes
+					)
+				)
+			elseif attributes.Mode == "PivotToCharacter" then
+				pv:PivotTo(
+					applyAxisTransform(
+						CFrame.new(root.Position) * currentPivot.Rotation,
+						CFrame.new(root.Position) * root.CFrame.Rotation,
+						attributes
+					)
+				)
+			elseif attributes.Mode == "LookAtCharacter" then
+				pv:PivotTo(
+					applyAxisTransform(currentPivot, CFrame.lookAt(currentPivot.Position, root.Position), attributes)
+				)
 			end
 		end
 	end

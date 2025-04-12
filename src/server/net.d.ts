@@ -11,3 +11,8 @@ export declare namespace mechanics {
 		on: (Listener: (Player: Player, Value: "Normal" | "Heavy" | "Lethal") => void) => (() => void)
 	}
 }
+export declare namespace areas {
+	export const loadArea: {
+		on: (Listener: (Player: Player, Value: string) => Instance) => void
+	}
+}

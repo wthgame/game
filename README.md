@@ -70,7 +70,7 @@ commit messages.
     - mechanics: maps to ReplicatedStorage.Mechanics.Core and is where the core
         mechanics are implemented
 
-    - utils: maps to ReplicatedStorage.MechanicUtils and provides the types used
+    - utils: maps to ReplicatedStorage.Lib and provides the types used
         in mechanic modules
 
 - assets: Roblox assets included in the project.

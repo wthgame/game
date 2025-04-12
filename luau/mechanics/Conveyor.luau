@@ -3,23 +3,23 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local lib = require(ReplicatedStorage:WaitForChild("Lib"))
 
 type ConveyorAttributes = {
 	Speed: number,
 	SynchronizeConveyorBeams: boolean,
 }
 
-local self = {} :: utils.Mechanic
+local self = {} :: lib.Mechanic
 self.type = "Mechanic"
 self.name = "Conveyor"
 
 function self.attach(wth)
-	local Conveyor: utils.Entity<BasePart> = wth.createMechanicTag("Conveyor", utils.t.instanceIsA("BasePart"))
+	local Conveyor: lib.Entity<BasePart> = wth.trackCollectionServiceTag("Conveyor", lib.t.instanceIsA("BasePart"))
 
-	local ConveyorAttributes: utils.Entity<ConveyorAttributes> = wth.createMechanicAttributes(Conveyor, {
-		Speed = utils.t.number,
-		SynchronizeConveyorBeams = utils.t.boolean,
+	local ConveyorAttributes: lib.Entity<ConveyorAttributes> = wth.createMechanicAttributes(Conveyor, {
+		Speed = lib.t.number,
+		SynchronizeConveyorBeams = lib.t.boolean,
 	}, {
 		Speed = 16,
 		SynchronizeConveyorBeams = true,

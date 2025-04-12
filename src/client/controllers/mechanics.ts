@@ -107,17 +107,13 @@ export class MechanicController implements OnInit, OnStart, OnTick {
 	private cull = new CullThrottle();
 
 	onInit(): void {
-		debug.profilebegin("Collecting Mechanics");
 		trace("Collecting Mechanics");
 		this.mechanics = this.requireMechanics(MECHANICS_PARENT.getValue());
 		trace("Finished");
-		debug.profileend();
 
-		debug.profilebegin("Attaching Mechanics");
 		trace("Attaching Mechanics");
 		this.attachMechanics(this.mechanics);
 		trace("Finished");
-		debug.profileend();
 	}
 
 	onStart(): void {

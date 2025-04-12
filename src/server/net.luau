@@ -156,6 +156,7 @@ Events.Reliable[0] = {}
 Queue.Reliable[0] = table.create(256)
 Events.Reliable[1] = {}
 Queue.Reliable[1] = table.create(256)
+Queue.Reliable[2] = table.create(256)
 export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
 local function mechanics_ReadEVENT_damageSelfVariable(): (number)
 	-- Read BLOCK: 4 bytes
@@ -181,6 +182,23 @@ local function mechanics_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Lethal"
 	return Value
 end
 
+local function areas_ReadFUNCTION_DATA_loadArea(): (string)
+	-- Read BLOCK: 2 bytes
+	local BLOCK_START = Read(2)
+	local Length = buffer.readu16(RecieveBuffer, BLOCK_START + 0)
+	local Value = buffer.readstring(RecieveBuffer, Read(Length), Length)
+	return Value
+end
+
+local function areas_WriteFUNCTION_RETURN_loadArea(Value: Instance, InvocationIdentifier: number): ()
+	-- Allocate BLOCK: 3 bytes
+	local BLOCK_START = Allocate(3)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 2)
+	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
+	buffer.writeu8(SendBuffer, BLOCK_START + 2, 1)
+	table.insert(SendInstances, Value or Null)
+end
+
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
@@ -189,6 +207,11 @@ if not RunService:IsRunning() then
 			on = NOOP
 		},
 		damageSelf = {
+			on = NOOP
+		},
+	},
+	areas = {
+		loadArea = {
 			on = NOOP
 		},
 	},
@@ -273,6 +296,19 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 				end
 				table.insert(Queue.Reliable[1], {Player, Value} :: {any})
 			end
+		elseif Index == 2 then
+			-- Read BLOCK: 1 bytes
+			local BLOCK_START = Read(1)
+			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
+			local Value: string = areas_ReadFUNCTION_DATA_loadArea()
+			if Events.Reliable[2] ~= nil then
+				task.spawn(Events.Reliable[2], Player, Value, InvocationIdentifier)
+			else
+				if #Queue.Reliable[2] > 256 then
+					warn("[Blink]: Event queue of \"loadArea\" exceeded 256, did you forget to implement a listener?")
+				end
+				table.insert(Queue.Reliable[2], {Player, Value, InvocationIdentifier} :: {any})
+			end
 		end
 	end
 end)
@@ -317,6 +353,36 @@ local Returns = table.freeze({
 					table.remove(Events.Reliable[1], table.find(Events.Reliable[1], Listener))
 				end
 			end
+		},
+	},
+	areas = {
+		loadArea = {
+		on = function(Listener: (Player, string) -> (Instance)): ()
+			Events.Reliable[2] = function(Player: Player, Value: string, InvocationIdentifier: number): ()
+				local ReturnValue: Instance;
+				local Success, Error = pcall(function ()
+					ReturnValue = Listener(Player, Value)
+				end)
+				Load(PlayersMap[Player])
+				if Success ~= true then
+					local Position = Allocate(3)
+					buffer.writeu8(SendBuffer, Position, 2)
+					buffer.writeu8(SendBuffer, Position + 1, InvocationIdentifier)
+					buffer.writeu8(SendBuffer, Position + 2, 0)
+					warn(`"loadArea" encountered an error, {Error}`)
+				else
+					areas_WriteFUNCTION_RETURN_loadArea(ReturnValue, InvocationIdentifier)
+				end
+				PlayersMap[Player] = Save()
+			end
+			task.spawn(function (): ()
+				local EventQueue = Queue.Reliable[2] or {}
+				Queue.Reliable[2] = nil
+				for Index, Arguments in EventQueue do
+					Events.Reliable[2](table.unpack(Arguments))
+				end
+			end)
+		end
 		},
 	},
 })

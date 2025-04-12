@@ -28,3 +28,11 @@ scope mechanics {
         data: DamageKind
     }
 }
+
+scope areas {
+    function loadArea {
+        yield: Promise,
+        data: string,
+        return: Instance
+    }
+}

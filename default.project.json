@@ -22,8 +22,8 @@
                     "$path": "luau/mechanics"
                 }
             },
-            "MechanicUtils": {
-                "$path": "luau/utils"
+            "Lib": {
+                "$path": "luau/lib"
             },
             "WTHShared": {
                 "$path": "out/shared",

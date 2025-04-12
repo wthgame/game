@@ -1,21 +1,21 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local lib = require(ReplicatedStorage:WaitForChild("Lib"))
 
 type TestAttributes = {
 	Flash: boolean,
 }
 
-local self = {} :: utils.Mechanic
+local self = {} :: lib.Mechanic
 self.type = "Mechanic"
 self.name = "Test"
 
 function self.attach(wth)
-	local Test: utils.Entity<BasePart> = wth.createMechanicTag("Test", utils.t.instanceIsA("BasePart"))
+	local Test: lib.Entity<BasePart> = wth.trackCollectionServiceTag("Test", lib.t.instanceIsA("BasePart"))
 
-	local TestAttributes: utils.Entity<TestAttributes> = wth.createMechanicAttributes(Test, {
-		Flash = utils.t.boolean,
+	local TestAttributes: lib.Entity<TestAttributes> = wth.createMechanicAttributes(Test, {
+		Flash = lib.t.boolean,
 	}, {
 		Flash = true,
 	})

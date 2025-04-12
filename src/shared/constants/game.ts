@@ -1,3 +1,4 @@
+import { panic } from "shared/flamework";
 import { UserId } from "./userids";
 
 export enum TowerType {
@@ -53,10 +54,9 @@ export interface TowerInstance extends Instance {
 	Frame: Instance;
 }
 
-// ---
-
-export interface Act {
+export interface Area {
 	name: string;
+	actNumber?: number;
 	title: string;
 
 	playerRequires?: [];
@@ -64,32 +64,43 @@ export interface Act {
 	towers?: Tower[];
 }
 
-export const ACTS: Act[] = [
+// ---
+
+export const AREAS: Area[] = [
 	{
-		name: "Act1",
-		title: "Act 1",
+		name: "A1MoltenHeart",
+		actNumber: 1,
+		title: "Molten Heart",
 		towers: [
+			// {
+			// 	name: "ToPaS",
+			// 	title: "Tower of Push and Shove",
+			// 	type: TowerType.Tower,
+			// 	difficulty: TowerDifficulty.Easy + TowerDifficultyIncrement.Low,
+			// 	creatorUserIds: [UserId.ImNotFireMan123],
+			// },
 			{
-				name: "ToPaS",
-				title: "Tower of Push and Shove",
-				type: TowerType.Tower,
-				difficulty: TowerDifficulty.Easy + TowerDifficultyIncrement.Low,
+				name: "MoDV",
+				title: "Monument of Death Valley",
+				type: TowerType.Monument,
+				difficulty: TowerDifficulty.Remorseless + TowerDifficultyIncrement.Low,
 				creatorUserIds: [UserId.ImNotFireMan123],
 			},
 		],
 	},
 ];
 
+const areaNames = new Set();
+const towerNames = new Set();
+
 {
-	const actNames = new Set();
-	const towerNames = new Set();
-	for (const act of ACTS) {
-		if (!actNames.has(act.name)) throw `Duplicate act name "${act.name}"`;
-		actNames.add(act.name);
-		if (act.towers) {
-			for (const tower of act.towers) {
-				if (!towerNames.has(tower.name)) throw `Act "${act.name}" has duplicate tower named "${tower.name}"`;
-				towerNames.add(act.name);
+	for (const area of AREAS) {
+		if (areaNames.has(area.name)) panic(`Duplicate area name "${area.name}"`);
+		areaNames.add(area.name);
+		if (area.towers) {
+			for (const tower of area.towers) {
+				if (towerNames.has(tower.name)) panic(`Area "${area.name}" has duplicate tower named "${tower.name}"`);
+				towerNames.add(tower.name);
 			}
 		}
 	}

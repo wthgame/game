@@ -151,6 +151,7 @@ local Queue: any = {
     Unreliable = table.create(256)
 }
 
+Queue.Reliable[2] = table.create(256)
 export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
 local function mechanics_WriteEVENT_damageSelfVariable(Value: number): ()
 	-- Allocate BLOCK: 5 bytes
@@ -174,6 +175,31 @@ local function mechanics_WriteEVENT_damageSelf(Value: ("Normal" | "Heavy" | "Let
 	end
 end
 
+local function areas_WriteFUNCTION_DATA_loadArea(Value: string, InvocationIdentifier: number): ()
+	-- Allocate BLOCK: 4 bytes
+	local BLOCK_START = Allocate(4)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 2)
+	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
+	local Length = #Value
+	buffer.writeu16(SendBuffer, BLOCK_START + 2, Length)
+	Allocate(Length)
+	buffer.writestring(SendBuffer, SendOffset, Value, Length)
+end
+
+local function areas_ReadFUNCTION_RETURN_loadArea(): (Instance)
+	-- Read BLOCK: 1 bytes
+	local BLOCK_START = Read(1)
+	local Success = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
+	if Success ~= 1 then
+		error("Server encountered an error.")
+	end
+	RecieveInstanceCursor += 1
+	local Value = RecieveInstances[RecieveInstanceCursor]
+	if typeof(Value) ~= "Instance" then error(`Expected an Instance, got {typeof(Value)} instead.`) end
+	if not Value:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.ClassName}" instead.`) end
+	return Value
+end
+
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
@@ -183,6 +209,11 @@ if not RunService:IsRunning() then
 		},
 		damageSelf = {
 			fire = NOOP
+		},
+	},
+	areas = {
+		loadArea = {
+			invoke = NOOP
 		},
 	},
 	})
@@ -229,6 +260,18 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 		-- Read BLOCK: 1 bytes
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
+		if Index == 2 then
+			-- Read BLOCK: 1 bytes
+			local BLOCK_START = Read(1)
+			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
+			if Calls[InvocationIdentifier] ~= nil then
+				local Success, ReturnValue = pcall(function ()
+					return areas_ReadFUNCTION_RETURN_loadArea()
+				end)
+				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
+				Calls[InvocationIdentifier] = nil
+			end
+		end
 	end
 end)
 Unreliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
@@ -257,6 +300,30 @@ local Returns = table.freeze({
 		damageSelf = {
 			fire = function(Value: ("Normal" | "Heavy" | "Lethal")): ()
 				mechanics_WriteEVENT_damageSelf(Value)
+			end
+		},
+	},
+	areas = {
+		loadArea = {
+			invoke = function(Value: string): any
+				return Promise.new(function (Resolve, Reject, OnCancel)
+					local InvocationIdentifier = Invoke()
+					if Calls[InvocationIdentifier] ~= nil then
+						Invocations -= 1
+						error("More than 256 calls are awaiting a response, this packet has been dropped.")
+					end
+					areas_WriteFUNCTION_DATA_loadArea(Value, InvocationIdentifier)
+					Calls[InvocationIdentifier] = coroutine.running()
+					OnCancel(function ()
+						Calls[InvocationIdentifier] = nil
+					end)
+					local Success, ReturnValue: Instance = coroutine.yield()
+					if Success ~= true then
+						Reject("There was an exception while processing \"loadArea\".")
+						return 
+					end
+					Resolve(ReturnValue)
+				end)
 			end
 		},
 	},

@@ -7,11 +7,6 @@ local Jecs = require(script.Parent.Jecs)
 export type Typechecker = (value: unknown) -> (boolean, string?)
 export type Cleanup = () -> ()
 
-export type MechanicComponent<Attributes, Instance> = {
-	attributes: Jecs.Entity<Attributes>,
-	instance: Jecs.Entity<Attributes>,
-}
-
 export type Mechanic = {
 	type: "Mechanic",
 	name: string,
@@ -19,10 +14,17 @@ export type Mechanic = {
 	persistant: boolean?,
 }
 
+export type Preprocessor = {
+	type: "Preprocessor",
+	name: string,
+	process: () -> (),
+}
+
 export type WthApi = {
 	world: Jecs.World,
 	-- FIXME: Roblox is stinky doo doo so i have to downtype this
-	createMechanicTag: (tag: string, instanceCheck: Typechecker?) -> any,
+	trackCollectionServiceTag: (tag: string, instanceCheck: Typechecker?) -> any,
+	--- @deprecated
 	createMechanicAttributes: (
 		tag: any,
 		attributeChecks: { [string]: Typechecker },
@@ -52,15 +54,6 @@ export type Character = Model & {
 	PrimaryPart: BasePart,
 	Animate: LocalScript,
 	Head: BasePart,
-}
-
-export type InstanceAttributeReconciler<T> = {
-	type: "InstanceAttributeReconciler",
-	check: Typechecker,
-	attributeName: string,
-	defaultValue: T,
-	reconcile: (self: InstanceAttributeReconciler<T>, instance: Instance) -> T,
-	destroy: (self: InstanceAttributeReconciler<T>) -> (),
 }
 
 -- Trove
