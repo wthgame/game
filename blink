@@ -35,4 +35,20 @@ scope areas {
         data: string,
         return: Instance
     }
+
+    function requestTower {
+        yield: Promise,
+        data: string,
+        return: Instance
+    }
+
+    function requestDetailsInTower {
+        yield: Promise,
+        return: Instance
+    }
+
+    function requestObbyInTower {
+        yield: Promise,
+        return: Instance
+    }
 }

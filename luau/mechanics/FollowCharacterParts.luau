@@ -1,30 +1,52 @@
 --!strict
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local lib = require(ReplicatedStorage:WaitForChild("Lib"))
+local wth = require(ReplicatedStorage:WaitForChild("Lib"))
 
-type FollowCharacterPartAttributes = {
-	Enabled: boolean,
-	Mode: "MoveToCharacter" | "FollowCharacterRotation" | "PivotToCharacter" | "LookAtCharacter",
-	UseXAxis: boolean,
-	UseYAxis: boolean,
-	UseZAxis: boolean,
-	Lerp: boolean,
-	LerpSmoothness: number,
-	Persistent: boolean,
-}
+type Self = wth.Mechanic<{
+	FollowCharacterPart: wth.Entity<Model | BasePart>,
+	Enabled: (instance: Instance) -> boolean,
+	Mode: (instance: Instance) -> "MoveToCharacter" | "FollowCharacterRotation" | "PivotToCharacter" | "LookAtCharacter",
+	UseXAxis: (instance: Instance) -> boolean,
+	UseYAxis: (instance: Instance) -> boolean,
+	UseZAxis: (instance: Instance) -> boolean,
+	Lerp: (instance: Instance) -> boolean,
+	LerpSmoothness: (instance: Instance) -> number,
+	Persistent: (instance: Instance) -> boolean,
 
-local function applyAxisTransform(
-	originalCFrame: CFrame,
-	targetCFrame: CFrame,
-	attributes: FollowCharacterPartAttributes
-): CFrame
+	applyAxisTransform: (Self, originalCFrame: CFrame, targetCFrame: CFrame, pv: PVInstance) -> CFrame,
+}>
+
+local mech = {} :: Self
+mech.type = "Mechanic"
+mech.name = "FollowCharacterPart"
+
+mech.FollowCharacterPart = wth.trackCollectionServiceTag(
+	"FollowCharacterPart",
+	wth.t.union(wth.t.instanceIsA("Model"), wth.t.instanceIsA("BasePart"))
+)
+mech.Enabled = wth.createAttributeReconciler("Enabled", wth.t.boolean, true)
+mech.Mode = wth.createAttributeReconciler(
+	"Enabled",
+	wth.t.literal("MoveToCharacter", "FollowCharacterRotation", "PivotToCharacter", "LookAtCharacter") :: any,
+	"Move"
+)
+mech.UseXAxis = wth.createAttributeReconciler("UseXAxis", wth.t.boolean, true)
+mech.UseYAxis = wth.createAttributeReconciler("UseYAxis", wth.t.boolean, true)
+mech.UseZAxis = wth.createAttributeReconciler("UseZAxis", wth.t.boolean, true)
+mech.Lerp = wth.createAttributeReconciler("Lerp", wth.t.boolean, true)
+mech.LerpSmoothness = wth.createAttributeReconciler("LerpSmoothness", wth.t.numberPositive, 40)
+mech.Persistent = wth.createAttributeReconciler("Persistent", wth.t.boolean, true)
+
+function mech:applyAxisTransform(originalCFrame: CFrame, targetCFrame: CFrame, pv: PVInstance): CFrame
 	local currentPosition = originalCFrame.Position
 	local targetPosition = targetCFrame.Position
 
-	local newX = if attributes.UseXAxis then targetPosition.X else currentPosition.X
-	local newY = if attributes.UseYAxis then targetPosition.Y else currentPosition.Y
-	local newZ = if attributes.UseZAxis then targetPosition.Z else currentPosition.Z
+	local useX, useY, useZ = self.UseXAxis(pv), self.UseYAxis(pv), self.UseZAxis(pv)
+
+	local newX = if useX then targetPosition.X else currentPosition.X
+	local newY = if useY then targetPosition.Y else currentPosition.Y
+	local newZ = if useZ then targetPosition.Z else currentPosition.Z
 
 	local currentRotation = originalCFrame.Rotation
 	local targetRotation = targetCFrame.Rotation
@@ -32,108 +54,62 @@ local function applyAxisTransform(
 	local rx, ry, rz = currentRotation:ToEulerAnglesXYZ()
 	local tx, ty, tz = targetRotation:ToEulerAnglesXYZ()
 
-	if not attributes.UseXAxis then
+	if not useX then
 		tx = rx
 	end
 
-	if not attributes.UseYAxis then
+	if not useY then
 		ty = ry
 	end
 
-	if not attributes.UseZAxis then
+	if not useZ then
 		tz = rz
 	end
 
 	return CFrame.new(newX, newY, newZ) * CFrame.fromEulerAnglesXYZ(tx, ty, tz)
 end
 
-local self = {} :: lib.Mechanic
-self.type = "Mechanic"
-self.name = "FollowCharacterPart"
-
-function self.attach(wth)
-	local FollowCharacterPart: lib.Entity<Model | BasePart> = wth.trackCollectionServiceTag(
-		"FollowCharacterPart",
-		lib.t.union(lib.t.instanceIsA("Model"), lib.t.instanceIsA("BasePart"))
-	)
-
-	local FollowCharacterPartAttributes: lib.Entity<FollowCharacterPartAttributes> = wth.createMechanicAttributes(
-		FollowCharacterPart,
-		{
-			Enabled = lib.t.boolean,
-			Mode = lib.t.literalList({
-				"MoveToCharacter",
-				"FollowCharacterRotation",
-				"PivotToCharacter",
-				"LookAtCharacter",
-			}),
-			UseXAxis = lib.t.boolean,
-			UseYAxis = lib.t.boolean,
-			UseZAxis = lib.t.boolean,
-			Lerp = lib.t.boolean,
-			LerpSmoothness = lib.t.numberPositive,
-			Persistent = lib.t.boolean,
-		},
-		{
-			Enabled = true,
-			Mode = "Move",
-			UseXAxis = true,
-			UseYAxis = true,
-			UseZAxis = true,
-			Lerp = true,
-			LerpSmoothness = 40,
-			Persistent = false,
-		}
-	)
-
-	local queryFollowCharacterParts = wth.world:query(FollowCharacterPart):cached()
+function mech:init(schedule)
+	local queryFollowCharacterParts = wth.world:query(self.FollowCharacterPart)
 
 	local function updateFollowCharacterParts()
-		local root = lib.getMaybeHumanoidRootPart()
+		local root = wth.getMaybeHumanoidRootPart()
 
 		if not root then
 			return
 		end
 
 		for entity, pv in queryFollowCharacterParts:iter() do
-			local attributes = wth.world:get(entity, FollowCharacterPartAttributes)
-			if not attributes then
+			if not self.Enabled(pv) then
 				continue
 			end
 
-			if not attributes.Enabled then
-				continue
-			end
-
+			local mode = self.Mode(pv)
 			local currentPivot = pv:GetPivot()
 
-			if attributes.Mode == "MoveToCharacter" then
-				pv:PivotTo(applyAxisTransform(currentPivot, CFrame.new(root.Position), attributes))
-			elseif attributes.Mode == "FollowCharacterRotation" then
+			if mode == "MoveToCharacter" then
+				pv:PivotTo(self:applyAxisTransform(currentPivot, CFrame.new(root.Position), pv))
+			elseif mode == "FollowCharacterRotation" then
 				pv:PivotTo(
-					applyAxisTransform(
-						currentPivot,
-						CFrame.new(currentPivot.Position) * root.CFrame.Rotation,
-						attributes
-					)
+					self:applyAxisTransform(currentPivot, CFrame.new(currentPivot.Position) * root.CFrame.Rotation, pv)
 				)
-			elseif attributes.Mode == "PivotToCharacter" then
+			elseif mode == "PivotToCharacter" then
 				pv:PivotTo(
-					applyAxisTransform(
+					self:applyAxisTransform(
 						CFrame.new(root.Position) * currentPivot.Rotation,
 						CFrame.new(root.Position) * root.CFrame.Rotation,
-						attributes
+						pv
 					)
 				)
-			elseif attributes.Mode == "LookAtCharacter" then
+			elseif mode == "LookAtCharacter" then
 				pv:PivotTo(
-					applyAxisTransform(currentPivot, CFrame.lookAt(currentPivot.Position, root.Position), attributes)
+					self:applyAxisTransform(currentPivot, CFrame.lookAt(currentPivot.Position, root.Position), pv)
 				)
 			end
 		end
 	end
 
-	wth.pushSystems(updateFollowCharacterParts)
+	schedule(updateFollowCharacterParts)
 end
 
-return self
+return mech

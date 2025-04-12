@@ -15,4 +15,13 @@ export declare namespace areas {
 	export const loadArea: {
 		on: (Listener: (Player: Player, Value: string) => Instance) => void
 	}
+	export const requestTower: {
+		on: (Listener: (Player: Player, Value: string) => Instance) => void
+	}
+	export const requestDetailsInTower: {
+		on: (Listener: (Player: Player, Value: void) => Instance) => void
+	}
+	export const requestObbyInTower: {
+		on: (Listener: (Player: Player, Value: void) => Instance) => void
+	}
 }

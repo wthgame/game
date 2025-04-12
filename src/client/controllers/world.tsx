@@ -1,14 +1,17 @@
 import { Controller, OnStart } from "@flamework/core";
 import { atom } from "@rbxts/charm";
-import { Players } from "@rbxts/services";
+import { Players, Workspace } from "@rbxts/services";
 import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
+import { areas } from "client/net";
 import { ButtonStyle } from "client/ui/components/Button";
 import { Text, TextStyle } from "client/ui/components/Text";
 import { TriangularButton } from "client/ui/components/TriangularButton";
 import { palette } from "client/ui/palette";
 import { px } from "client/ui/px";
 import { Area, AREAS } from "shared/constants/game";
+import { trace } from "shared/log";
+import { MechanicController } from "./mechanics";
 
 export interface AreaViewProps {
 	areas: Derivable<Area[]>;
@@ -46,20 +49,29 @@ export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
 }
 
 @Controller()
-export class AreasController implements OnStart {
+export class WorldController implements OnStart {
 	isLoaded = atom(false);
+
+	constructor(private mechanicController: MechanicController) {}
 
 	onStart(): void {
 		mount(() => {
 			const isLoaded = useAtom(this.isLoaded);
 
 			return (
-				<screengui Name="AreaView" ResetOnSpawn={false} Enabled={() => !isLoaded()}>
+				<screengui Name="AreaView" ResetOnSpawn={false} Enabled={() => !isLoaded()} IgnoreGuiInset>
 					<AreaView areas={AREAS} onAreaSelected={(a) => this.loadArea(a)} />
 				</screengui>
 			);
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
-	loadArea(area: Area) {}
+	loadArea(area: Area) {
+		trace(`Requesting to load area ${area.name}`);
+		const inst = areas.loadArea.invoke(area.name).expect();
+		inst.Parent = Workspace;
+		this.isLoaded(true);
+
+		this.mechanicController.loadFromParent(inst.WaitForChild("Mechanics"));
+	}
 }

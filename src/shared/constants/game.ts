@@ -1,4 +1,4 @@
-import { panic } from "shared/flamework";
+import Sift from "@rbxts/sift";
 import { UserId } from "./userids";
 
 export enum TowerType {
@@ -90,18 +90,16 @@ export const AREAS: Area[] = [
 	},
 ];
 
-const areaNames = new Set();
-const towerNames = new Set();
+export const AREA_NAMES = new ReadonlySet(AREAS.map(({ name }) => name));
+export const TOWER_NAMES = new ReadonlySet(
+	Sift.Array.join(...AREAS.map(({ towers }) => (towers ? towers.map(({ name }) => name) : []))),
+);
 
-{
-	for (const area of AREAS) {
-		if (areaNames.has(area.name)) panic(`Duplicate area name "${area.name}"`);
-		areaNames.add(area.name);
-		if (area.towers) {
-			for (const tower of area.towers) {
-				if (towerNames.has(tower.name)) panic(`Area "${area.name}" has duplicate tower named "${tower.name}"`);
-				towerNames.add(tower.name);
-			}
-		}
-	}
-}
+export const NAME_TO_AREA = new ReadonlyMap<string, Area>(AREAS.map((area) => [area.name, area]));
+export const NAME_TO_TOWER = new ReadonlyMap<string, Tower>(
+	// Wtf?
+	Sift.Array.join(...Sift.Array.flatten(AREAS.mapFiltered(({ towers }) => towers))).map((tower): [string, Tower] => [
+		tower.name,
+		tower,
+	]),
+);

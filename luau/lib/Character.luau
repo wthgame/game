@@ -4,53 +4,59 @@
 
 local Players = game:GetService("Players")
 
-local Types = require(script.Parent.Types)
+local types = require("./types")
 
-local Character = {}
-
-function Character.getMaybeCharacter(): Types.Character?
+local function getMaybeCharacter(): types.Character?
 	return Players.LocalPlayer.Character
 end
 
-function Character.waitForCharacter(): Types.Character
+local function waitForCharacter(): types.Character
 	return Players.LocalPlayer.CharacterAdded:Wait()
 end
 
-function Character.getCharacter(): Types.Character
-	return Character.getMaybeCharacter() or Character.waitForCharacter()
+local function getCharacter(): types.Character
+	return getMaybeCharacter() or waitForCharacter()
 end
 
-function Character.getMaybeHumanoidRootPart(): BasePart?
-	local character = Character.getMaybeCharacter()
+local function getMaybeHumanoidRootPart(): BasePart?
+	local character = getMaybeCharacter()
 	if character then
 		return character:FindFirstChild("HumanoidRootPart") :: BasePart
 	end
 	return nil
 end
 
-function Character.getHumanoidRootPart(): BasePart
-	return Character.getCharacter():WaitForChild("HumanoidRootPart") :: BasePart
+local function getHumanoidRootPart(): BasePart
+	return getCharacter():WaitForChild("HumanoidRootPart") :: BasePart
 end
 
-function Character.getMaybeHumanoid(): Humanoid?
-	local character = Character.getMaybeCharacter()
+local function getMaybeHumanoid(): Humanoid?
+	local character = getMaybeCharacter()
 	if character then
 		return character:FindFirstChild("Humanoid") :: Humanoid
 	end
 	return nil
 end
 
-function Character.getHumanoid(): Humanoid
-	return Character.getCharacter():WaitForChild("Humanoid") :: Humanoid
+local function getHumanoid(): Humanoid
+	return getCharacter():WaitForChild("Humanoid") :: Humanoid
 end
 
-function Character.isCharacterAlive(): boolean
-	local humanoid = Character.getMaybeHumanoid()
+local function isCharacterAlive(): boolean
+	local humanoid = getMaybeHumanoid()
 	return humanoid ~= nil and humanoid.Health > 0
 end
 
 -- TODO: getMaybeAnimator, getAnimator
 -- This will probably come after we implement custom animations
 
-table.freeze(Character)
-return Character
+return {
+	getMaybeCharacter = getMaybeCharacter,
+	waitForCharacter = waitForCharacter,
+	getCharacter = getCharacter,
+	getMaybeHumanoidRootPart = getMaybeHumanoidRootPart,
+	getHumanoidRootPart = getHumanoidRootPart,
+	getMaybeHumanoid = getMaybeHumanoid,
+	getHumanoid = getHumanoid,
+	isCharacterAlive = isCharacterAlive,
+}

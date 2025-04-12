@@ -15,4 +15,13 @@ export declare namespace areas {
 	export const loadArea: {
 		invoke: (Value: string) => Promise<Instance>
 	}
+	export const requestTower: {
+		invoke: (Value: string) => Promise<Instance>
+	}
+	export const requestDetailsInTower: {
+		invoke: (Value: void) => Promise<Instance>
+	}
+	export const requestObbyInTower: {
+		invoke: (Value: void) => Promise<Instance>
+	}
 }

@@ -4,16 +4,14 @@
 
 local Players = game:GetService("Players")
 
-local Types = require(script.Parent.Types)
-
-local checks = {}
+local types = require("./types")
 
 --- Returns true if a touching part passes the config, which can filter the
 --- following:
 ---
 --- * Pass all player characters
 --- * Pass only the local player's characters
-function checks.checkTouched(toucher: BasePart, config: Types.TouchConfig): boolean
+local function checkTouched(toucher: BasePart, config: types.TouchConfig): boolean
 	if config.passAllPlayerCharacters or config.passLocalPlayerCharacters then
 		local character = toucher.Parent
 		if character then
@@ -30,5 +28,6 @@ function checks.checkTouched(toucher: BasePart, config: Types.TouchConfig): bool
 	return false
 end
 
-table.freeze(checks)
-return checks
+return {
+	checkTouched = checkTouched,
+}

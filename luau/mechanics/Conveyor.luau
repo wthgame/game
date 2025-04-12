@@ -3,43 +3,39 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local lib = require(ReplicatedStorage:WaitForChild("Lib"))
+local wth = require(ReplicatedStorage:WaitForChild("Lib"))
+
+type Self = wth.Mechanic<{
+	Conveyor: wth.Entity<BasePart>,
+	Speed: (instance: Instance) -> number,
+	SynchronizeConveyorBeams: (instance: Instance) -> boolean,
+}>
 
 type ConveyorAttributes = {
 	Speed: number,
 	SynchronizeConveyorBeams: boolean,
 }
 
-local self = {} :: lib.Mechanic
-self.type = "Mechanic"
-self.name = "Conveyor"
+local mech = {} :: Self
+mech.type = "Mechanic"
+mech.name = "Conveyor"
 
-function self.attach(wth)
-	local Conveyor: lib.Entity<BasePart> = wth.trackCollectionServiceTag("Conveyor", lib.t.instanceIsA("BasePart"))
+mech.Conveyor = wth.trackCollectionServiceTag("Conveyor", wth.t.instanceIsA("BasePart"))
+mech.Speed = wth.createAttributeReconciler("Speed", wth.t.numberPositive, 16)
+mech.SynchronizeConveyorBeams = wth.createAttributeReconciler("SynchronizeConveyorBeams", wth.t.boolean, true)
 
-	local ConveyorAttributes: lib.Entity<ConveyorAttributes> = wth.createMechanicAttributes(Conveyor, {
-		Speed = lib.t.number,
-		SynchronizeConveyorBeams = lib.t.boolean,
-	}, {
-		Speed = 16,
-		SynchronizeConveyorBeams = true,
-	})
-
-	local queryConveyors = wth.world:query(Conveyor):cached()
+function mech:init(schedule)
+	print(self.Conveyor)
+	local queryConveyors = wth.world:query(self.Conveyor)
 
 	local function updateConveyors()
 		local alreadySynchronized = {}
 
 		for entity, conveyor in queryConveyors:iter() do
-			local attributes = wth.world:get(entity, ConveyorAttributes)
-			if not attributes then
-				continue
-			end
-
-			local speed = attributes.Speed
+			local speed = self.Speed(conveyor)
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
 
-			if attributes.SynchronizeConveyorBeams then
+			if self.SynchronizeConveyorBeams(conveyor) then
 				for _, beam in conveyor:GetDescendants() do
 					if not alreadySynchronized[beam] then
 						if beam.Name == "ConveyorBeam" and beam:IsA("Beam") then
@@ -54,7 +50,7 @@ function self.attach(wth)
 		table.clear(alreadySynchronized)
 	end
 
-	wth.pushSystems(updateConveyors)
+	schedule(updateConveyors)
 end
 
-return self
+return mech

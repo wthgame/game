@@ -62,7 +62,7 @@ export interface LoggerMetadata {
 export interface LoggerRecord {
 	metadata: LoggerMetadata;
 	level: LogLevel;
-	modulePath: string;
+	// modulePath: string;
 	args: defined[];
 }
 
@@ -100,17 +100,15 @@ export class RobloxLogger implements Logger {
 	async log(record: LoggerRecord) {
 		if (!this.enabled(record.metadata)) return;
 
-		let modulePath = record.modulePath;
-		if (this.aliases)
-			for (const [p, a] of pairs(this.aliases)) {
-				modulePath = modulePath.gsub(p, a)[0];
-			}
+		// let modulePath = record.modulePath;
+		// if (this.aliases)
+		// 	for (const [p, a] of pairs(this.aliases)) {
+		// 		modulePath = modulePath.gsub(p, a)[0];
+		// 	}
 
 		const msg =
-			`${LEVEL_TO_EMOJI[record.level]} [${modulePath}] — ${record.args.map((v) => tostring(v)).join(" ")}`.gsub(
-				"\n",
-				"\n    ",
-			)[0];
+			// `${LEVEL_TO_EMOJI[record.level]} [${modulePath}] — ${record.args.map((v) => tostring(v)).join(" ")}`.gsub(
+			`${LEVEL_TO_EMOJI[record.level]} ${record.args.map((v) => tostring(v)).join(" ")}`.gsub("\n", "\n    ")[0];
 
 		switch (record.level) {
 			case LogLevel.Error:
@@ -150,14 +148,14 @@ function createLogFn(level: LogLevel) {
 			level: level,
 		} satisfies LoggerMetadata;
 
-		let path = luaDebug.info(2, "s")[0] as string;
+		// let path = luaDebug.info(2, "s")[0] as string;
 		// FIX in stories, the source is [string "ReplicatedStorage.script"] instead of ReplicatedStorage.script
-		if (path.sub(1, 8) === "[string ") path = path.sub(10, -3);
+		// if (path.sub(1, 8) === "[string ") path = path.sub(10, -3);
 
 		const record = {
 			metadata: metadata,
 			level: level,
-			modulePath: path.gsub("%.", "/")[0],
+			// modulePath: path.gsub("%.", "/")[0],
 			args: args,
 		} satisfies LoggerRecord;
 

@@ -2,55 +2,32 @@
 
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
-local Attributes = require(script.Attributes)
-local Character = require(script.Character)
-local Checks = require(script.Checks)
-local CullThrottle = require(script.CullThrottle)
-local Jecs = require(script.Jecs)
-local t = require(script.t)
-local types = require(script.Types)
+local lib = require(script.lib)
 
-export type Mechanic = types.Mechanic
-export type TouchConfig = types.TouchConfig
+export type Mechanic<Self = {}> = lib.Mechanic<Self>
+export type TouchConfig = lib.TouchConfig
+export type Character = lib.Character
 
-export type Archetype = Jecs.Archetype
-export type Archetypes = Jecs.Archetypes
-export type ComponentIndex = Jecs.ComponentIndex
-export type ComponentRecord = Jecs.ComponentRecord
-export type Entity<T = unknown> = Jecs.Entity<T>
-export type EntityIndex = Jecs.EntityIndex
-export type Id<T = unknown> = Jecs.Id<T>
-export type Item<T...> = Jecs.Item<T...>
-export type Iter<T...> = Jecs.Iter<T...>
-export type Observable = Jecs.Observable
-export type Observer = Jecs.Observer
-export type Pair<P, O> = Jecs.Pair<P, O>
-export type Query<T...> = Jecs.Query<T...>
-export type QueryInner = Jecs.QueryInner
-export type Record = Jecs.Record
-export type World = Jecs.World
+export type Archetype = lib.Archetype
+export type Archetypes = lib.Archetypes
+export type ComponentIndex = lib.ComponentIndex
+export type ComponentRecord = lib.ComponentRecord
+export type Entity<T = unknown> = lib.Entity<T>
+export type EntityIndex = lib.EntityIndex
+export type Id<T = unknown> = lib.Id<T>
+export type Item<T...> = lib.Item<T...>
+export type Iter<T...> = lib.Iter<T...>
+export type Observable = lib.Observable
+export type Observer = lib.Observer
+export type Pair<P, O> = lib.Pair<P, O>
+export type Query<T...> = lib.Query<T...>
+export type QueryInner = lib.QueryInner
+export type Record = lib.Record
+export type World = lib.World
 
-export type CullThrottle = CullThrottle.CullThrottle
+export type CullThrottle = lib.CullThrottle
 
-return table.freeze({
-	-- Attributes
-	createAttributeReconciler = Attributes.createAttributeReconciler,
+export type Trove = lib.Trove
+export type TroveTrackable = lib.TroveTrackable
 
-	-- Character
-	getMaybeCharacter = Character.getMaybeCharacter,
-	waitForCharacter = Character.waitForCharacter,
-	getCharacter = Character.getCharacter,
-	getMaybeHumanoidRootPart = Character.getMaybeHumanoidRootPart,
-	getHumanoidRootPart = Character.getHumanoidRootPart,
-	getMaybeHumanoid = Character.getMaybeHumanoid,
-	getHumanoid = Character.getHumanoid,
-	isCharacterAlive = Character.isCharacterAlive,
-
-	-- Checks
-	checkTouched = Checks.checkTouched,
-
-	-- Packages
-	Jecs = Jecs,
-	t = t,
-	CullThrottle = CullThrottle,
-})
+return lib

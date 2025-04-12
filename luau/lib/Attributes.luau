@@ -2,15 +2,12 @@
 
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
-local Types = require(script.Parent.Types)
+local types = require("./types")
 
-local Attributes = {}
-
--- TODO: troves
-function Attributes.createAttributeReconciler<T>(
-	check: Types.Typechecker,
-	defaultValue: T,
-	attributeName: string
+local function createAttributeReconciler<T>(
+	attributeName: string,
+	check: types.Typechecker<T>,
+	defaultValue: T
 ): (instance: Instance) -> T
 	local function reconciler(instance)
 		local realValue = instance:GetAttribute(attributeName)
@@ -29,5 +26,6 @@ function Attributes.createAttributeReconciler<T>(
 	return reconciler
 end
 
-table.freeze(Attributes)
-return Attributes
+return {
+	createAttributeReconciler = createAttributeReconciler,
+}
