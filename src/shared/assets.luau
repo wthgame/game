@@ -1,10 +1,10 @@
 local assets = {
 	ui = {
-		borderGlow = "rbxasset://.asphalt-welcome-to-hell/ui/borderGlow.png",
-		fill = "rbxasset://.asphalt-welcome-to-hell/ui/fill.png",
-		rightTriangle = "rbxasset://.asphalt-welcome-to-hell/ui/rightTriangle.png",
-		triangularBorderSheen = "rbxasset://.asphalt-welcome-to-hell/ui/triangularBorderSheen.png",
-		triangularSurface = "rbxasset://.asphalt-welcome-to-hell/ui/triangularSurface.png",
+		borderGlow = "rbxassetid://100707458059597",
+		fill = "rbxassetid://96192640005099",
+		rightTriangle = "rbxassetid://75024981264700",
+		triangularBorderSheen = "rbxassetid://121420143337903",
+		triangularSurface = "rbxassetid://131315363402507",
 	},
 }
 

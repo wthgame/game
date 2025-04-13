@@ -1,3 +1,21 @@
 version = 1
 
-[inputs]
+[inputs.assets."assets/ui/borderGlow.png"]
+hash = "42dbfbb1b89728d2b8d34fd175b81bbe8bfeb9efad6dce6540eeb03f175b26fe"
+asset_id = 100707458059597
+
+[inputs.assets."assets/ui/fill.png"]
+hash = "bdcff0741347cf4f937ade7bf490d325e98875517109aec3c1680b2f2b68bef3"
+asset_id = 96192640005099
+
+[inputs.assets."assets/ui/rightTriangle.png"]
+hash = "7102ea5396fcc0720ff3163ce56d99653cb9763e16705e1b695c9260713c6310"
+asset_id = 75024981264700
+
+[inputs.assets."assets/ui/triangularBorderSheen.png"]
+hash = "71b0c2b246cc3150ceb3b101d76311a53febed8969f5032c30a2823460decbeb"
+asset_id = 121420143337903
+
+[inputs.assets."assets/ui/triangularSurface.png"]
+hash = "440a001ea1eb49cac4338178d72bfbf3e2dbbb76144d58586a3448ccef1dbdd5"
+asset_id = 131315363402507
