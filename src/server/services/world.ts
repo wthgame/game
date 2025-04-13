@@ -111,7 +111,7 @@ export class WorldService implements OnInit {
 
 		task.defer(() => {
 			const root = player.Character?.FindFirstChild<BasePart>("HumanoidRootPart");
-			if (root) root.CFrame = areaInstance.Spawn.CFrame;
+			if (root) root.CFrame = areaInstance.Spawn.CFrame.mul(new CFrame(0, 3, 0));
 		});
 
 		return clone;
