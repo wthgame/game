@@ -16,7 +16,6 @@ mech.name = "Conveyor"
 
 function mech:init(wth)
 	local Conveyor: utils.Entity<BasePart> = wth:useTag("Conveyor", utils.t.instanceIsA("BasePart"))
-	print(Conveyor)
 	local Speed = wth:useAttribute("Speed", Conveyor, utils.t.numberPositive, 16)
 	local SynchronizeConveyorBeams = wth:useAttribute("SynchronizeConveyorBeams", Conveyor, utils.t.boolean, true)
 
