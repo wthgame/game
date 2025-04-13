@@ -5,11 +5,11 @@
 local CullThrottle = require("./packages/cull-throttle")
 local character = require("./character")
 local checks = require("./checks")
+local ecs = require("./ecs")
 local jecs = require("./packages/jecs")
 local t = require("./packages/t")
 local trove = require("./packages/trove")
 local types = require("./types")
-local world = require("./world")
 
 export type Mechanic<Self = {}> = types.Mechanic<Self>
 export type TouchConfig = types.TouchConfig
@@ -51,7 +51,8 @@ return table.freeze({
 
 	checkTouched = checks.checkTouched,
 
-	world = world,
+	world = ecs.world,
+	collectSignal = ecs.collectSignal,
 
 	jecs = jecs,
 	t = t,
