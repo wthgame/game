@@ -70,7 +70,7 @@ function mech:applyAxisTransform(originalCFrame: CFrame, targetCFrame: CFrame, p
 end
 
 function mech:init(schedule)
-	local queryFollowCharacterParts = wth.world:query(self.FollowCharacterPart)
+	local queryFollowCharacterParts = wth.world:query(self.FollowCharacterPart):cached()
 
 	local function updateFollowCharacterParts()
 		local root = wth.getMaybeHumanoidRootPart()
@@ -80,9 +80,10 @@ function mech:init(schedule)
 		end
 
 		for entity, pv in queryFollowCharacterParts:iter() do
-			if not self.Enabled(pv) then
-				continue
-			end
+			print("GOT PV", pv)
+			-- if not self.Enabled(pv) then
+			-- 	continue
+			-- end
 
 			local mode = self.Mode(pv)
 			local currentPivot = pv:GetPivot()

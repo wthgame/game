@@ -15,7 +15,7 @@ export interface Mechanic {
 	/// Whether this mechanic should "persist" running systems even when it is
 	/// not visible.
 	persistant: boolean;
-	init(schedule: (fn: (dt: number) => void) => void): void;
+	init: (self: Mechanic, schedule: (fn: (dt: number) => void) => void) => void;
 }
 
 export const Mechanic = ty
@@ -115,7 +115,9 @@ export class MechanicController implements OnInit, OnTick {
 
 			const maybeMechanic = Mechanic.Cast(requireValue);
 			if (maybeMechanic.some) {
-				const mechanic = maybeMechanic.value;
+				// DONT use maybeMechanic.value because fuckass elttob decided to
+				// remove keys for some reason ????
+				const mechanic = requireValue as Mechanic;
 				trace("Collected Mechanic from", descendant.GetFullName(), "named", mechanic.name);
 				collectedMechanics.push(mechanic);
 				continue;
@@ -137,7 +139,7 @@ export class MechanicController implements OnInit, OnTick {
 				scheduled.push(system);
 			}
 
-			const [initSuccess, initValue] = pcall((s) => mechanic.init(s), schedule);
+			const [initSuccess, initValue] = pcall((s) => mechanic.init(mechanic, s), schedule);
 
 			if (initSuccess) {
 				this.mechanicSystems.set(mechanic, scheduled);

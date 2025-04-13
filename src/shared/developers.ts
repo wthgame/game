@@ -15,8 +15,8 @@ export enum Whitelisted {
 	// curse of moving to studio
 	Bazooka = 1275426298,
 	Creepyrafa_rayitno = 1275426298,
-	TheCrazyNuggy = 1275426298,
-	NuggetTheCoolOne = 1275426298,
+	The_CrazyNUGGY001 = 765066983,
+	Nugget_TheCoolOne = 1193318968,
 	leoiscool27 = 1275426298,
 	talikroy = 1275426298,
 	thefloodescaper22 = 1275426298,

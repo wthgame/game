@@ -25,8 +25,7 @@ mech.Speed = wth.createAttributeReconciler("Speed", wth.t.numberPositive, 16)
 mech.SynchronizeConveyorBeams = wth.createAttributeReconciler("SynchronizeConveyorBeams", wth.t.boolean, true)
 
 function mech:init(schedule)
-	print(self.Conveyor)
-	local queryConveyors = wth.world:query(self.Conveyor)
+	local queryConveyors = wth.world:query(self.Conveyor):cached()
 
 	local function updateConveyors()
 		local alreadySynchronized = {}

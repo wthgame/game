@@ -19,7 +19,7 @@ local mech = {} :: Self
 mech.type = "Mechanic"
 mech.name = "DamageParts"
 
-mech.DamageParts = wth.trackCollectionServiceTag("DamageParts", wth.t.instanceIsA("BasePart"))
+mech.DamageParts = wth.trackCollectionServiceTag("DamagePart", wth.t.instanceIsA("BasePart"))
 mech.DamageAmount = wth.createAttributeReconciler(
 	"DamageAmount",
 	wth.t.union(wth.t.numberPositive, wth.t.literal("Normal", "Heavy", "Lethal")) :: any,
@@ -27,7 +27,7 @@ mech.DamageAmount = wth.createAttributeReconciler(
 )
 
 function mech:init(schedule)
-	local queryDamageParts = wth.world:query(self.DamageParts)
+	local queryDamageParts = wth.world:query(self.DamageParts):cached()
 
 	local function checkDamagePartChildren()
 		for entity, part in queryDamageParts:iter() do
