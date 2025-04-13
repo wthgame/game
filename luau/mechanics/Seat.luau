@@ -66,8 +66,9 @@ function mech:init(wth)
 					beam.Segments = 1
 					beam.Texture = utils.assets.ui.fill
 					beam.TextureSpeed = 0
+					beam.Width0 = 1
 					beam.Width1 = 0
-					beam.Transparency = NumberSequence.new(0.5)
+					beam.Transparency = NumberSequence.new(1, 0.5)
 					beam.LightInfluence = 0
 					beam.Brightness = 1
 					beam.Parent = attachment0
