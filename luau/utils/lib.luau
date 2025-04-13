@@ -3,12 +3,10 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 local CullThrottle = require("./packages/cull-throttle")
-local attributes = require("./attributes")
 local character = require("./character")
 local checks = require("./checks")
 local jecs = require("./packages/jecs")
 local t = require("./packages/t")
-local tags = require("./tags")
 local trove = require("./packages/trove")
 local types = require("./types")
 local world = require("./world")
@@ -42,8 +40,6 @@ export type TroveTrackable = trove.TroveTrackable
 return table.freeze({
 	version = table.freeze({ major = 1, minor = 0, patch = 0 }),
 
-	createAttributeReconciler = attributes.createAttributeReconciler,
-
 	getMaybeCharacter = character.getMaybeCharacter,
 	waitForCharacter = character.waitForCharacter,
 	getCharacter = character.getCharacter,
@@ -54,8 +50,6 @@ return table.freeze({
 	isCharacterAlive = character.isCharacterAlive,
 
 	checkTouched = checks.checkTouched,
-
-	trackCollectionServiceTag = tags.trackCollectionServiceTag,
 
 	world = world,
 

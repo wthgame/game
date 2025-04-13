@@ -4,40 +4,37 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local net = require(ReplicatedStorage:WaitForChild("WTHClient"):WaitForChild("net"))
-local wth = require(ReplicatedStorage:WaitForChild("Lib"))
+local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
-type Self = wth.Mechanic<{
-	DamageParts: wth.Entity<BasePart>,
-	DamageAmount: (instance: Instance) -> number | "Normal" | "Heavy" | "Lethal",
-}>
+type DamageType = number | "Normal" | "Heavy" | "Lethal"
 
-local DAMAGE_PART_TOUCH_CONFIG: wth.TouchConfig = {
+local DAMAGE_PART_TOUCH_CONFIG: utils.TouchConfig = {
 	passLocalPlayerCharacters = true,
 }
 
-local mech = {} :: Self
+local mech = {} :: utils.Mechanic
 mech.type = "Mechanic"
 mech.name = "DamageParts"
 
-mech.DamageParts = wth.trackCollectionServiceTag("DamagePart", wth.t.instanceIsA("BasePart"))
-mech.DamageAmount = wth.createAttributeReconciler(
-	"DamageAmount",
-	wth.t.union(wth.t.numberPositive, wth.t.literal("Normal", "Heavy", "Lethal")) :: any,
-	0
-)
+function mech:init(wth)
+	local DamagePart: utils.Entity<BasePart> = wth:useTag("DamagePart", utils.t.instanceIsA("BasePart"))
+	local DamageAmount: utils.Entity<DamageType> = wth:useAttribute(
+		"DamageAmount",
+		DamagePart,
+		utils.t.union(utils.t.numberPositive, utils.t.literal("Normal", "Heavy", "Lethal")) :: any,
+		0
+	)
 
-function mech:init(schedule)
-	local queryDamageParts = wth.world:query(self.DamageParts):cached()
+	local queryDamagePart = wth.world:query(DamagePart, DamageAmount):cached()
 
 	local function checkDamagePartChildren()
-		for entity, part in queryDamageParts:iter() do
-			local damageAmountNow = self.DamageAmount(part)
+		for entity, part, amount in queryDamagePart:iter() do
 			for _, toucher in workspace:GetPartsInPart(part) do
-				if wth.checkTouched(toucher, DAMAGE_PART_TOUCH_CONFIG) then
-					if typeof(damageAmountNow) == "string" then
-						net.mechanics.damageSelf.fire(damageAmountNow :: never)
-					elseif wth.t.numberPositive(damageAmountNow) then
-						net.mechanics.damageSelfVariable.fire(damageAmountNow :: number)
+				if utils.checkTouched(toucher, DAMAGE_PART_TOUCH_CONFIG) then
+					if typeof(amount) == "string" then
+						net.mechanics.damageSelf.fire(amount :: never)
+					elseif utils.t.numberPositive(amount) then
+						net.mechanics.damageSelfVariable.fire(amount :: number)
 						-- else
 						-- wth.logWarn("Invalid amount", amountNow, "for DamagePart", part:GetFullName())
 					end
@@ -48,7 +45,7 @@ function mech:init(schedule)
 		end
 	end
 
-	schedule(checkDamagePartChildren)
+	wth:schedule(checkDamagePartChildren)
 end
 
 return mech

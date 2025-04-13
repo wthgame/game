@@ -1,6 +1,7 @@
 import { Controller, OnStart } from "@flamework/core";
 import { atom } from "@rbxts/charm";
 import { Players, Workspace } from "@rbxts/services";
+import { Trove } from "@rbxts/trove";
 import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
 import { areas } from "client/net";
@@ -50,6 +51,7 @@ export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
 
 @Controller()
 export class WorldController implements OnStart {
+	isLoadingArea = false;
 	isLoaded = atom(false);
 
 	constructor(private mechanicController: MechanicController) {}
@@ -66,12 +68,14 @@ export class WorldController implements OnStart {
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
-	loadArea(area: Area) {
+	async loadArea(area: Area) {
+		if (this.isLoadingArea) return;
+		this.isLoadingArea = true;
 		trace(`Requesting to load area ${area.name}`);
 		const inst = areas.loadArea.invoke(area.name).expect();
 		inst.Parent = Workspace;
+		await this.mechanicController.loadMechanicsFromParent(new Trove(), inst.WaitForChild("Mechanics"));
 		this.isLoaded(true);
-
-		this.mechanicController.loadFromParent(inst.WaitForChild("Mechanics"));
+		this.isLoadingArea = false;
 	}
 }
