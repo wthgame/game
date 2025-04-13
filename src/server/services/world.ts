@@ -88,6 +88,8 @@ export class WorldService implements OnInit {
 	}
 
 	@Blink(areas.loadArea)
+	// TODO: ask the player to clone it into workspace/or if it timesout THEN
+	// delete
 	loadArea(player: Player, areaName: string): Instance {
 		trace(`Loading area ${areaName} for player ${player.Name}`);
 		const area = NAME_TO_AREA.get(areaName);
