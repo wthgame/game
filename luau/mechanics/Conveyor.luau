@@ -3,38 +3,32 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local wth = require(ReplicatedStorage:WaitForChild("Lib"))
-
-type Self = wth.Mechanic<{
-	Conveyor: wth.Entity<BasePart>,
-	Speed: (instance: Instance) -> number,
-	SynchronizeConveyorBeams: (instance: Instance) -> boolean,
-}>
+local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
 type ConveyorAttributes = {
 	Speed: number,
 	SynchronizeConveyorBeams: boolean,
 }
 
-local mech = {} :: Self
+local mech = {} :: utils.Mechanic
 mech.type = "Mechanic"
 mech.name = "Conveyor"
 
-mech.Conveyor = wth.trackCollectionServiceTag("Conveyor", wth.t.instanceIsA("BasePart"))
-mech.Speed = wth.createAttributeReconciler("Speed", wth.t.numberPositive, 16)
-mech.SynchronizeConveyorBeams = wth.createAttributeReconciler("SynchronizeConveyorBeams", wth.t.boolean, true)
+function mech:init(wth)
+	local Conveyor: utils.Entity<BasePart> = wth:useTag("Conveyor", utils.t.instanceIsA("BasePart"))
+	print(Conveyor)
+	local Speed = wth:useAttribute("Speed", Conveyor, utils.t.numberPositive, 16)
+	local SynchronizeConveyorBeams = wth:useAttribute("SynchronizeConveyorBeams", Conveyor, utils.t.boolean, true)
 
-function mech:init(schedule)
-	local queryConveyors = wth.world:query(self.Conveyor):cached()
+	local queryConveyors = wth.world:query(Conveyor, Speed, SynchronizeConveyorBeams):cached()
 
 	local function updateConveyors()
 		local alreadySynchronized = {}
 
-		for entity, conveyor in queryConveyors:iter() do
-			local speed = self.Speed(conveyor)
+		for entity, conveyor, speed, sync in queryConveyors:iter() do
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
 
-			if self.SynchronizeConveyorBeams(conveyor) then
+			if sync then
 				for _, beam in conveyor:GetDescendants() do
 					if not alreadySynchronized[beam] then
 						if beam.Name == "ConveyorBeam" and beam:IsA("Beam") then
@@ -49,7 +43,7 @@ function mech:init(schedule)
 		table.clear(alreadySynchronized)
 	end
 
-	schedule(updateConveyors)
+	wth:schedule(updateConveyors)
 end
 
 return mech
