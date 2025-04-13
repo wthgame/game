@@ -3,6 +3,8 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 local CullThrottle = require("./packages/cull-throttle")
+local Sift = require("./packages/sift")
+local assets = require("./assets")
 local character = require("./character")
 local checks = require("./checks")
 local ecs = require("./ecs")
@@ -40,6 +42,8 @@ export type TroveTrackable = trove.TroveTrackable
 return table.freeze({
 	version = table.freeze({ major = 1, minor = 0, patch = 0 }),
 
+	assets = assets,
+
 	getMaybeCharacter = character.getMaybeCharacter,
 	waitForCharacter = character.waitForCharacter,
 	getCharacter = character.getCharacter,
@@ -57,4 +61,5 @@ return table.freeze({
 	jecs = jecs,
 	t = t,
 	CullThrottle = CullThrottle,
+	Sift = Sift,
 })
