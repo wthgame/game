@@ -3,6 +3,7 @@ local t = require("./packages/t")
 local trove = require("./packages/trove")
 
 type Trove = trove.Trove
+type Cleanup = () -> ()
 
 export type Typechecker<T> = t.Check<T>
 
@@ -41,6 +42,7 @@ export type WTH = {
 		default: T
 	) -> jecs.Entity<T>,
 	schedule: (self: WTH, ...((dt: number, trove: Trove) -> ())) -> (),
+	onLoad: (self: WTH, ...() -> ()) -> Cleanup,
 }
 
 return nil

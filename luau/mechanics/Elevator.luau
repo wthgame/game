@@ -12,6 +12,21 @@ local ALLOWED_CFRAME_COMPONENTS = {
 	"ZVector",
 }
 
+local function elevate(trove: utils.Trove, part: BasePart, currentMaxForce: Vector3, faceVector: Vector3, speed: number)
+	local velocityAttachment = Instance.new("Attachment")
+	velocityAttachment.Parent = part
+
+	local velocity = trove:add(Instance.new("LinearVelocity"))
+	velocity.Name = "ElevatorVelocity"
+	velocity.RelativeTo = Enum.ActuatorRelativeTo.World
+	velocity.ForceLimitMode = Enum.ForceLimitMode.PerAxis
+	velocity.Attachment0 = velocityAttachment
+	velocity.ForceLimitsEnabled = true
+	velocity.MaxAxesForce = currentMaxForce
+	velocity.VectorVelocity = faceVector * speed
+	velocity.Parent = part
+end
+
 local isAllowedCFrameComponent = utils.t.literalList(ALLOWED_CFRAME_COMPONENTS :: any)
 
 local mech = {} :: utils.Mechanic
@@ -20,26 +35,37 @@ mech.name = "Elevator"
 
 function mech:init(wth)
 	local Elevator: utils.Entity<BasePart> = wth:useTag("Elevator", utils.t.instanceIsA("BasePart"))
-	local Speed = wth:useAttribute("Elevator", Elevator, utils.t.numberPositive, 0)
+	local Speed = wth:useAttribute("Speed", Elevator, utils.t.numberPositive, 0)
 	local MaxForce = wth:useAttribute("MaxForce", Elevator, utils.t.numberPositive, math.huge)
 	local Vector = wth:useAttribute("Vector", Elevator, isAllowedCFrameComponent, "UpVector")
 	local PassCharacter = wth:useAttribute("PassCharacter", Elevator, utils.t.boolean, true)
-	local IsElevating: utils.Entity = wth.world:component()
 
-	local queryElevators =
-		wth.world:query(Elevator, Speed, MaxForce, Vector, PassCharacter):without(IsElevating):cached()
+	local elevatorTroves: { [BasePart]: utils.Trove } = {}
+
+	local queryElevators = wth.world:query(Elevator, Speed, MaxForce, Vector, PassCharacter):cached()
 
 	local function checkElevators(_, trove: utils.Trove)
+		local character = utils.getMaybeCharacter()
+		local root = utils.getMaybeHumanoidRootPart()
+
 		for entity, elevator, speed, maxForce, vec, passCharacter in queryElevators:iter() do
 			local touchConfig: utils.TouchConfig = {
 				passLocalPlayerCharacter = passCharacter,
 			}
 
-			if not utils.isPartTouched(elevator, touchConfig) then
-				continue
+			local partsTouched = utils.getPartTouched(elevator, touchConfig)
+
+			for part, trove in elevatorTroves do
+				if partsTouched[part] == nil then
+					-- FIXME: why tf i need to cast this??
+					(trove :: utils.Trove):destroy()
+					elevatorTroves[part] = nil
+				end
 			end
 
-			wth.world:set(entity, IsElevating)
+			if next(partsTouched) == nil then
+				continue
+			end
 
 			local faceVector: Vector3 = (elevator.CFrame :: any)[vec]
 			if not faceVector then
@@ -55,38 +81,31 @@ function mech:init(wth)
 				currentMaxForce = Vector3.new(currentMaxForce.X, currentMaxForce.Y, maxForce)
 			end
 
-			local velocityAttachment = Instance.new("Attachment")
-			velocityAttachment.Parent = elevator
+			local alreadyElevatedCharacter = false
 
-			local velocity = Instance.new("LinearVelocity")
-			velocity.Name = "ElevatorVelocity"
-			velocity.RelativeTo = Enum.ActuatorRelativeTo.World
-			velocity.ForceLimitMode = Enum.ForceLimitMode.PerAxis
-			velocity.Attachment0 = velocityAttachment
-			velocity.ForceLimitsEnabled = true
-			velocity.MaxAxesForce = currentMaxForce
-			velocity.VectorVelocity = faceVector * speed
-			velocity.Parent = elevator
+			for part in partsTouched do
+				if elevatorTroves[part] then
+					continue
+				end
 
-			-- -- new touchended implementation --
-			-- touchingParts[part] = true
-			-- while touchingParts[part] do
-			-- 	if not elevator.CanTouch then
-			-- 		break
-			-- 	end
-			-- 	if utility.checkConfig(elevator, "Activated") == false then
-			-- 		break
-			-- 	end
-			-- 	task.wait()
-			-- 	local zoneParts: { BasePart } = workspace:GetPartsInPart(elevator, params)
-			-- 	if #zoneParts <= 0 then
-			-- 		break
-			-- 	end
-			-- end
+				if character then
+					if character:IsAncestorOf(part) then
+						if alreadyElevatedCharacter then
+							continue
+						end
 
-			-- touchingParts[part] = nil
-			-- velocity:Destroy()
-			-- velocityAttachment:Destroy()
+						alreadyElevatedCharacter = true
+
+						if root then
+							local elevatorTrove = trove:extend()
+							elevate(elevatorTrove, root, currentMaxForce, faceVector, speed)
+							elevatorTroves[part] = elevatorTrove
+						end
+
+						continue
+					end
+				end
+			end
 		end
 	end
 

@@ -6,10 +6,10 @@ local CullThrottle = require("./packages/cull-throttle")
 local Sift = require("./packages/sift")
 local assets = require("./assets")
 local character = require("./character")
-local checks = require("./checks")
 local ecs = require("./ecs")
 local jecs = require("./packages/jecs")
 local t = require("./packages/t")
+local touch = require("./touch")
 local trove = require("./packages/trove")
 local types = require("./types")
 
@@ -51,14 +51,15 @@ return table.freeze({
 	getHumanoidRootPart = character.getHumanoidRootPart,
 	getMaybeHumanoid = character.getMaybeHumanoid,
 	getHumanoid = character.getHumanoid,
+	isCharacter = character.isCharacter,
+	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
 	isCharacterAlive = character.isCharacterAlive,
 
-	isCharacter = checks.isCharacter,
-	isLocalPlayerCharacter = checks.isLocalPlayerCharacter,
-	isCharacterTouchingPart = checks.isCharacterTouchingPart,
-	isLocalPlayerCharacterTouchingPart = checks.isLocalPlayerCharacterTouchingPart,
-	isTouched = checks.isTouched,
-	isPartTouched = checks.isPartTouched,
+	isCharacterTouchingPart = touch.isCharacterTouchingPart,
+	isLocalPlayerCharacterTouchingPart = touch.isLocalPlayerCharacterTouchingPart,
+	isTouched = touch.isTouched,
+	isPartTouched = touch.isPartTouched,
+	getPartTouched = touch.getPartTouched,
 
 	world = ecs.world,
 	collectSignal = ecs.collectSignal,
