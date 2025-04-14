@@ -11,6 +11,7 @@ local SWING_TOUCH_CONFIG: utils.TouchConfig = {
 }
 
 type SwingInstance = Instance & {
+	Constraint: Constraint,
 	Rope: BasePart,
 	Top: BasePart,
 }
@@ -23,26 +24,24 @@ function mech:init(wth)
 	local Swing: utils.Entity<SwingInstance> = wth:useTag(
 		"Swing",
 		utils.t.children({
+			Constraint = utils.t.instanceIsA("Constraint"),
 			Rope = utils.t.instanceIsA("BasePart"),
 			Top = utils.t.instanceIsA("BasePart"),
 		})
 	)
 
 	local Cooldown = wth:useAttribute("Cooldown", Swing, utils.t.numberPositive, 0)
-	local Mode = wth:useAttribute("Mode", Swing, utils.t.literal("Rope", "Rod", "Spring"), "Rope")
-	local RopeLength = wth:useAttribute("RopeLength", Swing, utils.t.numberPositive, 0)
-	local SpringStiffness = wth:useAttribute("SpringStiffness", Swing, utils.t.numberPositive, 0)
 
 	local isSwinging = false
 
-	local querySwings = wth.world:query(Swing, Cooldown, RopeLength, Mode, SpringStiffness):cached()
+	local querySwings = wth.world:query(Swing, Cooldown):cached()
 
 	local function checkSwings(_, trove: utils.Trove)
 		if isSwinging then
 			return
 		end
 
-		for entity, swing, cooldown, ropeLength, mode, springStiffness in querySwings:iter() do
+		for entity, swing, cooldown in querySwings:iter() do
 			local rope = swing.Rope
 			local top = swing.Top
 
@@ -72,32 +71,10 @@ function mech:init(wth)
 					local attachmentPoint2 = swingTrove:add(Instance.new("Attachment"))
 					attachmentPoint2.Parent = swingBar
 
-					if mode == "Rope" then
-						local ropeConstraint = swingTrove:add(Instance.new("RopeConstraint"))
-						ropeConstraint.Length = ropeLength
-						ropeConstraint.Visible = true
-						ropeConstraint.Color = rope.BrickColor
-						ropeConstraint.Attachment0 = attachmentPoint1
-						ropeConstraint.Attachment1 = attachmentPoint2
-						ropeConstraint.Parent = top
-					elseif mode == "Rod" then
-						local rodConstraint = swingTrove:add(Instance.new("RodConstraint"))
-						rodConstraint.Length = ropeLength
-						rodConstraint.Visible = true
-						rodConstraint.Color = rope.BrickColor
-						rodConstraint.Attachment0 = attachmentPoint1
-						rodConstraint.Attachment1 = attachmentPoint2
-						rodConstraint.Parent = top
-					elseif mode == "Spring" then
-						local springConstraint = swingTrove:add(Instance.new("SpringConstraint"))
-						springConstraint.Visible = true
-						springConstraint.Color = rope.BrickColor
-						springConstraint.Attachment0 = attachmentPoint1
-						springConstraint.Attachment1 = attachmentPoint2
-						springConstraint.FreeLength = ropeLength
-						springConstraint.Stiffness = springStiffness
-						springConstraint.Parent = top
-					end
+					local constraint = swingTrove:add(swing.Constraint:Clone())
+					constraint.Attachment0 = attachmentTop
+					constraint.Attachment1 = attachmentPoint2
+					constraint.Parent = top
 
 					local weldConstraint = swingTrove:add(Instance.new("WeldConstraint"))
 					weldConstraint.Part0 = toucher.Parent.HumanoidRootPart
