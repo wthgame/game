@@ -8,10 +8,6 @@ local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
 type DamageType = number | "Normal" | "Heavy" | "Lethal"
 
-local DAMAGE_PART_TOUCH_CONFIG: utils.TouchConfig = {
-	passLocalPlayerCharacter = true,
-}
-
 local mech = {} :: utils.Mechanic
 mech.type = "Mechanic"
 mech.name = "DamageParts"
@@ -29,18 +25,16 @@ function mech:init(wth)
 
 	local function checkDamagePartChildren()
 		for entity, part, amount in queryDamagePart:iter() do
-			for _, toucher in workspace:GetPartsInPart(part) do
-				if utils.checkTouched(toucher, DAMAGE_PART_TOUCH_CONFIG) then
-					if typeof(amount) == "string" then
-						net.mechanics.damageSelf.fire(amount :: never)
-					elseif utils.t.numberPositive(amount) then
-						net.mechanics.damageSelfVariable.fire(amount :: number)
-						-- else
-						-- wth.logWarn("Invalid amount", amountNow, "for DamagePart", part:GetFullName())
-					end
-
-					break
+			if utils.isCharacterTouchingPart(part) then
+				if typeof(amount) == "string" then
+					net.mechanics.damageSelf.fire(amount :: never)
+				elseif utils.t.numberPositive(amount) then
+					net.mechanics.damageSelfVariable.fire(amount :: number)
+					-- else
+					-- wth.logWarn("Invalid amount", amountNow, "for DamagePart", part:GetFullName())
 				end
+
+				break
 			end
 		end
 	end
