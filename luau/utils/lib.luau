@@ -4,6 +4,7 @@
 
 local CullThrottle = require("./packages/cull-throttle")
 local Sift = require("./packages/sift")
+local animation = require("./animation")
 local assets = require("./assets")
 local character = require("./character")
 local ecs = require("./ecs")
@@ -41,6 +42,8 @@ export type TroveTrackable = trove.TroveTrackable
 
 return table.freeze({
 	version = table.freeze({ major = 1, minor = 0, patch = 0 }),
+
+	tween = animation.tween,
 
 	assets = assets,
 

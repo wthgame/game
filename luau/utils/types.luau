@@ -45,4 +45,13 @@ export type WTH = {
 	onLoad: (self: WTH, ...() -> ()) -> Cleanup,
 }
 
+export type TweenConfig = {
+	time: number?,
+	easingStyle: Enum.EasingStyle?,
+	easingDirection: Enum.EasingDirection?,
+	repeatCount: number?,
+	reverse: boolean?,
+	delayTime: number?,
+}
+
 return nil
