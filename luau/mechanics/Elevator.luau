@@ -32,7 +32,7 @@ function mech:init(wth)
 	local function checkElevators(_, trove: utils.Trove)
 		for entity, elevator, speed, maxForce, vec, passCharacter in queryElevators:iter() do
 			local touchConfig: utils.TouchConfig = {
-				passLocalPlayerCharacters = passCharacter,
+				passLocalPlayerCharacter = passCharacter,
 			}
 
 			if not utils.isPartTouched(elevator, touchConfig) then

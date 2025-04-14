@@ -9,7 +9,7 @@ local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 type DamageType = number | "Normal" | "Heavy" | "Lethal"
 
 local DAMAGE_PART_TOUCH_CONFIG: utils.TouchConfig = {
-	passLocalPlayerCharacters = true,
+	passLocalPlayerCharacter = true,
 }
 
 local mech = {} :: utils.Mechanic

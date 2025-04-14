@@ -46,7 +46,7 @@ local function isTouched(toucher: BasePart, config: types.TouchConfig): boolean
 	if character then
 		if config.passAllPlayerCharacters then
 			return isCharacter(character)
-		elseif config.passLocalPlayerCharacters then
+		elseif config.passLocalPlayerCharacter then
 			return isLocalPlayerCharacter(character)
 		end
 	end

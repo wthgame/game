@@ -14,7 +14,7 @@ export type Mechanic<Self> = Self & {
 }
 
 export type TouchConfig = {
-	passLocalPlayerCharacters: boolean?,
+	passLocalPlayerCharacter: boolean?,
 	passAllPlayerCharacters: boolean?,
 }
 
