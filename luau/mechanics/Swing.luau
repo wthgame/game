@@ -52,6 +52,7 @@ function mech:init(wth)
 			local top = swing.Top
 
 			if utils.isLocalPlayerCharacterTouchingPart(rope) then
+				print("TOUCHED!")
 				local originalRopeTransparency = rope.Transparency
 				isSwinging = true
 
@@ -97,16 +98,15 @@ function mech:init(wth)
 					swingTrove:clean()
 
 					-- FIXME: this may be different once the player dismounts
-					if cooldown == 0 then
-						isSwinging = false
-						rope.Transparency = originalRopeTransparency
-						return
-					end
-
-					task.wait(cooldown)
-
+					-- if cooldown == 0 then
 					isSwinging = false
 					rope.Transparency = originalRopeTransparency
+					return
+					-- end
+
+					-- task.wait(cooldown)
+
+					-- rope.Transparency = originalRopeTransparency
 				end
 
 				trove:add(UserInputService.JumpRequest:Once(dismount))
