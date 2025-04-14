@@ -72,6 +72,7 @@ end
 return {
 	isCharacter = isCharacter,
 	isLocalPlayerCharacter = isLocalPlayerCharacter,
+	isCharacterTouchingPart = isCharacterTouchingPart,
 	isLocalPlayerCharacterTouchingPart = isLocalPlayerCharacterTouchingPart,
 	isTouched = isTouched,
 	isPartTouched = isPartTouched,

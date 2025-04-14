@@ -55,6 +55,7 @@ return table.freeze({
 
 	isCharacter = checks.isCharacter,
 	isLocalPlayerCharacter = checks.isLocalPlayerCharacter,
+	isCharacterTouchingPart = checks.isCharacterTouchingPart,
 	isLocalPlayerCharacterTouchingPart = checks.isLocalPlayerCharacterTouchingPart,
 	isTouched = checks.isTouched,
 	isPartTouched = checks.isPartTouched,
