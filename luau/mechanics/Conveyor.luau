@@ -5,11 +5,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
-type ConveyorAttributes = {
-	Speed: number,
-	SynchronizeConveyorBeams: boolean,
-}
-
 local mech = {} :: utils.Mechanic
 mech.type = "Mechanic"
 mech.name = "Conveyor"
