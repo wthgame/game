@@ -5,12 +5,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
-type DamageType = number | "Normal" | "Heavy" | "Lethal"
-
-local TRIP_PART_TOUCH_CONFIG: utils.TouchConfig = {
-	passLocalPlayerCharacters = true,
-}
-
 local mech = {} :: utils.Mechanic
 mech.type = "Mechanic"
 mech.name = "TripPart"
@@ -26,10 +20,8 @@ function mech:init(wth)
 		end
 
 		for entity, part in queryTripPart:iter() do
-			for _, toucher in workspace:GetPartsInPart(part) do
-				if utils.checkTouched(toucher, TRIP_PART_TOUCH_CONFIG) then
-					humanoid.Sit = true
-				end
+			if utils.isLocalPlayerCharacterTouchingPart(part) then
+				humanoid.Sit = true
 			end
 		end
 	end

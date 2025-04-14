@@ -53,7 +53,11 @@ return table.freeze({
 	getHumanoid = character.getHumanoid,
 	isCharacterAlive = character.isCharacterAlive,
 
-	checkTouched = checks.checkTouched,
+	isCharacter = checks.isCharacter,
+	isLocalPlayerCharacter = checks.isLocalPlayerCharacter,
+	isLocalPlayerCharacterTouchingPart = checks.isLocalPlayerCharacterTouchingPart,
+	isTouched = checks.isTouched,
+	isPartTouched = checks.isPartTouched,
 
 	world = ecs.world,
 	collectSignal = ecs.collectSignal,

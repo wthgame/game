@@ -6,10 +6,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
-local TRIP_PART_TOUCH_CONFIG: utils.TouchConfig = {
-	passLocalPlayerCharacters = true,
-}
-
 type SeatVisualizer = {
 	attachment0: Attachment,
 	attachment1: Attachment,
@@ -116,44 +112,42 @@ function mech:init(wth)
 				continue
 			end
 
-			for _, toucher in workspace:GetPartsInPart(seat) do
-				if utils.checkTouched(toucher, TRIP_PART_TOUCH_CONFIG) then
-					lastSit = os.clock()
-					isSeated = true
+			if utils.isLocalPlayerCharacterTouchingPart(seat) then
+				lastSit = os.clock()
+				isSeated = true
 
-					humanoid.Sit = true
-					root.CFrame = seat.CFrame * CFrame.new(0, seat.Size.Y / 2 + 1.5, 0)
+				humanoid.Sit = true
+				root.CFrame = seat.CFrame * CFrame.new(0, seat.Size.Y / 2 + 1.5, 0)
 
-					weld = trove:add(Instance.new("WeldConstraint"))
-					weld.Part0 = seat
-					weld.Part1 = root
-					weld.Parent = seat
+				weld = trove:add(Instance.new("WeldConstraint"))
+				weld.Part0 = seat
+				weld.Part1 = root
+				weld.Parent = seat
 
-					local function stopSitting()
-						if not isSeated then
-							return
-						end
-
-						isSeated = false
-
-						if weld then
-							weld:Destroy()
-						end
-
-						local humanoid = utils.getHumanoid()
-						local state = humanoid:GetState()
-						-- TODO: this may be different when the player jumps
-						if jumpOnDismount then
-							if state ~= Enum.HumanoidStateType.Jumping then
-								humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-							end
-						end
+				local function stopSitting()
+					if not isSeated then
+						return
 					end
 
-					trove:add(UserInputService.JumpRequest:Once(stopSitting))
+					isSeated = false
 
-					return
+					if weld then
+						weld:Destroy()
+					end
+
+					local humanoid = utils.getHumanoid()
+					local state = humanoid:GetState()
+					-- TODO: this may be different when the player jumps
+					if jumpOnDismount then
+						if state ~= Enum.HumanoidStateType.Jumping then
+							humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+						end
+					end
 				end
+
+				trove:add(UserInputService.JumpRequest:Once(stopSitting))
+
+				return
 			end
 		end
 	end
