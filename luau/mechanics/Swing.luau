@@ -52,9 +52,10 @@ function mech:init(wth)
 			local top = swing.Top
 
 			if utils.isLocalPlayerCharacterTouchingPart(rope) then
-				print("TOUCHED!")
-				local originalRopeTransparency = rope.Transparency
 				isSwinging = true
+				lastSwing = os.clock()
+
+				local originalRopeTransparency = rope.Transparency
 
 				local swingTrove = trove:extend()
 
@@ -90,17 +91,16 @@ function mech:init(wth)
 				rope.Transparency = 1
 
 				local function dismount()
+					print("DISMOUNTING")
+					isSwinging = false
+					swingTrove:clean()
+					rope.Transparency = originalRopeTransparency
+
 					local humanoid = utils.getMaybeHumanoid()
 					if humanoid then
 						humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 					end
 
-					swingTrove:clean()
-
-					-- FIXME: this may be different once the player dismounts
-					-- if cooldown == 0 then
-					isSwinging = false
-					rope.Transparency = originalRopeTransparency
 					return
 					-- end
 
@@ -110,7 +110,6 @@ function mech:init(wth)
 				end
 
 				trove:add(UserInputService.JumpRequest:Once(dismount))
-				lastSwing = os.clock()
 
 				return
 			end

@@ -16,6 +16,7 @@ local types = require("./types")
 
 export type Mechanic<Self = {}> = types.Mechanic<Self>
 export type TouchConfig = types.TouchConfig
+export type TweenConfig = types.TweenConfig
 export type Character = types.Character
 
 export type Archetype = jecs.Archetype

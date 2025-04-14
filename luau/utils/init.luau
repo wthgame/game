@@ -6,6 +6,7 @@ local lib = require(script.lib)
 
 export type Mechanic<Self = {}> = lib.Mechanic<Self>
 export type TouchConfig = lib.TouchConfig
+export type TweenConfig = lib.TweenConfig
 export type Character = lib.Character
 
 export type Archetype = lib.Archetype

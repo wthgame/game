@@ -7,7 +7,7 @@ import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
 import { world } from "shared/ecs";
 import { panic } from "shared/flamework";
-import { warn } from "shared/log";
+import { trace, warn } from "shared/log";
 
 export interface Mechanic {
 	type: "Mechanic";
@@ -145,6 +145,7 @@ export class MechanicController implements OnInit {
 	}
 
 	initMechanic(mechanic: Mechanic) {
+		trace(`Initializing mechanic ${mechanic.name}`);
 		const systems = new Array<(dt: number, trove: Trove) => void>();
 		const wth = new WTH(mechanic, this.mechanicTags, systems);
 
@@ -160,6 +161,7 @@ export class MechanicController implements OnInit {
 	// TODO: Impl cullthrottle
 	// TODO: track new tags/removed tags
 	async loadMechanicsFromParent(trove: Trove, parent: Instance) {
+		trace(`Loading mechanics from parent ${parent.GetFullName()}`);
 		const mechanicsUsed = new Set<Mechanic>();
 
 		async function tryTrackTaggedInstance<T extends Instance>(
@@ -179,8 +181,11 @@ export class MechanicController implements OnInit {
 			}
 		}
 
+		trace("Tracking tags");
+
 		const trackPromises = new Array<Promise<void>>();
 		for (const descendant of parent.GetDescendants()) {
+			trace(`Checking ${descendant.GetFullName()}`);
 			for (const [tag, component] of pairs(this.mechanicTags)) {
 				if (descendant.HasTag(tag)) {
 					trackPromises.push(tryTrackTaggedInstance(descendant, component));
@@ -189,6 +194,10 @@ export class MechanicController implements OnInit {
 		}
 
 		await Promise.all(trackPromises);
+
+		trace("Finished tracking tags");
+
+		trace("Running systems");
 
 		trove.add(
 			RunService.PostSimulation.Connect((dt) => {
