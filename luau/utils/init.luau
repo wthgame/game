@@ -27,6 +27,8 @@ export type World = lib.World
 
 export type CullThrottle = lib.CullThrottle
 
+export type Check<T> = lib.Check<T>
+
 export type Trove = lib.Trove
 export type TroveTrackable = lib.TroveTrackable
 

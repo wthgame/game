@@ -37,6 +37,8 @@ export type World = jecs.World
 
 export type CullThrottle = CullThrottle.CullThrottle
 
+export type Check<T> = t.Check<T>
+
 export type Trove = trove.Trove
 export type TroveTrackable = trove.TroveTrackable
 
