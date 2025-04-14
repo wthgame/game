@@ -68,14 +68,28 @@ export class WorldController implements OnStart {
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
-	async loadArea(area: Area) {
+	loadArea(area: Area) {
 		if (this.isLoadingArea) return;
 		this.isLoadingArea = true;
+
 		trace(`Requesting to load area ${area.name}`);
+
 		const inst = areas.loadArea.invoke(area.name).expect();
-		inst.Parent = Workspace;
-		await this.mechanicController.loadMechanicsFromParent(new Trove(), inst.WaitForChild("Mechanics"));
+
+		const clone = inst.Clone();
+		clone.Parent = Workspace;
+
+		inst.Destroy();
+
+		const trove = new Trove();
+
+		this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
+
 		this.isLoaded(true);
 		this.isLoadingArea = false;
+
+		areas.confirmAreaLoaded.fire();
+
+		return trove;
 	}
 }

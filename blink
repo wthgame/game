@@ -36,6 +36,12 @@ scope areas {
         return: Instance
     }
 
+    event confirmAreaLoaded {
+        from: Client,
+        type: Reliable,
+        call: ManyAsync
+    }
+
     function requestTower {
         yield: Promise,
         data: string,

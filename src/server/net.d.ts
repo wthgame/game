@@ -15,6 +15,9 @@ export declare namespace areas {
 	export const loadArea: {
 		on: (Listener: (Player: Player, Value: string) => Instance) => void
 	}
+	export const confirmAreaLoaded: {
+		on: (Listener: (Player: Player, Value: void) => void) => (() => void)
+	}
 	export const requestTower: {
 		on: (Listener: (Player: Player, Value: string) => Instance) => void
 	}

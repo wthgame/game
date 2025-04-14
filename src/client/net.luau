@@ -152,9 +152,9 @@ local Queue: any = {
 }
 
 Queue.Reliable[2] = table.create(256)
-Queue.Reliable[3] = table.create(256)
 Queue.Reliable[4] = table.create(256)
 Queue.Reliable[5] = table.create(256)
+Queue.Reliable[6] = table.create(256)
 export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
 local function mechanics_WriteEVENT_damageSelfVariable(Value: number): ()
 	-- Allocate BLOCK: 5 bytes
@@ -203,10 +203,16 @@ local function areas_ReadFUNCTION_RETURN_loadArea(): (Instance)
 	return Value
 end
 
+local function areas_WriteEVENT_confirmAreaLoaded(Value: nil): ()
+	-- Allocate BLOCK: 1 bytes
+	local BLOCK_START = Allocate(1)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 3)
+end
+
 local function areas_WriteFUNCTION_DATA_requestTower(Value: string, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 4 bytes
 	local BLOCK_START = Allocate(4)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 3)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 4)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 	local Length = #Value
 	buffer.writeu16(SendBuffer, BLOCK_START + 2, Length)
@@ -231,7 +237,7 @@ end
 local function areas_WriteFUNCTION_DATA_requestDetailsInTower(Value: nil, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 2 bytes
 	local BLOCK_START = Allocate(2)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 4)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 5)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 end
 
@@ -252,7 +258,7 @@ end
 local function areas_WriteFUNCTION_DATA_requestObbyInTower(Value: nil, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 2 bytes
 	local BLOCK_START = Allocate(2)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 5)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 6)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 end
 
@@ -284,6 +290,9 @@ if not RunService:IsRunning() then
 	areas = {
 		loadArea = {
 			invoke = NOOP
+		},
+		confirmAreaLoaded = {
+			fire = NOOP
 		},
 		requestTower = {
 			invoke = NOOP
@@ -350,7 +359,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
 			end
-		elseif Index == 3 then
+		elseif Index == 4 then
 			-- Read BLOCK: 1 bytes
 			local BLOCK_START = Read(1)
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
@@ -361,7 +370,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
 			end
-		elseif Index == 4 then
+		elseif Index == 5 then
 			-- Read BLOCK: 1 bytes
 			local BLOCK_START = Read(1)
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
@@ -372,7 +381,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
 			end
-		elseif Index == 5 then
+		elseif Index == 6 then
 			-- Read BLOCK: 1 bytes
 			local BLOCK_START = Read(1)
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
@@ -436,6 +445,11 @@ local Returns = table.freeze({
 					end
 					Resolve(ReturnValue)
 				end)
+			end
+		},
+		confirmAreaLoaded = {
+			fire = function(Value: nil): ()
+				areas_WriteEVENT_confirmAreaLoaded(Value)
 			end
 		},
 		requestTower = {

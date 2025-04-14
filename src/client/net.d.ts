@@ -15,6 +15,9 @@ export declare namespace areas {
 	export const loadArea: {
 		invoke: (Value: string) => Promise<Instance>
 	}
+	export const confirmAreaLoaded: {
+		fire: (Value: void) => void
+	}
 	export const requestTower: {
 		invoke: (Value: string) => Promise<Instance>
 	}
