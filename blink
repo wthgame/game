@@ -41,19 +41,28 @@ scope areas {
         type: Reliable,
         call: ManyAsync
     }
+}
 
-    function requestTower {
+scope towers {
+    enum TowerRunType = { Standard, Practice }
+
+    struct StartTowerRun {
+        towerType: TowerRunType,
+        towerName: string
+    }
+
+    struct StartTowerRunResult {
+        instance: Instance,
+        mechanics: Instance,
+    }
+
+    function startTowerRun {
         yield: Promise,
-        data: string,
-        return: Instance
+        data: StartTowerRun,
+        return: StartTowerRunResult?
     }
 
     function requestDetailsInTower {
-        yield: Promise,
-        return: Instance
-    }
-
-    function requestObbyInTower {
         yield: Promise,
         return: Instance
     }

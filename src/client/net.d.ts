@@ -18,13 +18,15 @@ export declare namespace areas {
 	export const confirmAreaLoaded: {
 		fire: (Value: void) => void
 	}
-	export const requestTower: {
-		invoke: (Value: string) => Promise<Instance>
+}
+export declare namespace towers {
+	type TowerRunType = "Standard" | "Practice"
+	type StartTowerRun = { towerType: "Standard" | "Practice", towerName: string }
+	type StartTowerRunResult = { instance: Instance, mechanics: Instance }
+	export const startTowerRun: {
+		invoke: (Value: { towerType: "Standard" | "Practice", towerName: string }) => Promise<{ instance: Instance, mechanics: Instance } | undefined>
 	}
 	export const requestDetailsInTower: {
-		invoke: (Value: void) => Promise<Instance>
-	}
-	export const requestObbyInTower: {
 		invoke: (Value: void) => Promise<Instance>
 	}
 }

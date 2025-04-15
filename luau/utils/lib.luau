@@ -6,6 +6,7 @@ local CullThrottle = require("./packages/cull-throttle")
 local Sift = require("./packages/sift")
 local animation = require("./animation")
 local assets = require("./assets")
+local bindings = require("./bindings")
 local character = require("./character")
 local ecs = require("./ecs")
 local effects = require("./effects")
@@ -51,6 +52,8 @@ return table.freeze({
 
 	assets = assets,
 
+	promptToLoadTower = bindings.promptToLoadTower,
+
 	getMaybeCharacter = character.getMaybeCharacter,
 	waitForCharacter = character.waitForCharacter,
 	getCharacter = character.getCharacter,
@@ -77,4 +80,9 @@ return table.freeze({
 	t = t,
 	CullThrottle = CullThrottle,
 	Sift = Sift,
+
+	_ = {
+		addMechanicBinding = bindings.addMechanicBinding,
+		callMechanicBinding = bindings.callMechanicBinding,
+	},
 })

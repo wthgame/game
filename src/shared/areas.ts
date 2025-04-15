@@ -1,5 +1,4 @@
-import Sift from "@rbxts/sift";
-import { UserId } from "./userids";
+import { UserId } from "./constants/userids";
 
 export enum TowerType {
 	Monument,
@@ -33,7 +32,7 @@ export enum TowerDifficultyIncrement {
 	Skyline = 0.95,
 }
 
-export interface Tower {
+export interface TowerInfo {
 	name: string;
 	title: string;
 	type: TowerType;
@@ -42,31 +41,34 @@ export interface Tower {
 	creatorUserIds: number[];
 }
 
-export interface TowerMechanicsInstance extends Instance {
-	Spawn: BasePart;
-	Endzones: Instance;
-}
-
 export interface TowerInstance extends Instance {
-	Mechanics: TowerMechanicsInstance;
+	Mechanics: Instance;
 	Obby: Instance;
-	Design: Instance;
+	Details: Instance;
 	Frame: Instance;
+	Spawn: BasePart;
 }
 
-export interface Area {
+export interface AreaInfo {
 	name: string;
 	actNumber?: number;
 	title: string;
 
 	playerRequires?: [];
 
-	towers?: Tower[];
+	towers?: TowerInfo[];
+}
+
+export interface AreaInstance extends Instance {
+	Mechanics: Instance;
+	Towers?: Instance;
+	Lobby: Instance;
+	Spawn: BasePart;
 }
 
 // ---
 
-export const AREAS: Area[] = [
+export const AREAS: AreaInfo[] = [
 	{
 		name: "A1MoltenHeart",
 		actNumber: 1,
@@ -90,16 +92,21 @@ export const AREAS: Area[] = [
 	},
 ];
 
-export const AREA_NAMES = new ReadonlySet(AREAS.map(({ name }) => name));
-export const TOWER_NAMES = new ReadonlySet(
-	Sift.Array.join(...AREAS.map(({ towers }) => (towers ? towers.map(({ name }) => name) : []))),
-);
+export const TOWERS = new Set<TowerInfo>();
+export const AREA_NAMES = new Set<string>();
+export const TOWER_NAMES = new Set<string>();
+export const NAME_TO_AREA = new Map<string, AreaInfo>();
+export const NAME_TO_TOWER = new Map<string, TowerInfo>();
 
-export const NAME_TO_AREA = new ReadonlyMap<string, Area>(AREAS.map((area) => [area.name, area]));
-export const NAME_TO_TOWER = new ReadonlyMap<string, Tower>(
-	// Wtf?
-	Sift.Array.join(...Sift.Array.flatten(AREAS.mapFiltered(({ towers }) => towers))).map((tower): [string, Tower] => [
-		tower.name,
-		tower,
-	]),
-);
+for (const area of AREAS) {
+	AREA_NAMES.add(area.name);
+	NAME_TO_AREA.set(area.name, area);
+
+	if (area.towers) {
+		for (const tower of area.towers) {
+			TOWERS.add(tower);
+			TOWER_NAMES.add(tower.name);
+			NAME_TO_TOWER.set(tower.name, tower);
+		}
+	}
+}

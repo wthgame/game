@@ -154,8 +154,10 @@ local Queue: any = {
 Queue.Reliable[2] = table.create(256)
 Queue.Reliable[4] = table.create(256)
 Queue.Reliable[5] = table.create(256)
-Queue.Reliable[6] = table.create(256)
 export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
+export type towers_TowerRunType = ("Standard" | "Practice")
+export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
+export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
 local function mechanics_WriteEVENT_damageSelfVariable(Value: number): ()
 	-- Allocate BLOCK: 5 bytes
 	local BLOCK_START = Allocate(5)
@@ -209,60 +211,54 @@ local function areas_WriteEVENT_confirmAreaLoaded(Value: nil): ()
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 3)
 end
 
-local function areas_WriteFUNCTION_DATA_requestTower(Value: string, InvocationIdentifier: number): ()
-	-- Allocate BLOCK: 4 bytes
-	local BLOCK_START = Allocate(4)
+local function towers_WriteFUNCTION_DATA_startTowerRun(Value: { towerType: ("Standard" | "Practice"), towerName: string }, InvocationIdentifier: number): ()
+	-- Allocate BLOCK: 5 bytes
+	local BLOCK_START = Allocate(5)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 4)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
-	local Length = #Value
-	buffer.writeu16(SendBuffer, BLOCK_START + 2, Length)
+	if Value.towerType == "Standard" then
+		buffer.writeu8(SendBuffer, BLOCK_START + 2, 0)
+	elseif Value.towerType == "Practice" then
+		buffer.writeu8(SendBuffer, BLOCK_START + 2, 1)
+	else
+		error(`Unexpected enum: {Value.towerType}, expected one of "Standard" or "Practice".`)
+	end
+	local Length = #Value.towerName
+	buffer.writeu16(SendBuffer, BLOCK_START + 3, Length)
 	Allocate(Length)
-	buffer.writestring(SendBuffer, SendOffset, Value, Length)
+	buffer.writestring(SendBuffer, SendOffset, Value.towerName, Length)
 end
 
-local function areas_ReadFUNCTION_RETURN_requestTower(): (Instance)
-	-- Read BLOCK: 1 bytes
-	local BLOCK_START = Read(1)
+local function towers_ReadFUNCTION_RETURN_startTowerRun(): ({ instance: Instance, mechanics: Instance }?)
+	-- Read BLOCK: 2 bytes
+	local BLOCK_START = Read(2)
 	local Success = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 	if Success ~= 1 then
 		error("Server encountered an error.")
 	end
-	RecieveInstanceCursor += 1
-	local Value = RecieveInstances[RecieveInstanceCursor]
-	if typeof(Value) ~= "Instance" then error(`Expected an Instance, got {typeof(Value)} instead.`) end
-	if not Value:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.ClassName}" instead.`) end
+	local Value
+	if buffer.readu8(RecieveBuffer, BLOCK_START + 1) == 1 then
+		Value = {} :: any
+		RecieveInstanceCursor += 1
+		Value.instance = RecieveInstances[RecieveInstanceCursor]
+		if typeof(Value.instance) ~= "Instance" then error(`Expected an Instance, got {typeof(Value.instance)} instead.`) end
+		if not Value.instance:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.instance.ClassName}" instead.`) end
+		RecieveInstanceCursor += 1
+		Value.mechanics = RecieveInstances[RecieveInstanceCursor]
+		if typeof(Value.mechanics) ~= "Instance" then error(`Expected an Instance, got {typeof(Value.mechanics)} instead.`) end
+		if not Value.mechanics:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.mechanics.ClassName}" instead.`) end
+	end
 	return Value
 end
 
-local function areas_WriteFUNCTION_DATA_requestDetailsInTower(Value: nil, InvocationIdentifier: number): ()
+local function towers_WriteFUNCTION_DATA_requestDetailsInTower(Value: nil, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 2 bytes
 	local BLOCK_START = Allocate(2)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 5)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 end
 
-local function areas_ReadFUNCTION_RETURN_requestDetailsInTower(): (Instance)
-	-- Read BLOCK: 1 bytes
-	local BLOCK_START = Read(1)
-	local Success = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
-	if Success ~= 1 then
-		error("Server encountered an error.")
-	end
-	RecieveInstanceCursor += 1
-	local Value = RecieveInstances[RecieveInstanceCursor]
-	if typeof(Value) ~= "Instance" then error(`Expected an Instance, got {typeof(Value)} instead.`) end
-	if not Value:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.ClassName}" instead.`) end
-	return Value
-end
-
-local function areas_WriteFUNCTION_DATA_requestObbyInTower(Value: nil, InvocationIdentifier: number): ()
-	-- Allocate BLOCK: 2 bytes
-	local BLOCK_START = Allocate(2)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 6)
-	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
-end
-
-local function areas_ReadFUNCTION_RETURN_requestObbyInTower(): (Instance)
+local function towers_ReadFUNCTION_RETURN_requestDetailsInTower(): (Instance)
 	-- Read BLOCK: 1 bytes
 	local BLOCK_START = Read(1)
 	local Success = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
@@ -294,13 +290,12 @@ if not RunService:IsRunning() then
 		confirmAreaLoaded = {
 			fire = NOOP
 		},
-		requestTower = {
+	},
+	towers = {
+		startTowerRun = {
 			invoke = NOOP
 		},
 		requestDetailsInTower = {
-			invoke = NOOP
-		},
-		requestObbyInTower = {
 			invoke = NOOP
 		},
 	},
@@ -365,7 +360,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 			if Calls[InvocationIdentifier] ~= nil then
 				local Success, ReturnValue = pcall(function ()
-					return areas_ReadFUNCTION_RETURN_requestTower()
+					return towers_ReadFUNCTION_RETURN_startTowerRun()
 				end)
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
@@ -376,18 +371,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 			if Calls[InvocationIdentifier] ~= nil then
 				local Success, ReturnValue = pcall(function ()
-					return areas_ReadFUNCTION_RETURN_requestDetailsInTower()
-				end)
-				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
-				Calls[InvocationIdentifier] = nil
-			end
-		elseif Index == 6 then
-			-- Read BLOCK: 1 bytes
-			local BLOCK_START = Read(1)
-			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
-			if Calls[InvocationIdentifier] ~= nil then
-				local Success, ReturnValue = pcall(function ()
-					return areas_ReadFUNCTION_RETURN_requestObbyInTower()
+					return towers_ReadFUNCTION_RETURN_requestDetailsInTower()
 				end)
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
@@ -452,22 +436,24 @@ local Returns = table.freeze({
 				areas_WriteEVENT_confirmAreaLoaded(Value)
 			end
 		},
-		requestTower = {
-			invoke = function(Value: string): any
+	},
+	towers = {
+		startTowerRun = {
+			invoke = function(Value: { towerType: ("Standard" | "Practice"), towerName: string }): any
 				return Promise.new(function (Resolve, Reject, OnCancel)
 					local InvocationIdentifier = Invoke()
 					if Calls[InvocationIdentifier] ~= nil then
 						Invocations -= 1
 						error("More than 256 calls are awaiting a response, this packet has been dropped.")
 					end
-					areas_WriteFUNCTION_DATA_requestTower(Value, InvocationIdentifier)
+					towers_WriteFUNCTION_DATA_startTowerRun(Value, InvocationIdentifier)
 					Calls[InvocationIdentifier] = coroutine.running()
 					OnCancel(function ()
 						Calls[InvocationIdentifier] = nil
 					end)
-					local Success, ReturnValue: Instance = coroutine.yield()
+					local Success, ReturnValue: { instance: Instance, mechanics: Instance }? = coroutine.yield()
 					if Success ~= true then
-						Reject("There was an exception while processing \"requestTower\".")
+						Reject("There was an exception while processing \"startTowerRun\".")
 						return 
 					end
 					Resolve(ReturnValue)
@@ -482,7 +468,7 @@ local Returns = table.freeze({
 						Invocations -= 1
 						error("More than 256 calls are awaiting a response, this packet has been dropped.")
 					end
-					areas_WriteFUNCTION_DATA_requestDetailsInTower(Value, InvocationIdentifier)
+					towers_WriteFUNCTION_DATA_requestDetailsInTower(Value, InvocationIdentifier)
 					Calls[InvocationIdentifier] = coroutine.running()
 					OnCancel(function ()
 						Calls[InvocationIdentifier] = nil
@@ -490,28 +476,6 @@ local Returns = table.freeze({
 					local Success, ReturnValue: Instance = coroutine.yield()
 					if Success ~= true then
 						Reject("There was an exception while processing \"requestDetailsInTower\".")
-						return 
-					end
-					Resolve(ReturnValue)
-				end)
-			end
-		},
-		requestObbyInTower = {
-			invoke = function(Value: nil): any
-				return Promise.new(function (Resolve, Reject, OnCancel)
-					local InvocationIdentifier = Invoke()
-					if Calls[InvocationIdentifier] ~= nil then
-						Invocations -= 1
-						error("More than 256 calls are awaiting a response, this packet has been dropped.")
-					end
-					areas_WriteFUNCTION_DATA_requestObbyInTower(Value, InvocationIdentifier)
-					Calls[InvocationIdentifier] = coroutine.running()
-					OnCancel(function ()
-						Calls[InvocationIdentifier] = nil
-					end)
-					local Success, ReturnValue: Instance = coroutine.yield()
-					if Success ~= true then
-						Reject("There was an exception while processing \"requestObbyInTower\".")
 						return 
 					end
 					Resolve(ReturnValue)

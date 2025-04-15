@@ -10,13 +10,13 @@ import { Text, TextStyle } from "client/ui/components/Text";
 import { TriangularButton } from "client/ui/components/TriangularButton";
 import { palette } from "client/ui/palette";
 import { px } from "client/ui/px";
-import { Area, AREAS } from "shared/constants/game";
+import { AreaInfo, AREAS } from "shared/areas";
 import { trace } from "shared/log";
 import { MechanicController } from "./mechanics";
 
 export interface AreaViewProps {
-	areas: Derivable<Area[]>;
-	onAreaSelected: (area: Area) => void;
+	areas: Derivable<AreaInfo[]>;
+	onAreaSelected: (area: AreaInfo) => void;
 }
 
 export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
@@ -68,7 +68,7 @@ export class WorldController implements OnStart {
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
-	loadArea(area: Area) {
+	loadArea(area: AreaInfo) {
 		if (this.isLoadingArea) return;
 		this.isLoadingArea = true;
 
@@ -76,14 +76,20 @@ export class WorldController implements OnStart {
 
 		const inst = areas.loadArea.invoke(area.name).expect();
 
+		trace("Got area");
+
+		trace("Cloning");
 		const clone = inst.Clone();
+		trace("Cloned");
 		clone.Parent = Workspace;
 
 		inst.Destroy();
 
 		const trove = new Trove();
 
+		trace("Loading mechanics");
 		this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
+		trace("Finished loading mechanics");
 
 		this.isLoaded(true);
 		this.isLoadingArea = false;

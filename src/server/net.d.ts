@@ -18,13 +18,15 @@ export declare namespace areas {
 	export const confirmAreaLoaded: {
 		on: (Listener: (Player: Player, Value: void) => void) => (() => void)
 	}
-	export const requestTower: {
-		on: (Listener: (Player: Player, Value: string) => Instance) => void
+}
+export declare namespace towers {
+	type TowerRunType = "Standard" | "Practice"
+	type StartTowerRun = { towerType: "Standard" | "Practice", towerName: string }
+	type StartTowerRunResult = { instance: Instance, mechanics: Instance }
+	export const startTowerRun: {
+		on: (Listener: (Player: Player, Value: { towerType: "Standard" | "Practice", towerName: string }) => { instance: Instance, mechanics: Instance } | undefined) => void
 	}
 	export const requestDetailsInTower: {
-		on: (Listener: (Player: Player, Value: void) => Instance) => void
-	}
-	export const requestObbyInTower: {
 		on: (Listener: (Player: Player, Value: void) => Instance) => void
 	}
 }
