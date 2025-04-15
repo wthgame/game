@@ -1,6 +1,6 @@
 import { Service } from "@flamework/core";
-import { Blink } from "server/decorators";
 import { mechanics } from "server/net";
+import { Blink } from "shared/decorators";
 import { trace } from "shared/log";
 
 export enum DamageType {

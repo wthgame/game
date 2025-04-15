@@ -14,17 +14,15 @@ const DEFAULT_BLINK_FUNCTION_PROPS: BlinkFunctionProps = {
 /** @metadata reflect identifier flamework:parameters */
 export function Blink<Args extends unknown[] = unknown[], Returns = unknown>(
 	callback: {
-		on: (callback: (player: Player, ...args: Args) => Returns) => void;
+		on: (callback: (...args: Args) => Returns) => void;
 	},
 	{ ratelimit, restrictedToDevelopers }: BlinkFunctionProps = DEFAULT_BLINK_FUNCTION_PROPS,
 ) {
 	return (
 		ctor: object,
 		_: string,
-		descriptor: TypedPropertyDescriptor<(this: unknown, player: Player, ...args: Args) => Returns>,
+		descriptor: TypedPropertyDescriptor<(this: unknown, ...args: Args) => Returns>,
 	) => {
-		onFlameworkIgnited(() =>
-			callback.on((player: Player, ...args: Args) => callMethodOnDependency(ctor, descriptor, player, ...args)),
-		);
+		onFlameworkIgnited(() => callback.on((...args: Args) => callMethodOnDependency(ctor, descriptor, ...args)));
 	};
 }

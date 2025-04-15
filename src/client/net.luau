@@ -154,6 +154,8 @@ local Queue: any = {
 Queue.Reliable[2] = table.create(256)
 Queue.Reliable[4] = table.create(256)
 Queue.Reliable[5] = table.create(256)
+Events.Unreliable[0] = {}
+Queue.Unreliable[0] = table.create(256)
 export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
@@ -272,6 +274,13 @@ local function towers_ReadFUNCTION_RETURN_requestDetailsInTower(): (Instance)
 	return Value
 end
 
+local function towers_ReadEVENT_syncElapsedTime(): (number)
+	-- Read BLOCK: 4 bytes
+	local BLOCK_START = Read(4)
+	local Value = buffer.readf32(RecieveBuffer, BLOCK_START + 0)
+	return Value
+end
+
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
@@ -297,6 +306,9 @@ if not RunService:IsRunning() then
 		},
 		requestDetailsInTower = {
 			invoke = NOOP
+		},
+		syncElapsedTime = {
+			on = NOOP
 		},
 	},
 	})
@@ -389,6 +401,12 @@ Unreliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 		-- Read BLOCK: 1 bytes
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
+		if Index == 0 then
+			local Value: number = towers_ReadEVENT_syncElapsedTime()
+			for _, Listener in Events.Unreliable[0] do
+				task.spawn(Listener, Value)
+			end
+		end
 	end
 end)
 
@@ -480,6 +498,14 @@ local Returns = table.freeze({
 					end
 					Resolve(ReturnValue)
 				end)
+			end
+		},
+		syncElapsedTime = {
+			on = function(Listener: (Value: number) -> ()): () -> ()
+				table.insert(Events.Unreliable[0], Listener)
+				return function (): ()
+					table.remove(Events.Unreliable[0], table.find(Events.Unreliable[0], Listener))
+				end
 			end
 		},
 	},

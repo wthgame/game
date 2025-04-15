@@ -29,4 +29,10 @@ export declare namespace towers {
 	export const requestDetailsInTower: {
 		on: (Listener: (Player: Player, Value: void) => Instance) => void
 	}
+	export const syncElapsedTime: {
+		fire: (Player: Player, Value: number) => void
+		fireAll: (Value: number) => void
+		fireExcept: (Except: Player, Value: number) => void
+		fireList: (List: Player[], Value: number) => void
+	}
 }

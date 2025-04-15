@@ -254,6 +254,13 @@ local function towers_WriteFUNCTION_RETURN_requestDetailsInTower(Value: Instance
 	table.insert(SendInstances, Value or Null)
 end
 
+local function towers_WriteEVENT_syncElapsedTime(Value: number): ()
+	-- Allocate BLOCK: 5 bytes
+	local BLOCK_START = Allocate(5)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 0)
+	buffer.writef32(SendBuffer, BLOCK_START + 1, Value)
+end
+
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
@@ -279,6 +286,12 @@ if not RunService:IsRunning() then
 		},
 		requestDetailsInTower = {
 			on = NOOP
+		},
+		syncElapsedTime = {
+			fire = NOOP,
+			fireAll = NOOP,
+			fireList = NOOP,
+			fireExcept = NOOP
 		},
 	},
 	})
@@ -557,6 +570,43 @@ local Returns = table.freeze({
 				end
 			end)
 		end
+		},
+		syncElapsedTime = {
+			fire = function(Player: Player, Value: number): ()
+				Load()
+				towers_WriteEVENT_syncElapsedTime(Value)
+				local Buffer = buffer.create(SendCursor)
+				buffer.copy(Buffer, 0, SendBuffer, 0, SendCursor)
+				Unreliable:FireClient(Player, Buffer, SendInstances)
+			end,
+			fireAll = function(Value: number): ()
+				Load()
+				towers_WriteEVENT_syncElapsedTime(Value)
+				local Buffer = buffer.create(SendCursor)
+				buffer.copy(Buffer, 0, SendBuffer, 0, SendCursor)
+				Unreliable:FireAllClients(Buffer, SendInstances)
+			end,
+			fireList = function(List: {Player}, Value: number): ()
+				Load()
+				towers_WriteEVENT_syncElapsedTime(Value)
+				local Buffer = buffer.create(SendCursor)
+				buffer.copy(Buffer, 0, SendBuffer, 0, SendCursor)
+				for _, Player in List do
+					Unreliable:FireClient(Player, Buffer, SendInstances)
+				end
+			end,
+			fireExcept = function(Except: Player, Value: number): ()
+				Load()
+				towers_WriteEVENT_syncElapsedTime(Value)
+				local Buffer = buffer.create(SendCursor)
+				buffer.copy(Buffer, 0, SendBuffer, 0, SendCursor)
+				for _, Player in Players:GetPlayers() do
+					if Player == Except then
+						continue
+					end
+					Unreliable:FireClient(Player, Buffer, SendInstances)
+				end
+			end,
 		},
 	},
 })

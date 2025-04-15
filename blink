@@ -66,4 +66,11 @@ scope towers {
         yield: Promise,
         return: Instance
     }
+
+    event syncElapsedTime {
+        from: Server,
+        type: Unreliable,
+        call: ManyAsync,
+        data: f32
+    }
 }

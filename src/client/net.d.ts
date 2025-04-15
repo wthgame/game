@@ -29,4 +29,7 @@ export declare namespace towers {
 	export const requestDetailsInTower: {
 		invoke: (Value: void) => Promise<Instance>
 	}
+	export const syncElapsedTime: {
+		on: (Listener: (Value: number) => void) => (() => void)
+	}
 }

@@ -1,6 +1,6 @@
-import { Service } from "@flamework/core";
-import { Blink } from "server/decorators";
+import { OnTick, Service } from "@flamework/core";
 import { towers } from "server/net";
+import { Blink } from "shared/decorators";
 import { trace, warn } from "shared/log";
 import { StartTowerRun, StartTowerRunResult } from "shared/types";
 import { PlayerService } from "./PlayerService";
@@ -9,11 +9,19 @@ import { TowerService } from "./TowerService";
 const CONFIRM_TOWER_LOADED_TIMEOUT = 5;
 
 @Service()
-export class TowerRunService {
+export class TowerRunService implements OnTick {
 	constructor(
 		private towerService: TowerService,
 		private playerService: PlayerService,
 	) {}
+
+	onTick(): void {
+		const now = os.clock();
+		for (const [player, { runStartedTime }] of pairs(this.playerService.infos)) {
+			if (!runStartedTime) continue;
+			towers.syncElapsedTime.fire(player, now - runStartedTime);
+		}
+	}
 
 	@Blink(towers.startTowerRun)
 	startTowerRun(player: Player, unknownRunRequest: unknown) {
