@@ -6,8 +6,8 @@ import { Trove } from "@rbxts/trove";
 import { towers } from "client/net";
 import { Blink } from "shared/decorators";
 import { trace } from "shared/log";
-import { MechanicController } from "./mechanics";
-import { addMechanicBinding } from "./mechanics/bindings";
+import { MechanicController } from "./MechanicController";
+import { addMechanicBinding } from "./MechanicController/bindings";
 
 @Controller()
 export class TowersController implements OnInit, OnTick {
@@ -27,7 +27,7 @@ export class TowersController implements OnInit, OnTick {
 	}
 
 	onInit(): void {
-		addMechanicBinding("TowersController.promptToLoadTower", (name) => {
+		addMechanicBinding("TowerRunController.promptToStartNewTowerRun", (name) => {
 			this.promptToLoadTower(ty.String.CastOrError(name));
 		});
 	}

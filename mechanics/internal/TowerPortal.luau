@@ -35,7 +35,7 @@ function mech:init(wth)
 
 			local name = wth.world:get(id, TowerName)
 			if name then
-				utils.promptToLoadTower(name)
+				utils.promptToStartNewTowerRun(name)
 			end
 		end))
 

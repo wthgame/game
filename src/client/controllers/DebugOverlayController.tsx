@@ -1,14 +1,11 @@
 import { Controller, OnStart } from "@flamework/core";
-import Vide, { mount, read, source } from "@rbxts/vide";
+import { useEventListener } from "@rbxts/pretty-vide-utils";
 import { Players, RunService, Stats } from "@rbxts/services";
+import Vide, { mount, source } from "@rbxts/vide";
 import { DebugOverlay } from "client/ui/views/DebugOverlay";
 import { CODE_NAME, REAL_NAME, VERSION } from "shared/constants/common";
-import { useEventListener } from "@rbxts/pretty-vide-utils";
-import { MainViewController } from "./main-view";
-import { debug } from "shared/log";
-import { CharacterController } from "../character";
-import { MechanicController } from "../mechanics";
-import { useAtom } from "@rbxts/vide-charm";
+import { CharacterController } from "./CharacterController";
+import { MainViewController } from "./MainViewController";
 
 @Controller()
 export class DebugOverlayController implements OnStart {

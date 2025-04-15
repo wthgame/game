@@ -12,7 +12,7 @@ import { palette } from "client/ui/palette";
 import { px } from "client/ui/px";
 import { AreaInfo, AREAS } from "shared/areas";
 import { trace } from "shared/log";
-import { MechanicController } from "./mechanics";
+import { MechanicController } from "./MechanicController";
 
 export interface AreaViewProps {
 	areas: Derivable<AreaInfo[]>;
@@ -50,7 +50,7 @@ export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
 }
 
 @Controller()
-export class WorldController implements OnStart {
+export class AreaController implements OnStart {
 	isLoadingArea = false;
 	isLoaded = atom(false);
 

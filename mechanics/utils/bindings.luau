@@ -8,16 +8,16 @@ type Bindings = {
 local bindings = require(
 	ReplicatedStorage:WaitForChild("WTHClient")
 		:WaitForChild("controllers")
-		:WaitForChild("mechanics")
+		:WaitForChild("MechanicController")
 		:WaitForChild("bindings")
 )
 
-local function promptToLoadTower(name: string)
-	bindings.callMechanicBinding("TowersController.promptToLoadTower", name)
+local function promptToStartNewTowerRun(name: string)
+	bindings.callMechanicBinding("TowerRunController.promptToStartNewTowerRun", name)
 end
 
 return {
-	promptToLoadTower = promptToLoadTower,
+	promptToStartNewTowerRun = promptToStartNewTowerRun,
 
 	addMechanicBinding = bindings.addMechanicBinding,
 	callMechanicBinding = bindings.callMechanicBinding,

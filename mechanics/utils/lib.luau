@@ -52,7 +52,7 @@ return table.freeze({
 
 	assets = assets,
 
-	promptToLoadTower = bindings.promptToLoadTower,
+	promptToStartNewTowerRun = bindings.promptToStartNewTowerRun,
 
 	getMaybeCharacter = character.getMaybeCharacter,
 	waitForCharacter = character.waitForCharacter,
