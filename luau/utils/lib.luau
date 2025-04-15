@@ -8,6 +8,7 @@ local animation = require("./animation")
 local assets = require("./assets")
 local character = require("./character")
 local ecs = require("./ecs")
+local effects = require("./effects")
 local jecs = require("./packages/jecs")
 local t = require("./packages/t")
 local touch = require("./touch")
@@ -69,6 +70,8 @@ return table.freeze({
 
 	world = ecs.world,
 	collectSignal = ecs.collectSignal,
+
+	createRingOfFire = effects.createRingOfFire,
 
 	jecs = jecs,
 	t = t,

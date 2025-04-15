@@ -28,6 +28,15 @@ local function launch(trove: utils.Trove, part: BasePart, currentMaxForce: Vecto
 	velocity.Parent = part
 end
 
+local function emitRingOfFire(part: BasePart)
+	local ringOfFire = utils.createRingOfFire()
+	ringOfFire.Enabled = false
+	ringOfFire.Parent = part
+	ringOfFire:Emit(1)
+	task.wait(ringOfFire.Lifetime.Max)
+	ringOfFire:Destroy()
+end
+
 local isAllowedCFrameComponent = utils.t.literalList(ALLOWED_CFRAME_COMPONENTS :: any)
 
 local mech = {} :: utils.Mechanic
@@ -40,17 +49,19 @@ function mech:init(wth)
 	local MaxForce = wth:useAttribute("MaxForce", JumpPad, utils.t.numberPositive, math.huge)
 	local Vector = wth:useAttribute("Vector", JumpPad, isAllowedCFrameComponent, "UpVector")
 	local Cooldown = wth:useAttribute("Cooldown", JumpPad, utils.t.numberPositive, 0)
+	local UseRingOfFire = wth:useAttribute("UseRingOfFire", JumpPad, utils.t.boolean, true)
 	local PassCharacter = wth:useAttribute("PassCharacter", JumpPad, utils.t.boolean, true)
 
 	local padTroves: { [BasePart]: utils.Trove } = {}
 
-	local queryJumpPads = wth.world:query(JumpPad, Power, MaxForce, Vector, Cooldown, PassCharacter):cached()
+	local queryJumpPads =
+		wth.world:query(JumpPad, Power, MaxForce, Vector, Cooldown, UseRingOfFire, PassCharacter):cached()
 
 	local function checkJumpPads(_, trove: utils.Trove)
 		local character = utils.getMaybeCharacter()
 		local root = utils.getMaybeHumanoidRootPart()
 
-		for entity, pad, power, maxForce, vec, cooldown, passCharacter in queryJumpPads:iter() do
+		for entity, pad, power, maxForce, vec, cooldown, useRingOfFire, passCharacter in queryJumpPads:iter() do
 			local touchConfig: utils.TouchConfig = {
 				passLocalPlayerCharacter = passCharacter,
 			}
@@ -100,6 +111,9 @@ function mech:init(wth)
 							local padTrove = trove:extend()
 
 							launch(padTrove, root, currentMaxForce, faceVector, power)
+							if useRingOfFire then
+								task.spawn(emitRingOfFire, pad)
+							end
 
 							trove:add(RunService.PostSimulation:Once(function()
 								padTrove:destroy()
