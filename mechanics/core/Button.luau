@@ -49,6 +49,7 @@ function mech:init(wth)
 
 	local function activate(id: utils.Entity, button: BasePart, duration: number, offset: Vector3 | CFrame)
 		wth.world:add(id, Activated)
+		utils.playSoundFromGameAssets("button", button)
 
 		local originalCFrame = button.CFrame
 		-- local originalMaterial = button.Material
@@ -73,8 +74,12 @@ function mech:init(wth)
 	end
 
 	local function checkButtons()
+		print("upadting")
 		for id, button, cooldown, duration, offset in queryButtons:iter() do
-			if not utils.isCharacterTouchingPart(button) then
+			print("btn", button)
+			local a = utils.isCharacterTouchingPart(button)
+			print(a)
+			if not a then
 				continue
 			end
 

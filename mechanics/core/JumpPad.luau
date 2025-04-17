@@ -111,6 +111,8 @@ function mech:init(wth)
 							local padTrove = trove:extend()
 
 							launch(padTrove, root, currentMaxForce, faceVector, power)
+							utils.playSoundFromGameAssets("dash", pad)
+
 							if useRingOfFire then
 								task.spawn(emitRingOfFire, pad)
 							end

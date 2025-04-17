@@ -168,8 +168,8 @@ export class MechanicController implements OnInit {
 			instance: Instance,
 			{ check, component, mechanic }: MechanicTag<T>,
 		) {
+			print(check(instance));
 			if (check(instance)) {
-				print("adding instance", instance);
 				const entity = world.entity();
 				world.set(entity, component, instance);
 				mechanicsUsed.add(mechanic);
@@ -187,6 +187,7 @@ export class MechanicController implements OnInit {
 		const trackPromises = new Array<Promise<void>>();
 		for (const descendant of parent.GetDescendants()) {
 			trace(`Checking ${descendant.GetFullName()}`);
+			print(this.mechanicTags);
 			for (const [tag, component] of pairs(this.mechanicTags)) {
 				if (descendant.HasTag(tag)) {
 					trackPromises.push(tryTrackTaggedInstance(descendant, component));
@@ -203,7 +204,6 @@ export class MechanicController implements OnInit {
 		trove.add(
 			RunService.PostSimulation.Connect((dt) => {
 				for (const mechanic of mechanicsUsed) {
-					print("mechanic", mechanic);
 					for (const system of this.mechanicSystems.get(mechanic)!) {
 						system(dt, trove);
 					}

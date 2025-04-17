@@ -37,7 +37,8 @@ export interface TowerInfo {
 	title: string;
 	type: TowerType;
 	difficulty: number;
-	abbreviate?: boolean;
+	doNotAbbreviate?: true;
+	hidden?: boolean;
 	creatorUserIds: number[];
 }
 
@@ -74,6 +75,15 @@ export const AREAS: AreaInfo[] = [
 		actNumber: 1,
 		title: "Molten Heart",
 		towers: [
+			{
+				name: "Prologue",
+				title: "Prologue",
+				doNotAbbreviate: true,
+				hidden: true,
+				type: TowerType.Tower,
+				difficulty: TowerDifficulty.Easy + TowerDifficultyIncrement.Bottom,
+				creatorUserIds: [UserId.ImNotFireMan123],
+			},
 			{
 				name: "ToPaS",
 				title: "Tower of Push and Shove",

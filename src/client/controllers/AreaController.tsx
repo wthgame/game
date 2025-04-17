@@ -88,8 +88,7 @@ export class AreaController implements OnStart {
 		inst.Destroy();
 
 		// i have no fucking clue why ts not working ????
-		for (const _ of clone.GetDescendants()) {
-		}
+		task.wait(1);
 
 		const trove = new Trove();
 

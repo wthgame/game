@@ -54,4 +54,9 @@ export type TweenConfig = {
 	delayTime: number?,
 }
 
+export type PlaySoundConfig = {
+	speed: number?,
+	volume: number?,
+}
+
 return nil

@@ -6,6 +6,7 @@ local CullThrottle = require("./packages/cull-throttle")
 local Sift = require("./packages/sift")
 local animation = require("./animation")
 local assets = require("./assets")
+local audio = require("./audio")
 local bindings = require("./bindings")
 local character = require("./character")
 local color = require("./color")
@@ -20,6 +21,7 @@ local types = require("./types")
 export type Mechanic<Self = {}> = types.Mechanic<Self>
 export type TouchConfig = types.TouchConfig
 export type TweenConfig = types.TweenConfig
+export type PlaySoundConfig = types.PlaySoundConfig
 export type Character = types.Character
 
 export type Archetype = jecs.Archetype
@@ -52,6 +54,10 @@ return table.freeze({
 	tween = animation.tween,
 
 	assets = assets,
+
+	SOUND_ASSETS = audio.SOUND_ASSETS,
+	playSound = audio.playSound,
+	playSoundFromGameAssets = audio.playSoundFromGameAssets,
 
 	promptToStartNewTowerRun = bindings.promptToStartNewTowerRun,
 
