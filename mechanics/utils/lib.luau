@@ -8,6 +8,7 @@ local animation = require("./animation")
 local assets = require("./assets")
 local bindings = require("./bindings")
 local character = require("./character")
+local color = require("./color")
 local ecs = require("./ecs")
 local effects = require("./effects")
 local jecs = require("./packages/jecs")
@@ -65,6 +66,8 @@ return table.freeze({
 	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
 	isCharacterAlive = character.isCharacterAlive,
 
+	roundColor = color.roundColor,
+
 	isCharacterTouchingPart = touch.isCharacterTouchingPart,
 	isLocalPlayerCharacterTouchingPart = touch.isLocalPlayerCharacterTouchingPart,
 	isTouched = touch.isTouched,
@@ -75,6 +78,14 @@ return table.freeze({
 	collectSignal = ecs.collectSignal,
 
 	createRingOfFire = effects.createRingOfFire,
+
+	castCheck = function<T>(value: unknown, check: t.Check<T>): T?
+		if check(value) then
+			return value :: T
+		end
+
+		return nil
+	end,
 
 	jecs = jecs,
 	t = t,

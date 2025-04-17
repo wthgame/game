@@ -68,7 +68,7 @@ export class AreaController implements OnStart {
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
-	loadArea(area: AreaInfo) {
+	async loadArea(area: AreaInfo) {
 		if (this.isLoadingArea) return;
 		this.isLoadingArea = true;
 
@@ -82,13 +82,19 @@ export class AreaController implements OnStart {
 		const clone = inst.Clone();
 		trace("Cloned");
 		clone.Parent = Workspace;
+		print(clone);
+		print(clone.WaitForChild("Mechanics"));
 
 		inst.Destroy();
+
+		// i have no fucking clue why ts not working ????
+		for (const _ of clone.GetDescendants()) {
+		}
 
 		const trove = new Trove();
 
 		trace("Loading mechanics");
-		this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
+		await this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
 		trace("Finished loading mechanics");
 
 		this.isLoaded(true);

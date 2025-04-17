@@ -26,6 +26,7 @@ export function TriangularSurface({
 	anchorPoint,
 	size,
 	automaticSize,
+	sizeConstraint,
 
 	children,
 
@@ -48,6 +49,7 @@ export function TriangularSurface({
 			AnchorPoint={anchorPoint}
 			Size={size}
 			AutomaticSize={automaticSize}
+			SizeConstraint={sizeConstraint}
 			BackgroundTransparency={1}
 			Image={TRIANGULAR_SURFACE_IMAGE}
 			ImageColor3={color}
@@ -68,6 +70,7 @@ export function TriangularSurface({
 			AnchorPoint={anchorPoint}
 			Size={size}
 			AutomaticSize={automaticSize}
+			SizeConstraint={sizeConstraint}
 			BackgroundTransparency={1}
 			Image={TRIANGULAR_SURFACE_IMAGE}
 			ImageColor3={color}

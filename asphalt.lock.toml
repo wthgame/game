@@ -8,6 +8,14 @@ asset_id = 100707458059597
 hash = "bdcff0741347cf4f937ade7bf490d325e98875517109aec3c1680b2f2b68bef3"
 asset_id = 96192640005099
 
+[inputs.assets."assets/ui/halfBorderCircle.png"]
+hash = "01a51fcddf0026e068cba1951fa96ef3e76a83de45c04548734c0e4b646c0764"
+asset_id = 74729125733931
+
+[inputs.assets."assets/ui/quarterBorderCircle.png"]
+hash = "59bf4d63ddf97138568cd5dc97f152a936ca8cf19b3a6fa1985e097843b2b272"
+asset_id = 76594407156373
+
 [inputs.assets."assets/ui/rightTriangle.png"]
 hash = "7102ea5396fcc0720ff3163ce56d99653cb9763e16705e1b695c9260713c6310"
 asset_id = 75024981264700

@@ -14,7 +14,7 @@ export interface Tower {
 	spawn: TowerInstance["Spawn"];
 }
 
-const TOWERS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "Tower" }));
+// const TOWERS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "Tower" }));
 const TOWER_OBBY_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerObby" }));
 const TOWER_DETAILS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerDetails" }));
 const TOWER_MECHANICS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerMechanics" }));
@@ -85,7 +85,7 @@ export class TowerService {
 		towerInstance.Obby.Parent = TOWER_OBBY_SERVER_STORAGE.getValue();
 		towerInstance.Details.Parent = TOWER_DETAILS_SERVER_STORAGE.getValue();
 		towerInstance.Mechanics.Parent = TOWER_MECHANICS_SERVER_STORAGE.getValue();
-		towerInstance.Parent = TOWERS_SERVER_STORAGE.getValue();
+		// towerInstance.Parent = TOWERS_SERVER_STORAGE.getValue();
 
 		this.towers.add(tower);
 		this.infoToTower.set(info, tower);

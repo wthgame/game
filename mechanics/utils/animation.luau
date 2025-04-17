@@ -5,7 +5,7 @@
 local TweenService = game:GetService("TweenService")
 local types = require("./types")
 
-local function tween(instance: Instance, config: types.TweenConfig?, propertyTable: { [string]: unknown })
+local function tween(instance: Instance, propertyTable: { [string]: unknown }, config: types.TweenConfig?)
 	local config: types.TweenConfig = config or {}
 
 	local tweenInfo = TweenInfo.new(

@@ -169,6 +169,7 @@ export class MechanicController implements OnInit {
 			{ check, component, mechanic }: MechanicTag<T>,
 		) {
 			if (check(instance)) {
+				print("adding instance", instance);
 				const entity = world.entity();
 				world.set(entity, component, instance);
 				mechanicsUsed.add(mechanic);
@@ -202,6 +203,7 @@ export class MechanicController implements OnInit {
 		trove.add(
 			RunService.PostSimulation.Connect((dt) => {
 				for (const mechanic of mechanicsUsed) {
+					print("mechanic", mechanic);
 					for (const system of this.mechanicSystems.get(mechanic)!) {
 						system(dt, trove);
 					}

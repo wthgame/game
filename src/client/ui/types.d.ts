@@ -15,4 +15,5 @@ export interface LayoutProps {
 	anchorPoint?: Derivable<Vector2>;
 	size?: Derivable<UDim2>;
 	automaticSize?: Derivable<Enum.AutomaticSize>;
+	sizeConstraint?: Derivable<Enum.SizeConstraint>;
 }

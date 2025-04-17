@@ -33,7 +33,7 @@ export type Character = Model & {
 
 export type WTH = {
 	world: jecs.World,
-	useTag: (self: WTH, tag: string, check: Typechecker<any>) -> any,
+	useTag: (self: WTH, tag: string, check: Typechecker<any>?) -> any,
 	useAttribute: <T>(
 		self: WTH,
 		attributeName: string,

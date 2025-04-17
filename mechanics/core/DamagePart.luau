@@ -10,7 +10,7 @@ type DamageType = number | "Normal" | "Heavy" | "Lethal"
 
 local mech = {} :: utils.Mechanic
 mech.type = "Mechanic"
-mech.name = "DamageParts"
+mech.name = "DamagePart"
 
 function mech:init(wth)
 	local DamagePart: utils.Entity<BasePart> = wth:useTag("DamagePart", utils.t.instanceIsA("BasePart"))
