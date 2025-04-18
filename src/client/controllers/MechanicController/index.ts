@@ -29,25 +29,25 @@ const Mechanic = ty
 	.Nicknamed("Mechanic")
 	.Retype<Mechanic>();
 
-export const AttributeValue = ty.String.Or(ty.Boolean)
-	.Or(ty.Number)
-	.Or(ty.Typeof("UDim").Retype<UDim>())
-	.Or(ty.Typeof("UDim2").Retype<UDim2>())
-	.Or(ty.Typeof("BrickColor").Retype<BrickColor>())
-	.Or(ty.Typeof("Color3").Retype<Color3>())
-	.Or(ty.Typeof("Vector2").Retype<Vector2>())
-	.Or(ty.Typeof("Vector3").Retype<Vector3>())
-	.Or(ty.Typeof("EnumItem").Retype<EnumItem>())
-	.Or(ty.Typeof("NumberSequence").Retype<NumberSequence>())
-	.Or(ty.Typeof("ColorSequence").Retype<ColorSequence>())
-	.Or(ty.Typeof("NumberRange").Retype<NumberRange>())
-	.Or(ty.Typeof("Rect").Retype<Rect>())
-	.Or(ty.Typeof("Font").Retype<Font>())
-	.Or(ty.Typeof("CFrame").Retype<CFrame>())
-	.Retype<AttributeValue>();
+// export const AttributeValue = ty.String.Or(ty.Boolean)
+// 	.Or(ty.Number)
+// 	.Or(ty.Typeof("UDim").Retype<UDim>())
+// 	.Or(ty.Typeof("UDim2").Retype<UDim2>())
+// 	.Or(ty.Typeof("BrickColor").Retype<BrickColor>())
+// 	.Or(ty.Typeof("Color3").Retype<Color3>())
+// 	.Or(ty.Typeof("Vector2").Retype<Vector2>())
+// 	.Or(ty.Typeof("Vector3").Retype<Vector3>())
+// 	.Or(ty.Typeof("EnumItem").Retype<EnumItem>())
+// 	.Or(ty.Typeof("NumberSequence").Retype<NumberSequence>())
+// 	.Or(ty.Typeof("ColorSequence").Retype<ColorSequence>())
+// 	.Or(ty.Typeof("NumberRange").Retype<NumberRange>())
+// 	.Or(ty.Typeof("Rect").Retype<Rect>())
+// 	.Or(ty.Typeof("Font").Retype<Font>())
+// 	.Or(ty.Typeof("CFrame").Retype<CFrame>())
+// 	.Retype<AttributeValue>();
 
-type InstanceAttributes = Map<string, AttributeValue>;
-const InstanceAttributes = ty.MapOf(ty.String, AttributeValue);
+// type InstanceAttributes = Map<string, AttributeValue>;
+// const InstanceAttributes = ty.MapOf(ty.String, AttributeValue);
 
 interface MechanicTag<T extends Instance> {
 	tag: string;
@@ -96,7 +96,7 @@ export class WTH {
 	): Entity<T> {
 		ty.String.CastOrError(attributeName);
 		ty.Function.CastOrError(check);
-		AttributeValue.CastOrError(defaultValue);
+		// AttributeValue.CastOrError(defaultValue);
 
 		const component = world.component<T>();
 		world.set(component, Name, attributeName);
@@ -168,7 +168,6 @@ export class MechanicController implements OnInit {
 			instance: Instance,
 			{ check, component, mechanic }: MechanicTag<T>,
 		) {
-			print(check(instance));
 			if (check(instance)) {
 				const entity = world.entity();
 				world.set(entity, component, instance);
@@ -186,8 +185,7 @@ export class MechanicController implements OnInit {
 
 		const trackPromises = new Array<Promise<void>>();
 		for (const descendant of parent.GetDescendants()) {
-			trace(`Checking ${descendant.GetFullName()}`);
-			print(this.mechanicTags);
+			// trace(`Checking ${descendant.GetFullName()}`);
 			for (const [tag, component] of pairs(this.mechanicTags)) {
 				if (descendant.HasTag(tag)) {
 					trackPromises.push(tryTrackTaggedInstance(descendant, component));

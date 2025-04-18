@@ -9,6 +9,8 @@ export type TouchConfig = lib.TouchConfig
 export type TweenConfig = lib.TweenConfig
 export type PlaySoundConfig = lib.PlaySoundConfig
 export type Character = lib.Character
+export type Set<T> = lib.Set<T>
+export type Map<K, V> = lib.Map<K, V>
 
 export type Archetype = lib.Archetype
 export type Archetypes = lib.Archetypes

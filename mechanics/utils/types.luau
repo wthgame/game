@@ -5,6 +5,9 @@ local trove = require("./packages/trove")
 type Trove = trove.Trove
 type Cleanup = () -> ()
 
+export type Set<T> = { [T]: true }
+export type Map<K, V> = { [K]: V }
+
 export type Typechecker<T> = t.Check<T>
 
 export type Mechanic<Self> = Self & {

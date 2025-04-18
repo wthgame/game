@@ -23,6 +23,8 @@ export type TouchConfig = types.TouchConfig
 export type TweenConfig = types.TweenConfig
 export type PlaySoundConfig = types.PlaySoundConfig
 export type Character = types.Character
+export type Set<T> = types.Set<T>
+export type Map<K, V> = types.Map<K, V>
 
 export type Archetype = jecs.Archetype
 export type Archetypes = jecs.Archetypes
