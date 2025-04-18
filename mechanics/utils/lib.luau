@@ -10,7 +10,7 @@ local audio = require("./audio")
 local bindings = require("./bindings")
 local character = require("./character")
 local color = require("./color")
-local ecs = require("./ecs")
+-- local ecs = require("./ecs")
 local effects = require("./effects")
 local jecs = require("./packages/jecs")
 local t = require("./packages/t")
@@ -80,8 +80,8 @@ return table.freeze({
 	isPartTouched = touch.isPartTouched,
 	getPartTouched = touch.getPartTouched,
 
-	world = ecs.world,
-	collectSignal = ecs.collectSignal,
+	-- world = ecs.world,
+	-- collectSignal = ecs.collectSignal,
 
 	createRingOfFire = effects.createRingOfFire,
 

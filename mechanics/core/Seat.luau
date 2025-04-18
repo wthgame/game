@@ -21,7 +21,7 @@ function mech:init(wth)
 	local Cooldown = wth:useAttribute("Cooldown", Seat, utils.t.numberPositive, 0)
 	local JumpOnDismount = wth:useAttribute("JumpOnDismount", Seat, utils.t.boolean, true)
 	local Visualize = wth:useAttribute("Visualize", Seat, utils.t.boolean, true)
-	local SeatVisualizer: utils.Entity<SeatVisualizer> = utils.world:component()
+	local SeatVisualizer: utils.Entity<SeatVisualizer> = wth.world:component()
 
 	local isSeated = false
 	local weld: WeldConstraint
@@ -32,7 +32,7 @@ function mech:init(wth)
 
 	local function updateSeatVisualizers(_, trove: utils.Trove)
 		for entity, seat, visualize in querySeatVisualizers:iter() do
-			local seatVisualizer = utils.world:get(entity, SeatVisualizer)
+			local seatVisualizer = wth.world:get(entity, SeatVisualizer)
 
 			if visualize then
 				local halfSeatHeight = seat.Size.Y / 2
@@ -72,7 +72,7 @@ function mech:init(wth)
 					attachment0.Parent = seat
 					attachment1.Parent = seat
 
-					utils.world:set(entity, SeatVisualizer, {
+					wth.world:set(entity, SeatVisualizer, {
 						attachment0 = attachment0,
 						attachment1 = attachment1,
 						beam = beam,
@@ -91,7 +91,7 @@ function mech:init(wth)
 					seatVisualizer.attachment1:Destroy()
 				end
 
-				utils.world:remove(entity, SeatVisualizer)
+				wth.world:remove(entity, SeatVisualizer)
 			end
 		end
 	end
