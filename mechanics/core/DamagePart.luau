@@ -26,7 +26,7 @@ function mech:init(wth)
 	local function checkDamagePartChildren()
 		for entity, part, amount in queryDamagePart:iter() do
 			if utils.isCharacterTouchingPart(part) then
-				utils.playSoundFromGameAssets("heartbeat", part)
+				-- utils.playSoundFromGameAssets("heartbeat", part)
 
 				if typeof(amount) == "string" then
 					net.mechanics.damageSelf.fire(amount :: never)

@@ -1,17 +1,11 @@
 declare const assets: {
 	sounds: {
 		button: string
-		conEnter: string
-		conExit: string
 		dash: string
-		doubleJump: string
 		heartbeat: string
-		jump: string
 		speed: string
 		teleport: string
 		tick: string
-		timeCannotBeStopped: string
-		victory: string
 		vineGrab: string
 	}
 	ui: {

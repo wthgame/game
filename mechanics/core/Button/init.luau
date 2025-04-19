@@ -11,6 +11,8 @@ local getTransparency = require(script:WaitForChild("getTransparency"))
 local updateColor, spawnOnceColorUpdated = colorUpdates.updateColor, colorUpdates.spawnOnceColorUpdated
 local utils = require(ReplicatedStorage:WaitForChild("Utils"))
 
+type PressMode = "TouchPress" | "WhileTouching" | "ClickDetector" | ""
+
 local PRESS_TWEEN_CONFIG: utils.TweenConfig = { time = 0.3, easingStyle = Enum.EasingStyle.Quart }
 local VISIBILITY_TWEEN_CONFIG: utils.TweenConfig = { time = 0.3, easingStyle = Enum.EasingStyle.Quart }
 
@@ -175,6 +177,8 @@ function mech:init(wth)
 					break
 				end
 			end
+
+			instance:SetAttribute("Enabled", enabled)
 
 			wth.world:add(be, Updated)
 			spawnOnceColorUpdated(roundedColor, function()

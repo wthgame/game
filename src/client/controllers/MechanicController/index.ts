@@ -201,11 +201,17 @@ export class MechanicController implements OnInit {
 
 		trove.add(
 			RunService.PostSimulation.Connect((dt) => {
+				debug.profilebegin("Mechanics Systems");
 				for (const mechanic of mechanicsUsed) {
-					for (const system of this.mechanicSystems.get(mechanic)!) {
-						system(dt, trove);
-					}
+					task.spawn((mechanic) => {
+						debug.profilebegin(mechanic.name);
+						for (const system of this.mechanicSystems.get(mechanic)!) {
+							system(dt, trove);
+						}
+						debug.profileend();
+					}, mechanic);
 				}
+				debug.profileend();
 			}),
 		);
 	}

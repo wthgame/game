@@ -1,5 +1,33 @@
 version = 1
 
+[inputs.assets."assets/sounds/button.mp3"]
+hash = "2b293bd53d26f21474598971951bfe07bef5a80ac8afddae50e8c0baaee90498"
+asset_id = 70429366019888
+
+[inputs.assets."assets/sounds/dash.mp3"]
+hash = "1c46e955eb4c971c45b01b584c55dabb84294ac41e474e44e190c7740ed5e56c"
+asset_id = 105853625389686
+
+[inputs.assets."assets/sounds/heartbeat.mp3"]
+hash = "b388e54faa176d6e995b5c3caf341b77da1619c6f9d9aa27497175015bc88544"
+asset_id = 130009554611660
+
+[inputs.assets."assets/sounds/speed.mp3"]
+hash = "f6c32dca11867db8466e1f75d2d68c839a7cc7877fe4e4ecd918126149b97a71"
+asset_id = 123939115254106
+
+[inputs.assets."assets/sounds/teleport.mp3"]
+hash = "b3f31c91d47e6062f7d20638459c0fc4720abc7e0e2fcd5f6c5382124dda1694"
+asset_id = 139995546207178
+
+[inputs.assets."assets/sounds/tick.mp3"]
+hash = "7874602461af6172fddc706162a563fa3a0823d106f994936dc38b8b77bcae5b"
+asset_id = 119430128003927
+
+[inputs.assets."assets/sounds/vineGrab.mp3"]
+hash = "7ec66463ecaa77526430b80f2390ef3725629cbd987def2ada8f8a802650fd33"
+asset_id = 119738595679060
+
 [inputs.assets."assets/ui/borderGlow.png"]
 hash = "42dbfbb1b89728d2b8d34fd175b81bbe8bfeb9efad6dce6540eeb03f175b26fe"
 asset_id = 100707458059597
