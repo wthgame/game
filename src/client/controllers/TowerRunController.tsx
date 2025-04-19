@@ -1,6 +1,5 @@
 import { Controller, OnInit, OnTick } from "@flamework/core";
 import { atom } from "@rbxts/charm";
-import ty from "@rbxts/libopen-ty";
 import { Workspace } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
 import { towers } from "client/net";
@@ -8,7 +7,6 @@ import { NAME_TO_TOWER, TowerInfo } from "shared/areas";
 import { Blink } from "shared/decorators";
 import { trace } from "shared/log";
 import { MechanicController } from "./MechanicController";
-import { addMechanicBinding } from "./MechanicController/bindings";
 
 @Controller()
 export class TowerRunController implements OnInit, OnTick {
@@ -29,9 +27,9 @@ export class TowerRunController implements OnInit, OnTick {
 	}
 
 	onInit(): void {
-		addMechanicBinding("TowerRunController.promptToStartNewTowerRun", (name) => {
-			this.promptToLoadTower(ty.String.CastOrError(name));
-		});
+		// addMechanicBinding("TowerRunController.promptToStartNewTowerRun", (name) => {
+		// 	this.promptToLoadTower(ty.String.CastOrError(name));
+		// });
 	}
 
 	async promptToLoadTower(towerName: string): Promise<void> {
