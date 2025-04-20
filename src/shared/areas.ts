@@ -3,6 +3,7 @@ import { UserId } from "./constants/userids";
 export enum TowerType {
 	Monument,
 	Tower,
+	Reflection,
 }
 
 export enum TowerDifficulty {
@@ -144,6 +145,15 @@ export const AREAS: AreaInfo[] = [
 				title: "Monument of Death Valley",
 				type: TowerType.Monument,
 				difficulty: TowerDifficulty.Remorseless + TowerDifficultyIncrement.Low,
+				creatorUserIds: [UserId.ImNotFireMan123],
+			},
+			{
+				name: "A1R",
+				title: "Molten Heart's Reflection",
+				doNotAbbreviate: true,
+				hidden: true,
+				type: TowerType.Reflection,
+				difficulty: TowerDifficulty.Insane + TowerDifficultyIncrement.Mid,
 				creatorUserIds: [UserId.ImNotFireMan123],
 			},
 		],
