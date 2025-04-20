@@ -8,6 +8,7 @@ local audio = require("./audio")
 local bindings = require("./bindings")
 local character = require("./character")
 local color = require("./color")
+local physics = require("./physics")
 local t = require("./packages/t")
 local trove = require("./packages/trove")
 local types = require("./types")
@@ -44,6 +45,9 @@ local utils = table.freeze({
 	isCharacter = character.isCharacter,
 	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
 	isLocalCharacterAlive = character.isLocalCharacterAlive,
+
+	weld = physics.weld,
+	populateConstraintAttachments = physics.populateConstraintAttachments,
 
 	t = t,
 	Trove = trove.Trove,
