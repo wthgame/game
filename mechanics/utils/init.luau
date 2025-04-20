@@ -1,3 +1,7 @@
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local utils = require(script.lib)
 
 export type Map<K, V> = utils.Map<K, V>

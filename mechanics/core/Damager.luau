@@ -1,17 +1,21 @@
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local net = require(ReplicatedStorage:WaitForChild("WTHClient"):WaitForChild("net"))
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 type Damage = number | "Normal" | "Heavy" | "Lethal"
-type DamagePartAttributes = {
+type DamagerAttributes = {
 	Damage: Damage,
 }
 
-local function initDamageParts(wth: utils.WTH)
-	local DamagePart = {
+local function init(wth: utils.WTH)
+	local Damager = {
 		type = "Mechanic",
 		minimumKitVersion = "1",
-		instanceTag = "DamagePart",
+		instanceTag = "Damager",
 		instanceCheck = utils.t.instanceIsA("BasePart"),
 		defaultAttributes = {
 			Damage = "Normal",
@@ -19,9 +23,9 @@ local function initDamageParts(wth: utils.WTH)
 		attributeChecks = {
 			Damage = utils.t.union(utils.t.numberPositive, utils.t.literal("Normal", "Heavy", "Lethal")),
 		},
-	} :: utils.Mechanic<BasePart, DamagePartAttributes>
+	} :: utils.Mechanic<BasePart, DamagerAttributes>
 
-	function DamagePart:loaded(trove, instance, kit)
+	function Damager:loaded(trove, instance, kit)
 		trove:add(instance.Touched:Connect(function(toucher)
 			if utils.isFromMaybeLocalCharacter(toucher) then
 				local damage = self:attribute(instance, "Damage")
@@ -34,7 +38,7 @@ local function initDamageParts(wth: utils.WTH)
 		end))
 	end
 
-	wth.registerMechanic(DamagePart)
+	wth.registerMechanic(Damager)
 end
 
-return initDamageParts
+return init

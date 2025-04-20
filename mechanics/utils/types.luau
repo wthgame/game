@@ -1,5 +1,7 @@
 --!strict
 
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local t = require("./packages/t")
 local trove = require("./packages/trove")
 
@@ -28,6 +30,8 @@ export type Mechanic<I, A> = {
 	unloaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, instance: I, kit: KitContext) -> (),
 	kitLoaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, kit: KitContext) -> (),
 	kitUnloaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, kit: KitContext) -> (),
+	physicStepped: (mechanic: MechanicContext<I, A>, trove: trove.Trove, dt: number, kit: KitContext) -> (),
+	renderStepped: (mechanic: MechanicContext<I, A>, trove: trove.Trove, dt: number, kit: KitContext) -> (),
 }
 
 export type WTH = {

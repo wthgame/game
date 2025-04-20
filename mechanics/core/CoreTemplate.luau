@@ -1,21 +1,23 @@
 --!strict
 
+-- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
-type TemplateAttributes = {}
+type CoreTemplateAttributes = {}
 
 local function init(wth: utils.WTH)
-	local Template = {
+	local CoreTemplate = {
 		type = "Mechanic",
 		minimumKitVersion = "1",
-		instanceTag = "Template (no comments)",
+		instanceTag = "CoreTemplate",
 		instanceCheck = utils.t.instanceIsA("BasePart"),
 		defaultAttributes = {},
 		attributeChecks = {},
-	} :: utils.Mechanic<BasePart, TemplateAttributes>
+	} :: utils.Mechanic<BasePart, CoreTemplateAttributes>
 
-	wth.registerMechanic(Template)
+	wth.registerMechanic(CoreTemplate)
 end
 
 return init

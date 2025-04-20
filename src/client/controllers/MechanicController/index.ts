@@ -2,7 +2,7 @@ import { Controller, OnInit } from "@flamework/core";
 import { Lazy } from "@rbxts/lazy";
 import ty from "@rbxts/libopen-ty";
 import Object from "@rbxts/object-utils";
-import { ReplicatedStorage } from "@rbxts/services";
+import { ReplicatedStorage, RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
 import { err, trace, warn } from "shared/log";
@@ -20,6 +20,8 @@ export interface Mechanic {
 	unloaded?: (mechanic: MechanicContext, trove: Trove, instance: Instance, kit: KitContext) => void;
 	kitLoaded?: (mechanic: MechanicContext, trove: Trove, kit: KitContext) => void;
 	kitUnloaded?: (mechanic: MechanicContext, trove: Trove, kit: KitContext) => void;
+	renderStepped?: (mechanic: MechanicContext, trove: Trove, dt: number, kit: KitContext) => void;
+	physicStepped?: (mechanic: MechanicContext, trove: Trove, dt: number, kit: KitContext) => void;
 }
 
 const Mechanic = ty
@@ -37,6 +39,8 @@ const Mechanic = ty
 			unloaded: ty.Function.Optional(),
 			kitLoaded: ty.Function.Optional(),
 			kitUnloaded: ty.Function.Optional(),
+			renderStepped: ty.Function.Optional(),
+			physicStepped: ty.Function.Optional(),
 		},
 	)
 	.Nicknamed("Mechanic")
@@ -139,9 +143,15 @@ export class MechanicController implements OnInit {
 		);
 	}
 
+	// TODO: clean this up wtf
 	async loadMechanicsFromParent(trove: Trove, parent: Instance) {
 		const taggedInstances = new Map<Mechanic, Instance[]>();
+
 		const mechanicContexts = new Map<Mechanic, MechanicContext>();
+		for (const mechanic of this.mechanics) {
+			mechanicContexts.set(mechanic, new MechanicContext(mechanic, taggedInstances));
+		}
+
 		const kitContext = new KitContext();
 
 		async function tryLoadMechanic(outerTrove: Trove, mechanic: Mechanic, instance: Instance) {
@@ -172,11 +182,27 @@ export class MechanicController implements OnInit {
 			}
 		}
 
-		for (const mechanic of this.mechanics) {
-			if (!mechanicContexts.has(mechanic)) {
-				mechanicContexts.set(mechanic, new MechanicContext(mechanic, taggedInstances));
-			}
+		trove.add(
+			RunService.PreRender.Connect((dt) => {
+				for (const mechanic of this.mechanics) {
+					if (mechanic.renderStepped) {
+						task.spawn(mechanic.renderStepped, mechanicContexts.get(mechanic)!, trove, dt, kitContext);
+					}
+				}
+			}),
+		);
 
+		trove.add(
+			RunService.PreSimulation.Connect((dt) => {
+				for (const mechanic of this.mechanics) {
+					if (mechanic.physicStepped) {
+						task.spawn(mechanic.physicStepped, mechanicContexts.get(mechanic)!, trove, dt, kitContext);
+					}
+				}
+			}),
+		);
+
+		for (const mechanic of this.mechanics) {
 			if (mechanic.kitLoaded) {
 				task.spawn(mechanic.kitLoaded, mechanicContexts.get(mechanic)!, trove, kitContext);
 			}
