@@ -31,7 +31,7 @@
                     "$path": "mechanics/TemplateNoComment.luau"
                 }
             },
-            "Utils": {
+            "MechanicUtils": {
                 "$path": "mechanics/utils"
             },
             "WTHShared": {

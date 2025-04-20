@@ -1,24 +1,156 @@
-import { Controller, OnStart } from "@flamework/core";
+import { Controller, OnInit } from "@flamework/core";
+import { Lazy } from "@rbxts/lazy";
+import ty from "@rbxts/libopen-ty";
+import Object from "@rbxts/object-utils";
+import { ReplicatedStorage } from "@rbxts/services";
+import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
+import { err, trace, warn } from "shared/log";
 
 export interface Mechanic {
 	type: "Mechanic";
-	name: string;
-	persistent: boolean;
-	init: (self: Mechanic, wth: WTH) => void;
+	minimumKitVersion?: string;
+	instanceTag: string;
+	instanceCheck?: t.check<any>;
+	defaultAttributes: Map<string, any>;
+	attributeChecks: Map<string, t.check<any>>;
+	persistent?: boolean;
+
+	loaded?: (mechanic: MechanicContext, trove: Trove, instance: Instance, kit: KitContext) => void;
+	unloaded?: (mechanic: MechanicContext, trove: Trove, instance: Instance, kit: KitContext) => void;
+	kitLoaded?: (mechanic: MechanicContext, trove: Trove, kit: KitContext) => void;
+	kitUnloaded?: (mechanic: MechanicContext, trove: Trove, kit: KitContext) => void;
 }
 
-export class MechanicTag {}
+const Mechanic = ty
+	.Struct(
+		{ exhaustive: true },
+		{
+			type: ty.Just("Mechanic"),
+			minimumKitVersion: ty.String.Optional(),
+			instanceTag: ty.String,
+			instanceCheck: ty.Function.Optional(),
+			defaultAttributes: ty.MapOf(ty.String, ty.Unknown),
+			attributeChecks: ty.MapOf(ty.String, ty.Function),
+			persistent: ty.Boolean.Optional(),
+			loaded: ty.Function.Optional(),
+			unloaded: ty.Function.Optional(),
+			kitLoaded: ty.Function.Optional(),
+			kitUnloaded: ty.Function.Optional(),
+		},
+	)
+	.Nicknamed("Mechanic")
+	.Retype<Mechanic>();
 
-export class WTH {}
+export interface WTH {
+	registerMechanic: (...mechanics: Mechanic[]) => void;
+}
+
+export class KitContext {
+	isDebug(): boolean {
+		throw "not yet implemented";
+	}
+}
+
+export class MechanicContext {
+	constructor(private _mechanic: Mechanic) {}
+
+	attribute(instance: Instance, key: string): unknown {
+		ty.String.CastOrError(key);
+		const realValue = instance.GetAttribute(key);
+		const check = this._mechanic.attributeChecks.get(key);
+
+		if (check && check(realValue)) {
+			return realValue;
+		}
+
+		return this._mechanic.defaultAttributes.get(key);
+	}
+}
+
+const MECHANIC_MODULES_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("Mechanics"));
 
 @Controller()
-export class MechanicController implements OnStart {
-	onStart(): void {}
+export class MechanicController implements OnInit {
+	private mechanics = new Set<Mechanic>();
 
-	tryInitModule(instance: Instance) {}
+	onInit(): void {
+		const initToModule = new Map<(wth: WTH) => void, Instance>();
 
-	tryInitMechanic(instance: Instance) {}
+		for (const module of MECHANIC_MODULES_PARENT.getValue().GetDescendants()) {
+			if (!classIs(module, "ModuleScript")) continue;
 
-	loadMechanicsFromParent(trove: Trove, parent: Instance) {}
+			const [requireSuccess, requireValue] = pcall(require, module);
+			if (requireSuccess) {
+				const maybe = ty.Function.Cast(requireValue);
+				if (maybe.some) {
+					initToModule.set(maybe.value, module);
+					continue;
+				}
+
+				warn(
+					"Ignoring module",
+					module.GetFullName(),
+					"because it is not a function:",
+					maybe.reason ?? "(no reason provided)",
+				);
+
+				continue;
+			}
+
+			warn("Cannot require mechanic module", module.GetFullName(), "because of:", tostring(requireValue));
+		}
+
+		const wth = table.freeze<WTH>({
+			registerMechanic: (...mechanics: Mechanic[]): void => {
+				for (const mechanic of mechanics) {
+					this.mechanics.add(Mechanic.CastOrError(mechanic));
+				}
+			},
+		});
+
+		async function doInit(init: (wth: WTH) => void) {
+			init(wth);
+		}
+
+		const initPromises = new Array<Promise<void>>();
+		for (const [init, module] of initToModule) {
+			initPromises.push(
+				doInit(init).catch((reason) =>
+					err("Cannot initialize mechanic module", module.GetFullName(), "because of:", reason),
+				),
+			);
+		}
+
+		Promise.all(initPromises).expect();
+
+		trace(
+			"Initialized mechanics:",
+			Object.keys(this.mechanics)
+				.map(({ instanceTag }) => instanceTag)
+				.join(", "),
+		);
+	}
+
+	async loadMechanicsFromParent(trove: Trove, parent: Instance) {
+		async function tryLoadMechanic(outerTrove: Trove, mechanic: Mechanic, instance: Instance) {
+			if (mechanic.instanceCheck && !mechanic.instanceCheck(instance)) return;
+
+			const trove = outerTrove.extend();
+			trove.attachToInstance(instance);
+
+			if (mechanic.loaded) {
+				task.spawn(mechanic.loaded, new MechanicContext(mechanic), trove, instance, new KitContext());
+			}
+		}
+
+		const loadPromises = new Array<Promise<void>>();
+		for (const descendant of parent.GetDescendants()) {
+			for (const mechanic of this.mechanics) {
+				loadPromises.push(tryLoadMechanic(trove, mechanic, descendant));
+			}
+		}
+
+		Promise.all(loadPromises).expect();
+	}
 }
