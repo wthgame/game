@@ -87,19 +87,13 @@ local function init(wth: utils.WTH)
 		local instances = self:instances()
 
 		local params = RaycastParams.new()
-		params:AddToFilter(CollectionService:GetTagged("MouseFollower"))
+		params:AddToFilter(CollectionService:GetTagged("MouseFollowerIgnored"))
 		params.FilterType = Enum.RaycastFilterType.Exclude
 
 		for _, pv in instances do
 			local enabled: FollowTarget = self:attribute(pv, "Enabled")
 			local target: FollowTarget = self:attribute(pv, "FollowTarget")
 			local mode: FollowMode = self:attribute(pv, "FollowMode")
-
-			if target == "Mouse" then
-				pv:AddTag("MouseFollower")
-			else
-				pv:RemoveTag("MouseFollower")
-			end
 
 			if not enabled or mode == "None" or target == "None" then
 				continue
