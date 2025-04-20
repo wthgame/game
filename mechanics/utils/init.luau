@@ -1,6 +1,7 @@
 local utils = require(script.lib)
 
 export type Map<K, V> = utils.Map<K, V>
+export type Set<T> = utils.Set<T>
 export type KitContext = utils.KitContext
 export type Mechanic<Instance, Attributes> = utils.Mechanic<Instance, Attributes>
 export type MechanicContext<Instance, Attributes> = utils.MechanicContext<Instance, Attributes>

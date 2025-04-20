@@ -4,12 +4,14 @@ local t = require("./packages/t")
 local trove = require("./packages/trove")
 
 export type Map<K, V> = { [K]: V }
+export type Set<T> = { [T]: true }
 
 export type KitContext = {
 	isDebug: (self: KitContext) -> boolean,
 }
 
 export type MechanicContext<I, A> = {
+	instances: (self: MechanicContext<I, A>) -> { I },
 	attribute: (self: MechanicContext<I, A>, instance: I, key: string) -> any,
 }
 

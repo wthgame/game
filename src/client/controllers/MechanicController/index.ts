@@ -53,7 +53,14 @@ export class KitContext {
 }
 
 export class MechanicContext {
-	constructor(private _mechanic: Mechanic) {}
+	constructor(
+		private _mechanic: Mechanic,
+		private _taggedInstances: Map<Mechanic, Instance[]>,
+	) {}
+
+	instances(): Instance[] {
+		return this._taggedInstances.get(this._mechanic) ?? [];
+	}
 
 	attribute(instance: Instance, key: string): unknown {
 		ty.String.CastOrError(key);
@@ -133,21 +140,45 @@ export class MechanicController implements OnInit {
 	}
 
 	async loadMechanicsFromParent(trove: Trove, parent: Instance) {
+		const taggedInstances = new Map<Mechanic, Instance[]>();
+		const mechanicContexts = new Map<Mechanic, MechanicContext>();
+		const kitContext = new KitContext();
+
 		async function tryLoadMechanic(outerTrove: Trove, mechanic: Mechanic, instance: Instance) {
 			if (mechanic.instanceCheck && !mechanic.instanceCheck(instance)) return;
 
 			const trove = outerTrove.extend();
 			trove.attachToInstance(instance);
 
+			if (!taggedInstances.has(mechanic)) taggedInstances.set(mechanic, []);
+			taggedInstances.get(mechanic)!.push(instance);
+			// trove.add(() => taggedInstances.get(mechanic)?.delete(instance));
+
+			if (!mechanicContexts.has(mechanic)) {
+				mechanicContexts.set(mechanic, new MechanicContext(mechanic, taggedInstances));
+			}
+
 			if (mechanic.loaded) {
-				task.spawn(mechanic.loaded, new MechanicContext(mechanic), trove, instance, new KitContext());
+				task.spawn(mechanic.loaded, mechanicContexts.get(mechanic)!, trove, instance, kitContext);
 			}
 		}
 
 		const loadPromises = new Array<Promise<void>>();
 		for (const descendant of parent.GetDescendants()) {
 			for (const mechanic of this.mechanics) {
-				loadPromises.push(tryLoadMechanic(trove, mechanic, descendant));
+				if (descendant.HasTag(mechanic.instanceTag)) {
+					loadPromises.push(tryLoadMechanic(trove, mechanic, descendant));
+				}
+			}
+		}
+
+		for (const mechanic of this.mechanics) {
+			if (!mechanicContexts.has(mechanic)) {
+				mechanicContexts.set(mechanic, new MechanicContext(mechanic, taggedInstances));
+			}
+
+			if (mechanic.kitLoaded) {
+				task.spawn(mechanic.kitLoaded, mechanicContexts.get(mechanic)!, trove, kitContext);
 			}
 		}
 

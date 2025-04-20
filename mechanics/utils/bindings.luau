@@ -10,7 +10,7 @@ local bindings = require(
 		:WaitForChild("controllers")
 		:WaitForChild("MechanicController")
 		:WaitForChild("bindings")
-)
+) :: Bindings
 
 local function promptToStartNewTowerRun(name: string)
 	bindings.callMechanicBinding("TowerRunController.promptToStartNewTowerRun", name)
