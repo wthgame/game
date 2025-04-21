@@ -9,10 +9,10 @@
         "$className": "DataModel",
         "ServerScriptService": {
             "$className": "ServerScriptService",
-            "WTHGameServer": {
+            "WTHServer": {
                 "$path": "out/game/server",
-                "WTHServer": {
-                    "$path": "out/shared/server"
+                "CoreServer": {
+                    "$path": "out/core/server"
                 }
             }
         },
@@ -37,28 +37,28 @@
             "MechanicUtils": {
                 "$path": "mechanics/utils"
             },
-            "WTHGameShared": {
+            "WTHShared": {
                 "$path": "out/game/shared",
-                "WTHShared": {
-                    "$path": "out/shared/shared",
-                    "include": {
-                        "$path": "include",
-                        "node_modules": {
-                            "$className": "Folder",
-                            "@rbxts": {
-                                "$path": "node_modules/@rbxts"
-                            },
-                            "@flamework": {
-                                "$path": "node_modules/@flamework"
-                            }
+                "CoreShared": {
+                    "$path": "out/core/shared"
+                },
+                "include": {
+                    "$path": "include",
+                    "node_modules": {
+                        "$className": "Folder",
+                        "@rbxts": {
+                            "$path": "node_modules/@rbxts"
+                        },
+                        "@flamework": {
+                            "$path": "node_modules/@flamework"
                         }
                     }
                 }
             },
-            "WTHGameClient": {
+            "WTHClient": {
                 "$path": "out/game/client",
-                "WTHClient": {
-                    "$path": "out/shared/client"
+                "CoreClient": {
+                    "$path": "out/core/client"
                 }
             }
         }

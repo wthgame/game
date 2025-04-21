@@ -9,10 +9,10 @@
         "$className": "DataModel",
         "ServerScriptService": {
             "$className": "ServerScriptService",
-            "WTHKitServer": {
+            "WTHServer": {
                 "$path": "out/kit/server",
-                "WTHServer": {
-                    "$path": "out/shared/server"
+                "CoreServer": {
+                    "$path": "out/core/server"
                 }
             }
         },
@@ -34,28 +34,28 @@
             "MechanicUtils": {
                 "$path": "mechanics/utils"
             },
-            "WTHKitShared": {
+            "WTHShared": {
                 "$path": "out/kit/shared",
-                "WTHShared": {
-                    "$path": "out/shared/shared",
-                    "include": {
-                        "$path": "include",
-                        "node_modules": {
-                            "$className": "Folder",
-                            "@rbxts": {
-                                "$path": "node_modules/@rbxts"
-                            },
-                            "@flamework": {
-                                "$path": "node_modules/@flamework"
-                            }
+                "CoreShared": {
+                    "$path": "out/core/shared"
+                },
+                "include": {
+                    "$path": "include",
+                    "node_modules": {
+                        "$className": "Folder",
+                        "@rbxts": {
+                            "$path": "node_modules/@rbxts"
+                        },
+                        "@flamework": {
+                            "$path": "node_modules/@flamework"
                         }
                     }
                 }
             },
-            "WTHKitClient": {
+            "WTHClient": {
                 "$path": "out/kit/client",
-                "WTHClient": {
-                    "$path": "out/shared/client"
+                "CoreClient": {
+                    "$path": "out/core/client"
                 }
             }
         }

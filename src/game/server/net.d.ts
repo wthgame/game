@@ -2,7 +2,7 @@
 // This file is not meant to be edited
 
 export declare const stepReplication: () => void
-export declare namespace mechanics {
+export declare namespace kit {
 	type DamageKind = "Normal" | "Heavy" | "Lethal"
 	export const damageSelfVariable: {
 		on: (Listener: (Player: Player, Value: number) => void) => (() => void)

@@ -10,7 +10,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Promise = require(ReplicatedStorage.WTHShared.include.Promise)
+local Promise = require(ReplicatedStorage.include.Promise)
 local BASE_EVENT_NAME = "BLINK"
 local Invocations = 0
 
@@ -161,18 +161,18 @@ Events.Reliable[3] = {}
 Queue.Reliable[3] = table.create(256)
 Queue.Reliable[4] = table.create(256)
 Queue.Reliable[5] = table.create(256)
-export type mechanics_DamageKind = ("Normal" | "Heavy" | "Lethal")
+export type kit_DamageKind = ("Normal" | "Heavy" | "Lethal")
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
 export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
-local function mechanics_ReadEVENT_damageSelfVariable(): (number)
+local function kit_ReadEVENT_damageSelfVariable(): (number)
 	-- Read BLOCK: 4 bytes
 	local BLOCK_START = Read(4)
 	local Value = buffer.readu32(RecieveBuffer, BLOCK_START + 0)
 	return Value
 end
 
-local function mechanics_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Lethal"))
+local function kit_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Lethal"))
 	-- Read BLOCK: 1 bytes
 	local BLOCK_START = Read(1)
 	local Value = true :: any
@@ -264,7 +264,7 @@ end
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
-	mechanics = {
+	kit = {
 		damageSelfVariable = {
 			on = NOOP
 		},
@@ -352,7 +352,7 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 0 then
-			local Value: number = mechanics_ReadEVENT_damageSelfVariable()
+			local Value: number = kit_ReadEVENT_damageSelfVariable()
 			if #Events.Reliable[0] > 0 then
 				for _, Listener in Events.Reliable[0] do
 					task.spawn(Listener, Player, Value)
@@ -364,7 +364,7 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 				table.insert(Queue.Reliable[0], {Player, Value} :: {any})
 			end
 		elseif Index == 1 then
-			local Value: ("Normal" | "Heavy" | "Lethal") = mechanics_ReadEVENT_damageSelf()
+			local Value: ("Normal" | "Heavy" | "Lethal") = kit_ReadEVENT_damageSelf()
 			if #Events.Reliable[1] > 0 then
 				for _, Listener in Events.Reliable[1] do
 					task.spawn(Listener, Player, Value)
@@ -446,7 +446,7 @@ end)
 local Returns = table.freeze({
 	stepReplication = StepReplication,
 
-	mechanics = {
+	kit = {
 		damageSelfVariable = {
 			on = function(Listener: (Player: Player, Value: number) -> ()): () -> ()
 				table.insert(Events.Reliable[0], Listener)

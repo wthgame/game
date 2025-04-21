@@ -9,7 +9,7 @@ import { info, setWTHAsDefaultLogger } from "game/shared/log";
 try {
 	setWTHAsDefaultLogger();
 	Flamework.addPaths("src/game/client/controllers");
-	Flamework.addPaths("src/shared/client/controllers");
+	Flamework.addPaths("src/core/client/controllers");
 	Flamework.ignite();
 	flameworkIgnited();
 

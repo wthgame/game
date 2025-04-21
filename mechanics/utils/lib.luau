@@ -23,9 +23,33 @@ export type WTH = types.WTH
 
 export type Trove = trove.Trove
 
+--[=[
+    @class MechanicUtils
+
+    In addition to the Welcome To Hell API which is bundled as part of the kit,
+    the game also provides this sibling package that contains a set of utilities
+    to streamline common patterns and operations used in Mechanics.
+
+    ```Lua
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+    ```
+]=]
 local utils = table.freeze({
+	--[=[
+        @prop version string
+	    @within MechanicUtils
+
+		The utils version, pairing with the kit version.
+    ]=]
 	version = "1.0.0-dev",
 
+	--[=[
+        @prop ASSETS typeof(assets)
+	    @within MechanicUtils
+
+		Image and sound assets used by Welcome To Hell.
+    ]=]
 	ASSETS = assets,
 
 	SOUND_ASSETS = audio.SOUND_ASSETS,

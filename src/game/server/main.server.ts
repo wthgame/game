@@ -5,7 +5,7 @@ import { info, setWTHAsDefaultLogger } from "game/shared/log";
 try {
 	setWTHAsDefaultLogger();
 	Flamework.addPaths("src/game/server/services");
-	Flamework.addPaths("src/shared/server/services");
+	Flamework.addPaths("src/core/server/services");
 	Flamework.ignite();
 	flameworkIgnited();
 	info("Server ignited!");

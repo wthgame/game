@@ -13,6 +13,8 @@ local DEFAULT_PLAY_SOUND_CONFIG: types.PlaySoundConfig = {
 
 local soundTimeLengths: { [string]: number } = {}
 
+--- @within MechanicUtils
+--- @tag Audio
 --- Plays a sound from an asset string or cloned from a Sound instance.
 local function playSound(asset: string | Sound, from: Instance?, config: types.PlaySoundConfig?)
 	local speed = if config and config.speed then config.speed else DEFAULT_PLAY_SOUND_CONFIG.speed :: number
@@ -39,6 +41,8 @@ local function playSound(asset: string | Sound, from: Instance?, config: types.P
 	Debris:AddItem(sound, (soundTimeLengths[sound.SoundId] or sound.TimeLength) * speed + DELETE_SOUNDS_AFTER_SECONDS)
 end
 
+--- @within MechanicUtils
+--- @tag Audio
 --- Plays a sound from the game's assets module. See the sounds table in the
 --- Replicated.WTHShared.assets module for what sounds can be played.
 local function playSoundFromGameAssets(key: string, from: Instance?, config: types.PlaySoundConfig?)
