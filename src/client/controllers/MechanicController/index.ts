@@ -7,6 +7,23 @@ import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
 import { err, trace, warn } from "shared/log";
 
+export const AttributeValue = ty.String.Or(ty.Boolean)
+	.Or(ty.Number)
+	.Or(ty.Typeof("UDim").Retype<UDim>())
+	.Or(ty.Typeof("UDim2").Retype<UDim2>())
+	.Or(ty.Typeof("BrickColor").Retype<BrickColor>())
+	.Or(ty.Typeof("Color3").Retype<Color3>())
+	.Or(ty.Typeof("Vector2").Retype<Vector2>())
+	.Or(ty.Typeof("Vector3").Retype<Vector3>())
+	.Or(ty.Typeof("EnumItem").Retype<EnumItem>())
+	.Or(ty.Typeof("NumberSequence").Retype<NumberSequence>())
+	.Or(ty.Typeof("ColorSequence").Retype<ColorSequence>())
+	.Or(ty.Typeof("NumberRange").Retype<NumberRange>())
+	.Or(ty.Typeof("Rect").Retype<Rect>())
+	.Or(ty.Typeof("Font").Retype<Font>())
+	.Or(ty.Typeof("CFrame").Retype<CFrame>())
+	.Retype<AttributeValue>();
+
 export interface Mechanic {
 	type: "Mechanic";
 	minimumKitVersion?: string;
@@ -32,9 +49,9 @@ const Mechanic = ty
 			minimumKitVersion: ty.String.Optional(),
 			instanceTag: ty.String,
 			instanceCheck: ty.Function.Optional(),
-			defaultAttributes: ty.MapOf(ty.String, ty.Unknown),
+			defaultAttributes: ty.MapOf(ty.String, AttributeValue),
 			attributeChecks: ty.MapOf(ty.String, ty.Function),
-			persistent: ty.Boolean.Optional(),
+			persistent: ty.Boolean.IntoDefault(false),
 			loaded: ty.Function.Optional(),
 			unloaded: ty.Function.Optional(),
 			kitLoaded: ty.Function.Optional(),
@@ -84,6 +101,10 @@ const MECHANIC_MODULES_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("M
 @Controller()
 export class MechanicController implements OnInit {
 	private mechanics = new Set<Mechanic>();
+	private hasKitLoaded = new Set<Mechanic>();
+	private hasKitUnloaded = new Set<Mechanic>();
+	private hasPhysicStepped = new Set<Mechanic>();
+	private hasRenderStepped = new Set<Mechanic>();
 
 	onInit(): void {
 		const initToModule = new Map<(wth: WTH) => void, Instance>();
@@ -115,7 +136,13 @@ export class MechanicController implements OnInit {
 		const wth = table.freeze<WTH>({
 			registerMechanic: (...mechanics: Mechanic[]): void => {
 				for (const mechanic of mechanics) {
-					this.mechanics.add(Mechanic.CastOrError(mechanic));
+					const castedMechanic = Mechanic.CastOrError(mechanic);
+					this.mechanics.add(castedMechanic);
+
+					if (castedMechanic.kitLoaded) this.hasKitLoaded.add(castedMechanic);
+					if (castedMechanic.kitUnloaded) this.hasKitUnloaded.add(castedMechanic);
+					if (castedMechanic.physicStepped) this.hasPhysicStepped.add(castedMechanic);
+					if (castedMechanic.renderStepped) this.hasRenderStepped.add(castedMechanic);
 				}
 			},
 		});
@@ -143,16 +170,16 @@ export class MechanicController implements OnInit {
 		);
 	}
 
-	// TODO: clean this up wtf
 	async loadMechanicsFromParent(trove: Trove, parent: Instance) {
+		const kitContext = new KitContext();
 		const taggedInstances = new Map<Mechanic, Instance[]>();
-
 		const mechanicContexts = new Map<Mechanic, MechanicContext>();
+
 		for (const mechanic of this.mechanics) {
 			mechanicContexts.set(mechanic, new MechanicContext(mechanic, taggedInstances));
 		}
 
-		const kitContext = new KitContext();
+		const loadedThreads = new Array<thread>();
 
 		async function tryLoadMechanic(outerTrove: Trove, mechanic: Mechanic, instance: Instance) {
 			if (mechanic.instanceCheck && !mechanic.instanceCheck(instance)) return;
@@ -162,14 +189,29 @@ export class MechanicController implements OnInit {
 
 			if (!taggedInstances.has(mechanic)) taggedInstances.set(mechanic, []);
 			taggedInstances.get(mechanic)!.push(instance);
-			// trove.add(() => taggedInstances.get(mechanic)?.delete(instance));
+
+			trove.add(() => {
+				const mechanicTaggedInstances = taggedInstances.get(mechanic);
+				if (mechanicTaggedInstances) {
+					mechanicTaggedInstances.remove(mechanicTaggedInstances.indexOf(instance));
+				}
+
+				if (mechanic.unloaded) {
+					trove.add(() => {
+						task.spawn(mechanic.unloaded!, mechanicContexts.get(mechanic)!, trove, instance, kitContext);
+					});
+				}
+			});
 
 			if (!mechanicContexts.has(mechanic)) {
 				mechanicContexts.set(mechanic, new MechanicContext(mechanic, taggedInstances));
 			}
 
-			if (mechanic.loaded) {
-				task.spawn(mechanic.loaded, mechanicContexts.get(mechanic)!, trove, instance, kitContext);
+			const { loaded } = mechanic;
+			if (loaded) {
+				loadedThreads.push(
+					coroutine.create(() => loaded(mechanicContexts.get(mechanic)!, trove, instance, kitContext)),
+				);
 			}
 		}
 
@@ -182,32 +224,31 @@ export class MechanicController implements OnInit {
 			}
 		}
 
-		trove.add(
-			RunService.PreRender.Connect((dt) => {
-				for (const mechanic of this.mechanics) {
-					if (mechanic.renderStepped) {
-						task.spawn(mechanic.renderStepped, mechanicContexts.get(mechanic)!, trove, dt, kitContext);
-					}
-				}
-			}),
-		);
-
-		trove.add(
-			RunService.PreSimulation.Connect((dt) => {
-				for (const mechanic of this.mechanics) {
-					if (mechanic.physicStepped) {
-						task.spawn(mechanic.physicStepped, mechanicContexts.get(mechanic)!, trove, dt, kitContext);
-					}
-				}
-			}),
-		);
-
-		for (const mechanic of this.mechanics) {
-			if (mechanic.kitLoaded) {
-				task.spawn(mechanic.kitLoaded, mechanicContexts.get(mechanic)!, trove, kitContext);
+		trove.connect(RunService.PreRender, (dt) => {
+			for (const mechanic of this.hasRenderStepped) {
+				task.spawn(mechanic.renderStepped!, mechanicContexts.get(mechanic)!, trove, dt, kitContext);
 			}
-		}
+		});
+
+		trove.connect(RunService.PreSimulation, (dt) => {
+			for (const mechanic of this.hasPhysicStepped) {
+				task.spawn(mechanic.physicStepped!, mechanicContexts.get(mechanic)!, trove, dt, kitContext);
+			}
+		});
 
 		Promise.all(loadPromises).expect();
+		for (const thread of loadedThreads) {
+			task.spawn(thread);
+		}
+
+		for (const mechanic of this.hasKitLoaded) {
+			task.spawn(mechanic.kitLoaded!, mechanicContexts.get(mechanic)!, trove, kitContext);
+		}
+
+		trove.add(() => {
+			for (const mechanic of this.hasKitUnloaded) {
+				task.spawn(mechanic.kitUnloaded!, mechanicContexts.get(mechanic)!, trove, kitContext);
+			}
+		});
 	}
 }
