@@ -1,5 +1,5 @@
 {
-    "name": "Welcome to Hell",
+    "name": "Welcome to Hell Kit",
     "emitLegacyScripts": false,
     "globIgnorePaths": [
         "**/package.json",
@@ -9,8 +9,8 @@
         "$className": "DataModel",
         "ServerScriptService": {
             "$className": "ServerScriptService",
-            "WTHGameServer": {
-                "$path": "out/game/server",
+            "WTHKitServer": {
+                "$path": "out/kit/server",
                 "WTHServer": {
                     "$path": "out/shared/server"
                 }
@@ -24,9 +24,6 @@
                 "Core": {
                     "$path": "mechanics/core"
                 },
-                "Internal": {
-                    "$path": "mechanics/internal"
-                },
                 "Template": {
                     "$path": "mechanics/Template.luau"
                 },
@@ -37,8 +34,8 @@
             "MechanicUtils": {
                 "$path": "mechanics/utils"
             },
-            "WTHGameShared": {
-                "$path": "out/game/shared",
+            "WTHKitShared": {
+                "$path": "out/kit/shared",
                 "WTHShared": {
                     "$path": "out/shared/shared",
                     "include": {
@@ -55,8 +52,8 @@
                     }
                 }
             },
-            "WTHGameClient": {
-                "$path": "out/game/client",
+            "WTHKitClient": {
+                "$path": "out/kit/client",
                 "WTHClient": {
                     "$path": "out/shared/client"
                 }

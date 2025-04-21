@@ -2,7 +2,8 @@
     "name": "welcome-to-hell",
     "version": "0.0.0",
     "scripts": {
-        "dev": "rbxtsc --watch",
+        "dev:game": "rbxtsc --watch --project default.tsconfig.json --rojo default.project.json",
+        "dev:kit": "rbxtsc --watch --project kit.tsconfig.json --rojo kit.project.json",
         "lint": "bunx eslint ./src ./packages",
         "lint:style": "bunx prettier --check ./src ./packages && stylua ./src ./packages -c",
         "ci": "bun run lint && bun run lint:style",

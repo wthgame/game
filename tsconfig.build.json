@@ -2,10 +2,10 @@
     "extends": "./tsconfig.json",
     "include": [
         "src/**/*",
-        "types/**/*",
-        "eslint.config.ts"
+        "types/**/*"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "eslint.config.ts"
     ]
 }
