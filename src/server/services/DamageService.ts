@@ -23,7 +23,9 @@ export class DamageService {
 		const humanoid = player.Character?.FindFirstChildOfClass("Humanoid");
 		if (humanoid) {
 			trace("Damaging player", player, "by", kind.lower(), "damage");
-			humanoid.TakeDamage(DamageType[kind as "Normal" | "Heavy" | "Lethal"]);
+			const damage = DamageType[kind as "Normal" | "Heavy" | "Lethal"];
+			const difference = humanoid.MaxHealth - humanoid.Health;
+			humanoid.TakeDamage(math.max(-difference, damage));
 			task.wait(DEBOUNCE_DURATION_SECONDS);
 			this.debounce.delete(player);
 		}
@@ -37,7 +39,8 @@ export class DamageService {
 		const humanoid = player.Character?.FindFirstChildOfClass("Humanoid");
 		if (humanoid) {
 			trace("Damaging player", player, "by", amount, "health");
-			humanoid.TakeDamage(amount);
+			const difference = humanoid.MaxHealth - humanoid.Health;
+			humanoid.TakeDamage(math.max(-difference, math.abs(amount)));
 			task.wait(DEBOUNCE_DURATION_SECONDS);
 			this.debounce.delete(player);
 		}

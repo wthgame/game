@@ -18,7 +18,10 @@ export type Set<T> = types.Set<T>
 export type KitContext = types.KitContext
 export type Mechanic<Instance, Attributes> = types.Mechanic<Instance, Attributes>
 export type MechanicContext<Instance, Attributes> = types.MechanicContext<Instance, Attributes>
+export type PlaySoundConfig = types.PlaySoundConfig
 export type WTH = types.WTH
+
+export type Trove = trove.Trove
 
 local utils = table.freeze({
 	version = "1.0.0-dev",

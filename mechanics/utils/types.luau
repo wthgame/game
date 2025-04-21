@@ -50,4 +50,9 @@ export type Character = Model & {
 	Head: BasePart,
 }
 
+export type PlaySoundConfig = {
+	speed: number?,
+	volume: number?,
+}
+
 return nil
