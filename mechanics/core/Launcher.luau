@@ -111,10 +111,8 @@ local function init(wth: utils.WTH)
 				end
 
 				if self:attribute(instance, "EmitLauncherParticle") then
-					print("LAUNCH PARTICLES")
 					local launchParticles = instance:FindFirstChild("LaunchParticle")
 					if launchParticles and launchParticles:IsA("ParticleEmitter") then
-						print("GOT LAUNCH PARTICLES", launchParticles)
 						launchParticles:Emit(1)
 					end
 				end
