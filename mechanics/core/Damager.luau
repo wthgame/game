@@ -8,6 +8,7 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 type Damage = number | "Normal" | "Heavy" | "Lethal"
 type DamagerAttributes = {
+	Enabled: boolean,
 	Damage: Damage,
 }
 
@@ -18,16 +19,18 @@ local function init(wth: utils.WTH)
 		instanceTag = "Damager",
 		instanceCheck = utils.t.instanceIsA("BasePart"),
 		defaultAttributes = {
+			Enabled = true,
 			Damage = "Normal",
 		},
 		attributeChecks = {
+			Enabled = utils.t.boolean,
 			Damage = utils.t.union(utils.t.numberPositive, utils.t.literal("Normal", "Heavy", "Lethal")),
 		},
 	} :: utils.Mechanic<BasePart, DamagerAttributes>
 
 	function Damager:loaded(trove, instance, kit)
 		trove:add(instance.Touched:Connect(function(toucher)
-			if utils.isFromMaybeLocalCharacter(toucher) then
+			if self:attribute(instance, "Enabled") and utils.isFromMaybeLocalCharacter(toucher) then
 				local damage = self:attribute(instance, "Damage")
 				if typeof(damage) == "number" then
 					net.mechanics.damageSelfVariable.fire(damage)

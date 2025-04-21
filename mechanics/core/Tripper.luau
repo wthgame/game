@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 type TripperAttributes = {
+	Enabled: boolean,
 	Cooldown: number,
 }
 
@@ -16,9 +17,11 @@ local function init(wth: utils.WTH)
 		instanceTag = "Tripper",
 		instanceCheck = utils.t.instanceIsA("BasePart"),
 		defaultAttributes = {
+			Enabled = true,
 			Cooldown = 0,
 		},
 		attributeChecks = {
+			Enabled = utils.t.boolean,
 			Cooldown = utils.t.numberPositive,
 		},
 	} :: utils.Mechanic<BasePart, TripperAttributes>
@@ -30,7 +33,7 @@ local function init(wth: utils.WTH)
 				return
 			end
 
-			if utils.isFromMaybeLocalCharacter(toucher) then
+			if self:attribute(instance, "Enabled") and utils.isFromMaybeLocalCharacter(toucher) then
 				local humanoid = assert(utils.getMaybeLocalHumanoid(), "can be assumed it exists")
 				humanoid.Sit = true
 

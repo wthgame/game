@@ -30,7 +30,7 @@ local function init(wth: utils.WTH)
 	} :: utils.Mechanic<BasePart, ConveyorAttributes>
 
 	function Conveyor:physicStepped(trove, dt, kit)
-		local alreadySynchronized = {}
+		local alreadySynchronized: utils.Set<Instance> = {}
 
 		for _, conveyor in self:instances() do
 			local speed: number = self:attribute(conveyor, "Enabled") and self:attribute(conveyor, "Speed") or 0
