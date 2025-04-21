@@ -3,59 +3,30 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 local CullThrottle = require("./packages/cull-throttle")
-local Sift = require("./packages/sift")
-local animation = require("./animation")
 local assets = require("./assets")
 local audio = require("./audio")
 local bindings = require("./bindings")
 local character = require("./character")
 local color = require("./color")
--- local ecs = require("./ecs")
-local effects = require("./effects")
-local jecs = require("./packages/jecs")
+local physics = require("./physics")
 local t = require("./packages/t")
-local touch = require("./touch")
 local trove = require("./packages/trove")
 local types = require("./types")
 
-export type Mechanic<Self = {}> = types.Mechanic<Self>
-export type TouchConfig = types.TouchConfig
-export type TweenConfig = types.TweenConfig
-export type PlaySoundConfig = types.PlaySoundConfig
-export type Character = types.Character
-export type Set<T> = types.Set<T>
 export type Map<K, V> = types.Map<K, V>
-
-export type Archetype = jecs.Archetype
-export type Archetypes = jecs.Archetypes
-export type ComponentIndex = jecs.ComponentIndex
-export type ComponentRecord = jecs.ComponentRecord
-export type Entity<T = unknown> = jecs.Entity<T>
-export type EntityIndex = jecs.EntityIndex
-export type Id<T = unknown> = jecs.Id<T>
-export type Item<T...> = jecs.Item<T...>
-export type Iter<T...> = jecs.Iter<T...>
-export type Observable = jecs.Observable
-export type Observer = jecs.Observer
-export type Pair<P, O> = jecs.Pair<P, O>
-export type Query<T...> = jecs.Query<T...>
-export type QueryInner = jecs.QueryInner
-export type Record = jecs.Record
-export type World = jecs.World
-
-export type CullThrottle = CullThrottle.CullThrottle
-
-export type Check<T> = t.Check<T>
+export type Set<T> = types.Set<T>
+export type KitContext = types.KitContext
+export type Mechanic<Instance, Attributes> = types.Mechanic<Instance, Attributes>
+export type MechanicContext<Instance, Attributes> = types.MechanicContext<Instance, Attributes>
+export type PlaySoundConfig = types.PlaySoundConfig
+export type WTH = types.WTH
 
 export type Trove = trove.Trove
-export type TroveTrackable = trove.TroveTrackable
 
-return table.freeze({
-	version = table.freeze({ major = 1, minor = 0, patch = 0 }),
+local utils = table.freeze({
+	version = "1.0.0-dev",
 
-	tween = animation.tween,
-
-	assets = assets,
+	ASSETS = assets,
 
 	SOUND_ASSETS = audio.SOUND_ASSETS,
 	playSound = audio.playSound,
@@ -63,45 +34,32 @@ return table.freeze({
 
 	promptToStartNewTowerRun = bindings.promptToStartNewTowerRun,
 
-	getMaybeCharacter = character.getMaybeCharacter,
-	waitForCharacter = character.waitForCharacter,
-	getCharacter = character.getCharacter,
-	getMaybeHumanoidRootPart = character.getMaybeHumanoidRootPart,
-	getHumanoidRootPart = character.getHumanoidRootPart,
-	getMaybeHumanoid = character.getMaybeHumanoid,
-	getHumanoid = character.getHumanoid,
-	isCharacter = character.isCharacter,
-	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
-	isCharacterAlive = character.isCharacterAlive,
-
 	roundColor = color.roundColor,
 
-	isCharacterTouchingPart = touch.isCharacterTouchingPart,
-	isLocalPlayerCharacterTouchingPart = touch.isLocalPlayerCharacterTouchingPart,
-	isTouched = touch.isTouched,
-	isPartTouched = touch.isPartTouched,
-	getPartTouched = touch.getPartTouched,
+	getMaybeLocalCharacter = character.getMaybeLocalCharacter,
+	waitForLocalCharacter = character.waitForLocalCharacter,
+	getLocalCharacter = character.getLocalCharacter,
+	isFromMaybeLocalCharacter = character.isFromMaybeLocalCharacter,
+	isFromLocalCharacter = character.isFromLocalCharacter,
+	getMaybeLocalHumanoidRootPart = character.getMaybeLocalHumanoidRootPart,
+	getLocalHumanoidRootPart = character.getLocalHumanoidRootPart,
+	getMaybeLocalHumanoid = character.getMaybeLocalHumanoid,
+	getLocalHumanoid = character.getLocalHumanoid,
+	isCharacter = character.isCharacter,
+	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
+	isLocalCharacterAlive = character.isLocalCharacterAlive,
 
-	-- world = ecs.world,
-	-- collectSignal = ecs.collectSignal,
+	weld = physics.weld,
+	populateConstraintAttachments = physics.populateConstraintAttachments,
 
-	createRingOfFire = effects.createRingOfFire,
-
-	castCheck = function<T>(value: unknown, check: t.Check<T>): T?
-		if check(value) then
-			return value :: T
-		end
-
-		return nil
-	end,
-
-	jecs = jecs,
 	t = t,
+	Trove = trove.Trove,
 	CullThrottle = CullThrottle,
-	Sift = Sift,
 
 	_ = {
 		addMechanicBinding = bindings.addMechanicBinding,
 		callMechanicBinding = bindings.callMechanicBinding,
 	},
 })
+
+return utils

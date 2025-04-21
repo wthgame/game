@@ -3,6 +3,7 @@ import { UserId } from "./constants/userids";
 export enum TowerType {
 	Monument,
 	Tower,
+	Reflection,
 }
 
 export enum TowerDifficulty {
@@ -71,6 +72,19 @@ export interface AreaInstance extends Instance {
 
 export const AREAS: AreaInfo[] = [
 	{
+		name: "KitDevelopment",
+		title: "Welcome To Hell Kit Development",
+		towers: [
+			{
+				name: "ET",
+				title: "Example Tower",
+				type: TowerType.Tower,
+				difficulty: TowerDifficulty.Easy + TowerDifficultyIncrement.Bottom,
+				creatorUserIds: [UserId.ImNotFireMan123],
+			},
+		],
+	},
+	{
 		name: "A1MoltenHeart",
 		actNumber: 1,
 		title: "Molten Heart",
@@ -93,7 +107,7 @@ export const AREAS: AreaInfo[] = [
 			},
 			{
 				name: "ToSH",
-				title: "Tower of Sky High",
+				title: "Tower of Turbulance",
 				type: TowerType.Tower,
 				difficulty: TowerDifficulty.Hard + TowerDifficultyIncrement.Low,
 				creatorUserIds: [UserId.ImNotFireMan123],
@@ -130,6 +144,90 @@ export const AREAS: AreaInfo[] = [
 				name: "MoDV",
 				title: "Monument of Death Valley",
 				type: TowerType.Monument,
+				difficulty: TowerDifficulty.Remorseless + TowerDifficultyIncrement.Low,
+				creatorUserIds: [UserId.ImNotFireMan123],
+			},
+			{
+				name: "A1R",
+				title: "Molten Heart's Reflection",
+				doNotAbbreviate: true,
+				hidden: true,
+				type: TowerType.Reflection,
+				difficulty: TowerDifficulty.Insane + TowerDifficultyIncrement.Mid,
+				creatorUserIds: [UserId.ImNotFireMan123],
+			},
+		],
+	},
+	{
+		name: "A2FeveredEyes",
+		actNumber: 2,
+		title: "Fevered Eyes",
+		towers: [],
+	},
+	{
+		name: "A3OhNoItsASeriousRobloxGame",
+		actNumber: 3,
+		title: "Oh No, It's a Serious Roblox Game",
+		towers: [
+			{
+				name: "MoBH",
+				title: "Monument of Bleeding Heart",
+				type: TowerType.Monument,
+				hidden: true,
+				difficulty: TowerDifficulty.Challenging + TowerDifficultyIncrement.Low,
+				creatorUserIds: [UserId.ImNotFireMan123],
+			},
+		],
+	},
+	{
+		name: "A4BrokenDreams",
+		actNumber: 4,
+		title: "Broken Dreams",
+		towers: [],
+	},
+	{
+		name: "A5RunningInSpirals",
+		actNumber: 5,
+		title: "Running in Spirals",
+		towers: [],
+	},
+	{
+		name: "A6WhereTheHeavensWeptFire",
+		actNumber: 6,
+		title: "Where the Heavens Wept Fire",
+		towers: [
+			{
+				name: "MoFLS",
+				title: "Monument of Forever Luv Sic",
+				type: TowerType.Monument,
+				hidden: true,
+				difficulty: TowerDifficulty.Intense + TowerDifficultyIncrement.Low,
+				creatorUserIds: [UserId.ImNotFireMan123],
+			},
+		],
+	},
+	{
+		name: "A7NoReturn",
+		actNumber: 7,
+		title: "No Return",
+		towers: [],
+	},
+	{
+		name: "A8YouBastard",
+		actNumber: 8,
+		title: "You Bastard",
+		towers: [],
+	},
+	{
+		name: "A9BreakingPoint",
+		actNumber: 9,
+		title: "Breaking Point",
+		towers: [
+			{
+				name: "MoTP",
+				title: "Monument of Take Pilot",
+				type: TowerType.Monument,
+				hidden: true,
 				difficulty: TowerDifficulty.Remorseless + TowerDifficultyIncrement.Low,
 				creatorUserIds: [UserId.ImNotFireMan123],
 			},

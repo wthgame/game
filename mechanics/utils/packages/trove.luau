@@ -58,13 +58,15 @@ export type Trove = {
 	add: <T>(self: Trove, object: T & TroveTrackable, cleanupMethod: string?) -> T,
 	remove: <T>(self: Trove, object: T & TroveTrackable) -> boolean,
 	clean: (self: Trove) -> (),
-	wrapClean: (self: Trove) -> () -> (),
+	-- wrapClean: (self: Trove) -> () -> (),
 	attachToInstance: (self: Trove, instance: Instance) -> RBXScriptConnection,
 	destroy: (self: Trove) -> (),
 }
 
 export type TroveLib = {
-	Trove: Trove,
+	Trove: {
+		new: () -> Trove,
+	},
 }
 
 local trove: TroveLib = require(

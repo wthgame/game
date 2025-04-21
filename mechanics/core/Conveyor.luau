@@ -3,26 +3,40 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("Utils"))
+local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
-local mech = {} :: utils.Mechanic
-mech.type = "Mechanic"
-mech.name = "Conveyor"
+type ConveyorAttributes = {
+	Enabled: boolean,
+	Speed: number,
+	SynchronizeConveyorBeams: boolean,
+}
 
-function mech:init(wth)
-	local Conveyor: utils.Entity<BasePart> = wth:useTag("Conveyor", utils.t.instanceIsA("BasePart"))
-	local Speed = wth:useAttribute("Speed", Conveyor, utils.t.numberPositive, 16)
-	local SynchronizeConveyorBeams = wth:useAttribute("SynchronizeConveyorBeams", Conveyor, utils.t.boolean, true)
+local function init(wth: utils.WTH)
+	local Conveyor = {
+		type = "Mechanic",
+		minimumKitVersion = "1",
+		instanceTag = "Conveyor",
+		instanceCheck = utils.t.instanceIsA("BasePart"),
+		defaultAttributes = {
+			Enabled = true,
+			Speed = 0,
+			SynchronizeConveyorBeams = true,
+		},
+		attributeChecks = {
+			Enabled = utils.t.boolean,
+			Speed = utils.t.numberPositive,
+			SynchronizeConveyorBeams = utils.t.boolean,
+		},
+	} :: utils.Mechanic<BasePart, ConveyorAttributes>
 
-	local queryConveyors = wth.world:query(Conveyor, Speed, SynchronizeConveyorBeams):cached()
+	function Conveyor:physicStepped(trove, dt, kit)
+		local alreadySynchronized: utils.Set<Instance> = {}
 
-	local function updateConveyors()
-		local alreadySynchronized = {}
-
-		for entity, conveyor, speed, sync in queryConveyors:iter() do
+		for _, conveyor in self:instances() do
+			local speed: number = self:attribute(conveyor, "Enabled") and self:attribute(conveyor, "Speed") or 0
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
 
-			if sync then
+			if self:attribute(conveyor, "SynchronizeConveyorBeams") then
 				for _, beam in conveyor:GetDescendants() do
 					if not alreadySynchronized[beam] then
 						if beam.Name == "ConveyorBeam" and beam:IsA("Beam") then
@@ -37,7 +51,7 @@ function mech:init(wth)
 		table.clear(alreadySynchronized)
 	end
 
-	wth:schedule(updateConveyors)
+	wth.registerMechanic(Conveyor)
 end
 
-return mech
+return init

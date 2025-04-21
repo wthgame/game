@@ -1,25 +1,41 @@
-local jecs = require("./packages/jecs")
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local t = require("./packages/t")
 local trove = require("./packages/trove")
 
-type Trove = trove.Trove
-type Cleanup = () -> ()
-
-export type Set<T> = { [T]: true }
 export type Map<K, V> = { [K]: V }
+export type Set<T> = { [T]: true }
 
-export type Typechecker<T> = t.Check<T>
-
-export type Mechanic<Self> = Self & {
-	type: "Mechanic",
-	name: string,
-	persistent: boolean?,
-	init: (self: Mechanic<Self>, wth: WTH) -> (),
+export type KitContext = {
+	isDebug: (self: KitContext) -> boolean,
 }
 
-export type TouchConfig = {
-	passLocalPlayerCharacter: boolean?,
-	passAllPlayerCharacters: boolean?,
+export type MechanicContext<I, A> = {
+	instances: (self: MechanicContext<I, A>) -> { I },
+	attribute: (self: MechanicContext<I, A>, instance: I, key: string) -> any,
+}
+
+export type Mechanic<I, A> = {
+	type: "Mechanic",
+	minimumKitVersion: string?,
+	instanceTag: string,
+	instanceCheck: t.check<any>?,
+	defaultAttributes: Map<string, any>,
+	attributeChecks: Map<string, t.check<any>>,
+	persistent: boolean?,
+
+	loaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, instance: I, kit: KitContext) -> (),
+	unloaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, instance: I, kit: KitContext) -> (),
+	kitLoaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, kit: KitContext) -> (),
+	kitUnloaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, kit: KitContext) -> (),
+	physicStepped: (mechanic: MechanicContext<I, A>, trove: trove.Trove, dt: number, kit: KitContext) -> (),
+	renderStepped: (mechanic: MechanicContext<I, A>, trove: trove.Trove, dt: number, kit: KitContext) -> (),
+}
+
+export type WTH = {
+	registerMechanic: (...Mechanic<any, any>) -> (),
 }
 
 export type Character = Model & {
@@ -32,29 +48,6 @@ export type Character = Model & {
 	PrimaryPart: BasePart,
 	Animate: LocalScript,
 	Head: BasePart,
-}
-
-export type WTH = {
-	world: jecs.World,
-	useTag: (self: WTH, tag: string, check: Typechecker<any>?) -> any,
-	useAttribute: <T>(
-		self: WTH,
-		attributeName: string,
-		tag: jecs.Entity,
-		check: Typechecker<T>,
-		default: T
-	) -> jecs.Entity<T>,
-	schedule: (self: WTH, ...((dt: number, trove: Trove) -> ())) -> (),
-	onLoad: (self: WTH, ...() -> ()) -> Cleanup,
-}
-
-export type TweenConfig = {
-	time: number?,
-	easingStyle: Enum.EasingStyle?,
-	easingDirection: Enum.EasingDirection?,
-	repeatCount: number?,
-	reverse: boolean?,
-	delayTime: number?,
 }
 
 export type PlaySoundConfig = {

@@ -1,68 +1,54 @@
---!strict
-
--- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("Utils"))
+local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
-local mech = {} :: utils.Mechanic
-mech.type = "Mechanic"
-mech.name = "TowerPortal"
+type TowerPortalAttributes = {
+	ShouldPrompt: boolean,
+	TowerName: string,
+}
 
-function mech:init(wth)
-	local TowerPortal: utils.Entity<BasePart> = wth:useTag("TowerPortal", utils.t.instanceIsA("BasePart"))
-	local TowerName = wth:useAttribute("TowerName", TowerPortal, utils.t.string, "")
-	local ShouldPrompt = wth:useAttribute("ShouldPrompt", TowerPortal, utils.t.boolean, true)
+local function initTowerPortals(wth: utils.WTH)
+	local TowerPortal = {
+		type = "Mechanic",
+		minimumKitVersion = "1",
+		instanceTag = "TowerPortal",
+		instanceCheck = utils.t.instanceIsA("BasePart"),
+		defaultAttributes = {
+			ShouldPrompt = true,
+			TowerName = "",
+		},
+		attributeChecks = {
+			ShouldPrompt = utils.t.boolean,
+			TowerName = utils.t.string,
+		},
+	} :: utils.Mechanic<BasePart, TowerPortalAttributes>
 
-	local TowerPrompt: utils.Entity<ProximityPrompt> = wth.world:component()
+	function TowerPortal:loaded(trove, portal, kit)
+		local shouldPrompt = self:attribute(portal, "ShouldPrompt")
+		local towerName = self:attribute(portal, "TowerName")
 
-	local function createTowerPrompt(trove: utils.Trove, id: utils.Entity, portal: BasePart)
-		local promptAttachment = trove:add(Instance.new("Attachment"))
-		promptAttachment.Name = "TowerPortalPromptAttachment"
+		if shouldPrompt then
+			local promptAttachment = trove:add(Instance.new("Attachment"))
+			promptAttachment.Name = "TowerPortalPromptAttachment"
 
-		local towerPrompt = trove:add(Instance.new("ProximityPrompt"))
-		towerPrompt.Name = "TowerPortalPrompt"
-		towerPrompt.ActionText = "Enter Tower"
-		towerPrompt.Parent = promptAttachment
+			local towerPrompt = trove:add(Instance.new("ProximityPrompt"))
+			towerPrompt.Name = "TowerPortalPrompt"
+			towerPrompt.ActionText = "Enter Tower"
+			towerPrompt.RequiresLineOfSight = false
+			towerPrompt.Parent = promptAttachment
 
-		promptAttachment.Parent = portal
+			promptAttachment.Parent = portal
 
-		trove:add(towerPrompt.Triggered:Connect(function(player)
-			if Players.LocalPlayer ~= player then
-				return
-			end
-
-			local name = wth.world:get(id, TowerName)
-			if name then
-				utils.promptToStartNewTowerRun(name)
-			end
-		end))
-
-		wth.world:set(id, TowerPrompt, towerPrompt)
-
-		return towerPrompt
-	end
-
-	local queryTowerPortals = wth.world:query(TowerPortal, ShouldPrompt):cached()
-
-	local function checkTowerPortals(_, trove: utils.Trove)
-		for id, portal, shouldPrompt in queryTowerPortals:iter() do
-			if shouldPrompt then
-				if not wth.world:has(id, TowerPrompt) then
-					createTowerPrompt(trove, id, portal)
+			trove:add(towerPrompt.Triggered:Connect(function(player)
+				-- TODO: is this check needed?
+				if Players.LocalPlayer == player then
+					utils.promptToStartNewTowerRun(towerName)
 				end
-
-				return
-			end
-
-			if not utils.isLocalPlayerCharacterTouchingPart(portal) then
-				continue
-			end
+			end))
 		end
 	end
 
-	wth:schedule(checkTowerPortals)
+	wth.registerMechanic(TowerPortal)
 end
 
-return mech
+return initTowerPortals
