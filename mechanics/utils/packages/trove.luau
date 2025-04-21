@@ -64,7 +64,9 @@ export type Trove = {
 }
 
 export type TroveLib = {
-	Trove: Trove,
+	Trove: {
+		new: () -> Trove,
+	},
 }
 
 local trove: TroveLib = require(
