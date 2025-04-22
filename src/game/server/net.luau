@@ -10,7 +10,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Promise = require(ReplicatedStorage.include.Promise)
+local Promise = require(ReplicatedStorage.WTHShared.include.Promise)
 local BASE_EVENT_NAME = "BLINK"
 local Invocations = 0
 
@@ -161,7 +161,7 @@ Events.Reliable[3] = {}
 Queue.Reliable[3] = table.create(256)
 Queue.Reliable[4] = table.create(256)
 Queue.Reliable[5] = table.create(256)
-export type kit_DamageKind = ("Normal" | "Heavy" | "Lethal")
+export type kit_DamageKind = ("Normal" | "Heavy" | "Super" | "Lethal")
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
 export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
@@ -172,7 +172,7 @@ local function kit_ReadEVENT_damageSelfVariable(): (number)
 	return Value
 end
 
-local function kit_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Lethal"))
+local function kit_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Super" | "Lethal"))
 	-- Read BLOCK: 1 bytes
 	local BLOCK_START = Read(1)
 	local Value = true :: any
@@ -182,6 +182,8 @@ local function kit_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Lethal"))
 	elseif Index == 1 then
 		Value = "Heavy"
 	elseif Index == 2 then
+		Value = "Super"
+	elseif Index == 3 then
 		Value = "Lethal"
 	else
 		error(`Unexpected enum: {Index}`)
@@ -364,7 +366,7 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 				table.insert(Queue.Reliable[0], {Player, Value} :: {any})
 			end
 		elseif Index == 1 then
-			local Value: ("Normal" | "Heavy" | "Lethal") = kit_ReadEVENT_damageSelf()
+			local Value: ("Normal" | "Heavy" | "Super" | "Lethal") = kit_ReadEVENT_damageSelf()
 			if #Events.Reliable[1] > 0 then
 				for _, Listener in Events.Reliable[1] do
 					task.spawn(Listener, Player, Value)
@@ -460,7 +462,7 @@ local Returns = table.freeze({
 			end
 		},
 		damageSelf = {
-			on = function(Listener: (Player: Player, Value: ("Normal" | "Heavy" | "Lethal")) -> ()): () -> ()
+			on = function(Listener: (Player: Player, Value: ("Normal" | "Heavy" | "Super" | "Lethal")) -> ()): () -> ()
 				table.insert(Events.Reliable[1], Listener)
 				for Index, Arguments in Queue.Reliable[1] do
 					task.spawn(Listener, table.unpack(Arguments))

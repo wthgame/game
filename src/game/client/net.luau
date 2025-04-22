@@ -9,7 +9,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Promise = require(ReplicatedStorage.include.Promise)
+local Promise = require(ReplicatedStorage.WTHShared.include.Promise)
 local BASE_EVENT_NAME = "BLINK"
 local Invocations = 0
 
@@ -156,7 +156,7 @@ Queue.Reliable[4] = table.create(256)
 Queue.Reliable[5] = table.create(256)
 Events.Unreliable[0] = {}
 Queue.Unreliable[0] = table.create(256)
-export type kit_DamageKind = ("Normal" | "Heavy" | "Lethal")
+export type kit_DamageKind = ("Normal" | "Heavy" | "Super" | "Lethal")
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
 export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
@@ -167,7 +167,7 @@ local function kit_WriteEVENT_damageSelfVariable(Value: number): ()
 	buffer.writeu32(SendBuffer, BLOCK_START + 1, Value)
 end
 
-local function kit_WriteEVENT_damageSelf(Value: ("Normal" | "Heavy" | "Lethal")): ()
+local function kit_WriteEVENT_damageSelf(Value: ("Normal" | "Heavy" | "Super" | "Lethal")): ()
 	-- Allocate BLOCK: 2 bytes
 	local BLOCK_START = Allocate(2)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 1)
@@ -175,10 +175,12 @@ local function kit_WriteEVENT_damageSelf(Value: ("Normal" | "Heavy" | "Lethal"))
 		buffer.writeu8(SendBuffer, BLOCK_START + 1, 0)
 	elseif Value == "Heavy" then
 		buffer.writeu8(SendBuffer, BLOCK_START + 1, 1)
-	elseif Value == "Lethal" then
+	elseif Value == "Super" then
 		buffer.writeu8(SendBuffer, BLOCK_START + 1, 2)
+	elseif Value == "Lethal" then
+		buffer.writeu8(SendBuffer, BLOCK_START + 1, 3)
 	else
-		error(`Unexpected enum: {Value}, expected one of "Normal" or "Heavy" or "Lethal".`)
+		error(`Unexpected enum: {Value}, expected one of "Normal" or "Heavy" or "Super" or "Lethal".`)
 	end
 end
 
@@ -421,7 +423,7 @@ local Returns = table.freeze({
 			end
 		},
 		damageSelf = {
-			fire = function(Value: ("Normal" | "Heavy" | "Lethal")): ()
+			fire = function(Value: ("Normal" | "Heavy" | "Super" | "Lethal")): ()
 				kit_WriteEVENT_damageSelf(Value)
 			end
 		},

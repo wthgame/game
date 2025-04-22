@@ -3,12 +3,12 @@
 
 export declare const stepReplication: () => void
 export declare namespace kit {
-	type DamageKind = "Normal" | "Heavy" | "Lethal"
+	type DamageKind = "Normal" | "Heavy" | "Super" | "Lethal"
 	export const damageSelfVariable: {
 		fire: (Value: number) => void
 	}
 	export const damageSelf: {
-		fire: (Value: "Normal" | "Heavy" | "Lethal") => void
+		fire: (Value: "Normal" | "Heavy" | "Super" | "Lethal") => void
 	}
 }
 export declare namespace areas {

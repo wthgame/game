@@ -5,13 +5,16 @@
         "**/package.json",
         "**/tsconfig.json"
     ],
+    "servePlaceIds": [
+        79485745632134
+    ],
     "tree": {
         "$className": "DataModel",
         "ServerScriptService": {
             "$className": "ServerScriptService",
             "WTHServer": {
                 "$path": "out/game/server",
-                "CoreServer": {
+                "core": {
                     "$path": "out/core/server"
                 }
             }
@@ -39,7 +42,7 @@
             },
             "WTHShared": {
                 "$path": "out/game/shared",
-                "CoreShared": {
+                "core": {
                     "$path": "out/core/shared"
                 },
                 "include": {
@@ -57,7 +60,7 @@
             },
             "WTHClient": {
                 "$path": "out/game/client",
-                "CoreClient": {
+                "core": {
                     "$path": "out/core/client"
                 }
             }

@@ -11,7 +11,7 @@
             "$className": "ServerScriptService",
             "WTHServer": {
                 "$path": "out/kit/server",
-                "CoreServer": {
+                "core": {
                     "$path": "out/core/server"
                 }
             }
@@ -36,7 +36,7 @@
             },
             "WTHShared": {
                 "$path": "out/kit/shared",
-                "CoreShared": {
+                "core": {
                     "$path": "out/core/shared"
                 },
                 "include": {
@@ -54,7 +54,7 @@
             },
             "WTHClient": {
                 "$path": "out/kit/client",
-                "CoreClient": {
+                "core": {
                     "$path": "out/core/client"
                 }
             }
