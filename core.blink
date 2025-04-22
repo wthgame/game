@@ -1,0 +1,27 @@
+option ClientOutput = "src/core/client/net.luau"
+option ServerOutput = "src/core/server/net.luau"
+option Typescript = true
+option PromiseLibrary = "ReplicatedStorage.WTHSharedCore.include.Promise"
+option Casing = Camel
+option RemoteScope = "WELCOME_TO_HELL_CORE"
+
+enum DamageKind = {
+    Normal,
+    Heavy,
+    Super,
+    Lethal
+}
+
+event damageSelfVariable {
+    from: Client,
+    type: Reliable,
+    call: ManyAsync,
+    data: u32
+}
+
+event damageSelf {
+    from: Client,
+    type: Reliable,
+    call: ManyAsync,
+    data: DamageKind
+}

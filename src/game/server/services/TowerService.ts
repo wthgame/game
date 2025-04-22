@@ -2,21 +2,21 @@ import { Service } from "@flamework/core";
 import { Lazy } from "@rbxts/lazy";
 import Maybe from "@rbxts/libopen-maybe";
 import Make from "@rbxts/make";
+import { trace, warn } from "core/shared/log";
 import { NAME_TO_TOWER, TowerInfo, TowerInstance } from "game/shared/areas";
-import { trace, warn } from "game/shared/log";
 
 export interface Tower {
 	info: TowerInfo;
-	instance: Omit<TowerInstance, "Details" | "Obby" | "Mechanics">;
+	instance: Omit<TowerInstance, "Decoration" | "Obby" | "Mechanics">;
 	obby: TowerInstance["Obby"];
-	details: TowerInstance["Details"];
+	decoration: TowerInstance["Decoration"];
 	mechanics: TowerInstance["Mechanics"];
 	spawn: TowerInstance["Spawn"];
 }
 
 // const TOWERS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "Tower" }));
 const TOWER_OBBY_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerObby" }));
-const TOWER_DETAILS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerDetails" }));
+const TOWER_DECORATION_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerDecoration" }));
 const TOWER_MECHANICS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerMechanics" }));
 
 // TODO: remove link if not in studio
@@ -26,7 +26,7 @@ const NO_ETOH =
 
 function castToTowerInstance(instance: Instance): Maybe.Maybe<TowerInstance> {
 	const mechanics = instance.FindFirstChild("Mechanics");
-	const details = instance.FindFirstChild("Details");
+	const decoration = instance.FindFirstChild("Decoration");
 	const obby = instance.FindFirstChild("Obby");
 	const spawn = instance.FindFirstChild("Spawn");
 
@@ -36,7 +36,7 @@ function castToTowerInstance(instance: Instance): Maybe.Maybe<TowerInstance> {
 		return Maybe.None("No Mechanics folder found");
 	}
 
-	if (!details) return Maybe.None("No Details folder found");
+	if (!decoration) return Maybe.None("No Decoration folder found");
 	if (!obby) return Maybe.None("No Obby folder found");
 	if (!spawn) return Maybe.None("No Spawn found");
 	if (!spawn.IsA("BasePart")) return Maybe.None(`Expected Spawn to be a BasePart, got ${spawn.ClassName}`);
@@ -77,13 +77,13 @@ export class TowerService {
 			info,
 			instance: towerInstance,
 			obby: towerInstance.Obby,
-			details: towerInstance.Details,
+			decoration: towerInstance.Decoration,
 			mechanics: towerInstance.Mechanics,
 			spawn: towerInstance.Spawn,
 		};
 
 		towerInstance.Obby.Parent = TOWER_OBBY_SERVER_STORAGE.getValue();
-		towerInstance.Details.Parent = TOWER_DETAILS_SERVER_STORAGE.getValue();
+		towerInstance.Decoration.Parent = TOWER_DECORATION_SERVER_STORAGE.getValue();
 		towerInstance.Mechanics.Parent = TOWER_MECHANICS_SERVER_STORAGE.getValue();
 		// towerInstance.Parent = TOWERS_SERVER_STORAGE.getValue();
 

@@ -1,6 +1,6 @@
 import { Flamework } from "@flamework/core";
-import { flameworkIgnited, panic } from "game/shared/flamework";
-import { info, setWTHAsDefaultLogger } from "game/shared/log";
+import { flameworkIgnited, panic } from "core/shared/flamework";
+import { info, setWTHAsDefaultLogger } from "core/shared/log";
 
 try {
 	setWTHAsDefaultLogger();

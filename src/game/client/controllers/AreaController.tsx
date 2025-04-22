@@ -4,6 +4,8 @@ import { Players, Workspace } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
 import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
+import { MechanicController } from "core/client/controllers/MechanicController";
+import { trace } from "core/shared/log";
 import { areas } from "game/client/net";
 import { ButtonStyle } from "game/client/ui/components/Button";
 import { Text, TextStyle } from "game/client/ui/components/Text";
@@ -11,8 +13,6 @@ import { TriangularButton } from "game/client/ui/components/TriangularButton";
 import { palette } from "game/client/ui/palette";
 import { px } from "game/client/ui/px";
 import { AreaInfo, AREAS } from "game/shared/areas";
-import { trace } from "game/shared/log";
-import { MechanicController } from "./MechanicController";
 
 export interface AreaViewProps {
 	areas: Derivable<AreaInfo[]>;

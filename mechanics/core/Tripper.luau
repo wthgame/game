@@ -5,47 +5,28 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
-type TripperAttributes = {
-	Enabled: boolean,
-	Cooldown: number,
-}
-
 local function init(wth: utils.WTH)
-	local Tripper = {
-		type = "Mechanic",
-		minimumKitVersion = "1",
-		instanceTag = "Tripper",
-		instanceCheck = utils.t.instanceIsA("BasePart"),
-		defaultAttributes = {
-			Enabled = true,
-			Cooldown = 0,
-		},
-		attributeChecks = {
-			Enabled = utils.t.boolean,
-			Cooldown = utils.t.numberPositive,
-		},
-	} :: utils.Mechanic<BasePart, TripperAttributes>
+	local Tripper = wth:tag("Tripper", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
 
-	function Tripper:loaded(trove, instance)
+	Tripper:onLoaded(function(trove, instance)
 		local debounce = false
 		trove:add(instance.Touched:Connect(function(toucher)
 			if debounce then
 				return
 			end
 
-			if self:attribute(instance, "Enabled") and utils.isFromMaybeLocalCharacter(toucher) then
+			if utils.isEnabled(instance) and utils.isFromMaybeLocalCharacter(toucher) then
 				local humanoid = assert(utils.getMaybeLocalHumanoid(), "can be assumed it exists")
 				humanoid.Sit = true
 
 				debounce = true
-				task.delay(self:attribute(instance, "Cooldown"), function()
+				task.delay(Cooldown(instance), function()
 					debounce = false
 				end)
 			end
 		end))
-	end
-
-	wth.registerMechanic(Tripper)
+	end)
 end
 
 return init

@@ -3,12 +3,12 @@ import { atom } from "@rbxts/charm";
 import ty from "@rbxts/libopen-ty";
 import { Workspace } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
+import { Blink } from "core/shared/decorators";
+import { trace } from "core/shared/log";
 import { towers } from "game/client/net";
 import { NAME_TO_TOWER, TowerInfo } from "game/shared/areas";
-import { Blink } from "game/shared/decorators";
-import { trace } from "game/shared/log";
-import { MechanicController } from "./MechanicController";
-import { addMechanicBinding } from "./MechanicController/bindings";
+import { MechanicController } from "../../../core/client/controllers/MechanicController";
+import { addMechanicBinding } from "../../../core/client/controllers/MechanicController/bindings";
 
 @Controller()
 export class TowerRunController implements OnInit {

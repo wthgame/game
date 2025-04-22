@@ -9,39 +9,20 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 local DISTANCE_FROM_ROOT_TO_GROUND = 3
 local OFFSET_CHARACTER_BY = DISTANCE_FROM_ROOT_TO_GROUND / 2
 
-type SeatAttributes = {
-	Enabled: boolean,
-	Cooldown: boolean,
-	JumpOnDismount: boolean,
-	Visualize: boolean,
-}
-
 local function init(wth: utils.WTH)
-	local Seat = {
-		type = "Mechanic",
-		minimumKitVersion = "1",
-		instanceTag = "Seat",
-		instanceCheck = utils.t.instanceIsA("BasePart"),
-		defaultAttributes = {
-			Enabled = true,
-			Cooldown = 0,
-			JumpOnDismount = true,
-			Visualize = true,
-		},
-		attributeChecks = {
-			Enabled = utils.t.boolean,
-			Cooldown = utils.t.numberPositive,
-			JumpOnDismount = utils.t.boolean,
-			Visualize = utils.t.boolean,
-		},
-	} :: utils.Mechanic<BasePart, SeatAttributes>
+	local Seat = wth:tag("Seat", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+
+	local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
+	local JumpOnDismount = utils.attribute("JumpOnDismount", utils.t.boolean, true)
+	-- local Visualize = utils.attribute("Visualize", utils.t.boolean, true)
 
 	local seated = false
 
-	function Seat:loaded(trove, instance)
+	Seat:onLoaded(function(trove, instance)
 		local debounce = false
 		trove:add(instance.Touched:Connect(function(toucher)
-			local canBeSeated = not seated
+			local canBeSeated = utils.isEnabled(instance)
+				and not seated
 				and not debounce
 				and utils.isFromMaybeLocalCharacter(toucher)
 				and utils.isLocalCharacterAlive()
@@ -69,20 +50,18 @@ local function init(wth: utils.WTH)
 				local function dismount()
 					seated = false
 					local humanoid = utils.getMaybeLocalHumanoid()
-					if self:attribute(instance, "JumpOnDismount") and humanoid then
+					if JumpOnDismount(instance) and humanoid then
 						humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 					end
 				end
 
 				weldTrove:add(dismount)
-				task.delay(self:attribute(instance, "Cooldown"), function()
+				task.delay(Cooldown(instance), function()
 					debounce = false
 				end)
 			end
 		end))
-	end
-
-	wth.registerMechanic(Seat)
+	end)
 end
 
 return init

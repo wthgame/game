@@ -10,8 +10,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Promise = require(ReplicatedStorage.WTHShared.include.Promise)
-local BASE_EVENT_NAME = "BLINK"
+local Promise = require(ReplicatedStorage.WTHSharedCore.include.Promise)
+local BASE_EVENT_NAME = "WELCOME_TO_HELL_GAME_BLINK"
 local Invocations = 0
 
 local SendSize = 64
@@ -152,45 +152,14 @@ local Queue: any = {
     Unreliable = table.create(256)
 }
 
-Events.Reliable[0] = {}
 Queue.Reliable[0] = table.create(256)
 Events.Reliable[1] = {}
 Queue.Reliable[1] = table.create(256)
 Queue.Reliable[2] = table.create(256)
-Events.Reliable[3] = {}
 Queue.Reliable[3] = table.create(256)
-Queue.Reliable[4] = table.create(256)
-Queue.Reliable[5] = table.create(256)
-export type kit_DamageKind = ("Normal" | "Heavy" | "Super" | "Lethal")
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
 export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
-local function kit_ReadEVENT_damageSelfVariable(): (number)
-	-- Read BLOCK: 4 bytes
-	local BLOCK_START = Read(4)
-	local Value = buffer.readu32(RecieveBuffer, BLOCK_START + 0)
-	return Value
-end
-
-local function kit_ReadEVENT_damageSelf(): (("Normal" | "Heavy" | "Super" | "Lethal"))
-	-- Read BLOCK: 1 bytes
-	local BLOCK_START = Read(1)
-	local Value = true :: any
-	local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
-	if Index == 0 then
-		Value = "Normal"
-	elseif Index == 1 then
-		Value = "Heavy"
-	elseif Index == 2 then
-		Value = "Super"
-	elseif Index == 3 then
-		Value = "Lethal"
-	else
-		error(`Unexpected enum: {Index}`)
-	end
-	return Value
-end
-
 local function areas_ReadFUNCTION_DATA_loadArea(): (string)
 	-- Read BLOCK: 2 bytes
 	local BLOCK_START = Read(2)
@@ -202,7 +171,7 @@ end
 local function areas_WriteFUNCTION_RETURN_loadArea(Value: Instance, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 3 bytes
 	local BLOCK_START = Allocate(3)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 2)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 0)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 	buffer.writeu8(SendBuffer, BLOCK_START + 2, 1)
 	table.insert(SendInstances, Value or Null)
@@ -233,7 +202,7 @@ end
 local function towers_WriteFUNCTION_RETURN_startTowerRun(Value: { instance: Instance, mechanics: Instance }?, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 4 bytes
 	local BLOCK_START = Allocate(4)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 4)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 2)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 	buffer.writeu8(SendBuffer, BLOCK_START + 2, 1)
 	buffer.writeu8(SendBuffer, BLOCK_START + 3, Value ~= nil and 1 or 0)
@@ -243,14 +212,14 @@ local function towers_WriteFUNCTION_RETURN_startTowerRun(Value: { instance: Inst
 	end
 end
 
-local function towers_ReadFUNCTION_DATA_requestDetailsInTower(): (nil)
+local function towers_ReadFUNCTION_DATA_requestDecorationInTower(): (nil)
 	return nil
 end
 
-local function towers_WriteFUNCTION_RETURN_requestDetailsInTower(Value: Instance, InvocationIdentifier: number): ()
+local function towers_WriteFUNCTION_RETURN_requestDecorationInTower(Value: Instance, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 3 bytes
 	local BLOCK_START = Allocate(3)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 5)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 3)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 	buffer.writeu8(SendBuffer, BLOCK_START + 2, 1)
 	table.insert(SendInstances, Value or Null)
@@ -266,14 +235,6 @@ end
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
-	kit = {
-		damageSelfVariable = {
-			on = NOOP
-		},
-		damageSelf = {
-			on = NOOP
-		},
-	},
 	areas = {
 		loadArea = {
 			on = NOOP
@@ -286,7 +247,7 @@ if not RunService:IsRunning() then
 		startTowerRun = {
 			on = NOOP
 		},
-		requestDetailsInTower = {
+		requestDecorationInTower = {
 			on = NOOP
 		},
 		syncElapsedTime = {
@@ -354,26 +315,27 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 		if Index == 0 then
-			local Value: number = kit_ReadEVENT_damageSelfVariable()
-			if #Events.Reliable[0] > 0 then
-				for _, Listener in Events.Reliable[0] do
-					task.spawn(Listener, Player, Value)
-				end
+			-- Read BLOCK: 1 bytes
+			local BLOCK_START = Read(1)
+			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
+			local Value: string = areas_ReadFUNCTION_DATA_loadArea()
+			if Events.Reliable[0] ~= nil then
+				task.spawn(Events.Reliable[0], Player, Value, InvocationIdentifier)
 			else
 				if #Queue.Reliable[0] > 256 then
-					warn("[Blink]: Event queue of \"damageSelfVariable\" exceeded 256, did you forget to implement a listener?")
+					warn("[Blink]: Event queue of \"loadArea\" exceeded 256, did you forget to implement a listener?")
 				end
-				table.insert(Queue.Reliable[0], {Player, Value} :: {any})
+				table.insert(Queue.Reliable[0], {Player, Value, InvocationIdentifier} :: {any})
 			end
 		elseif Index == 1 then
-			local Value: ("Normal" | "Heavy" | "Super" | "Lethal") = kit_ReadEVENT_damageSelf()
+			local Value: nil = areas_ReadEVENT_confirmAreaLoaded()
 			if #Events.Reliable[1] > 0 then
 				for _, Listener in Events.Reliable[1] do
 					task.spawn(Listener, Player, Value)
 				end
 			else
 				if #Queue.Reliable[1] > 256 then
-					warn("[Blink]: Event queue of \"damageSelf\" exceeded 256, did you forget to implement a listener?")
+					warn("[Blink]: Event queue of \"confirmAreaLoaded\" exceeded 256, did you forget to implement a listener?")
 				end
 				table.insert(Queue.Reliable[1], {Player, Value} :: {any})
 			end
@@ -381,52 +343,27 @@ Reliable.OnServerEvent:Connect(function(Player: Player, Buffer: buffer, Instance
 			-- Read BLOCK: 1 bytes
 			local BLOCK_START = Read(1)
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
-			local Value: string = areas_ReadFUNCTION_DATA_loadArea()
+			local Value: { towerType: ("Standard" | "Practice"), towerName: string } = towers_ReadFUNCTION_DATA_startTowerRun()
 			if Events.Reliable[2] ~= nil then
 				task.spawn(Events.Reliable[2], Player, Value, InvocationIdentifier)
 			else
 				if #Queue.Reliable[2] > 256 then
-					warn("[Blink]: Event queue of \"loadArea\" exceeded 256, did you forget to implement a listener?")
+					warn("[Blink]: Event queue of \"startTowerRun\" exceeded 256, did you forget to implement a listener?")
 				end
 				table.insert(Queue.Reliable[2], {Player, Value, InvocationIdentifier} :: {any})
 			end
 		elseif Index == 3 then
-			local Value: nil = areas_ReadEVENT_confirmAreaLoaded()
-			if #Events.Reliable[3] > 0 then
-				for _, Listener in Events.Reliable[3] do
-					task.spawn(Listener, Player, Value)
-				end
+			-- Read BLOCK: 1 bytes
+			local BLOCK_START = Read(1)
+			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
+			local Value: nil = towers_ReadFUNCTION_DATA_requestDecorationInTower()
+			if Events.Reliable[3] ~= nil then
+				task.spawn(Events.Reliable[3], Player, Value, InvocationIdentifier)
 			else
 				if #Queue.Reliable[3] > 256 then
-					warn("[Blink]: Event queue of \"confirmAreaLoaded\" exceeded 256, did you forget to implement a listener?")
+					warn("[Blink]: Event queue of \"requestDecorationInTower\" exceeded 256, did you forget to implement a listener?")
 				end
-				table.insert(Queue.Reliable[3], {Player, Value} :: {any})
-			end
-		elseif Index == 4 then
-			-- Read BLOCK: 1 bytes
-			local BLOCK_START = Read(1)
-			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
-			local Value: { towerType: ("Standard" | "Practice"), towerName: string } = towers_ReadFUNCTION_DATA_startTowerRun()
-			if Events.Reliable[4] ~= nil then
-				task.spawn(Events.Reliable[4], Player, Value, InvocationIdentifier)
-			else
-				if #Queue.Reliable[4] > 256 then
-					warn("[Blink]: Event queue of \"startTowerRun\" exceeded 256, did you forget to implement a listener?")
-				end
-				table.insert(Queue.Reliable[4], {Player, Value, InvocationIdentifier} :: {any})
-			end
-		elseif Index == 5 then
-			-- Read BLOCK: 1 bytes
-			local BLOCK_START = Read(1)
-			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
-			local Value: nil = towers_ReadFUNCTION_DATA_requestDetailsInTower()
-			if Events.Reliable[5] ~= nil then
-				task.spawn(Events.Reliable[5], Player, Value, InvocationIdentifier)
-			else
-				if #Queue.Reliable[5] > 256 then
-					warn("[Blink]: Event queue of \"requestDetailsInTower\" exceeded 256, did you forget to implement a listener?")
-				end
-				table.insert(Queue.Reliable[5], {Player, Value, InvocationIdentifier} :: {any})
+				table.insert(Queue.Reliable[3], {Player, Value, InvocationIdentifier} :: {any})
 			end
 		end
 	end
@@ -448,21 +385,37 @@ end)
 local Returns = table.freeze({
 	stepReplication = StepReplication,
 
-	kit = {
-		damageSelfVariable = {
-			on = function(Listener: (Player: Player, Value: number) -> ()): () -> ()
-				table.insert(Events.Reliable[0], Listener)
-				for Index, Arguments in Queue.Reliable[0] do
-					task.spawn(Listener, table.unpack(Arguments))
+	areas = {
+		loadArea = {
+		on = function(Listener: (Player, string) -> (Instance)): ()
+			Events.Reliable[0] = function(Player: Player, Value: string, InvocationIdentifier: number): ()
+				local ReturnValue: Instance;
+				local Success, Error = pcall(function ()
+					ReturnValue = Listener(Player, Value)
+				end)
+				Load(PlayersMap[Player])
+				if Success ~= true then
+					local Position = Allocate(3)
+					buffer.writeu8(SendBuffer, Position, 0)
+					buffer.writeu8(SendBuffer, Position + 1, InvocationIdentifier)
+					buffer.writeu8(SendBuffer, Position + 2, 0)
+					warn(`"loadArea" encountered an error, {Error}`)
+				else
+					areas_WriteFUNCTION_RETURN_loadArea(ReturnValue, InvocationIdentifier)
 				end
-				Queue.Reliable[0] = {}
-				return function (): ()
-					table.remove(Events.Reliable[0], table.find(Events.Reliable[0], Listener))
-				end
+				PlayersMap[Player] = Save()
 			end
+			task.spawn(function (): ()
+				local EventQueue = Queue.Reliable[0] or {}
+				Queue.Reliable[0] = nil
+				for Index, Arguments in EventQueue do
+					Events.Reliable[0](table.unpack(Arguments))
+				end
+			end)
+		end
 		},
-		damageSelf = {
-			on = function(Listener: (Player: Player, Value: ("Normal" | "Heavy" | "Super" | "Lethal")) -> ()): () -> ()
+		confirmAreaLoaded = {
+			on = function(Listener: (Player: Player, Value: nil) -> ()): () -> ()
 				table.insert(Events.Reliable[1], Listener)
 				for Index, Arguments in Queue.Reliable[1] do
 					task.spawn(Listener, table.unpack(Arguments))
@@ -474,11 +427,11 @@ local Returns = table.freeze({
 			end
 		},
 	},
-	areas = {
-		loadArea = {
-		on = function(Listener: (Player, string) -> (Instance)): ()
-			Events.Reliable[2] = function(Player: Player, Value: string, InvocationIdentifier: number): ()
-				local ReturnValue: Instance;
+	towers = {
+		startTowerRun = {
+		on = function(Listener: (Player, { towerType: ("Standard" | "Practice"), towerName: string }) -> ({ instance: Instance, mechanics: Instance }?)): ()
+			Events.Reliable[2] = function(Player: Player, Value: { towerType: ("Standard" | "Practice"), towerName: string }, InvocationIdentifier: number): ()
+				local ReturnValue: { instance: Instance, mechanics: Instance }?;
 				local Success, Error = pcall(function ()
 					ReturnValue = Listener(Player, Value)
 				end)
@@ -488,9 +441,9 @@ local Returns = table.freeze({
 					buffer.writeu8(SendBuffer, Position, 2)
 					buffer.writeu8(SendBuffer, Position + 1, InvocationIdentifier)
 					buffer.writeu8(SendBuffer, Position + 2, 0)
-					warn(`"loadArea" encountered an error, {Error}`)
+					warn(`"startTowerRun" encountered an error, {Error}`)
 				else
-					areas_WriteFUNCTION_RETURN_loadArea(ReturnValue, InvocationIdentifier)
+					towers_WriteFUNCTION_RETURN_startTowerRun(ReturnValue, InvocationIdentifier)
 				end
 				PlayersMap[Player] = Save()
 			end
@@ -503,51 +456,9 @@ local Returns = table.freeze({
 			end)
 		end
 		},
-		confirmAreaLoaded = {
-			on = function(Listener: (Player: Player, Value: nil) -> ()): () -> ()
-				table.insert(Events.Reliable[3], Listener)
-				for Index, Arguments in Queue.Reliable[3] do
-					task.spawn(Listener, table.unpack(Arguments))
-				end
-				Queue.Reliable[3] = {}
-				return function (): ()
-					table.remove(Events.Reliable[3], table.find(Events.Reliable[3], Listener))
-				end
-			end
-		},
-	},
-	towers = {
-		startTowerRun = {
-		on = function(Listener: (Player, { towerType: ("Standard" | "Practice"), towerName: string }) -> ({ instance: Instance, mechanics: Instance }?)): ()
-			Events.Reliable[4] = function(Player: Player, Value: { towerType: ("Standard" | "Practice"), towerName: string }, InvocationIdentifier: number): ()
-				local ReturnValue: { instance: Instance, mechanics: Instance }?;
-				local Success, Error = pcall(function ()
-					ReturnValue = Listener(Player, Value)
-				end)
-				Load(PlayersMap[Player])
-				if Success ~= true then
-					local Position = Allocate(3)
-					buffer.writeu8(SendBuffer, Position, 4)
-					buffer.writeu8(SendBuffer, Position + 1, InvocationIdentifier)
-					buffer.writeu8(SendBuffer, Position + 2, 0)
-					warn(`"startTowerRun" encountered an error, {Error}`)
-				else
-					towers_WriteFUNCTION_RETURN_startTowerRun(ReturnValue, InvocationIdentifier)
-				end
-				PlayersMap[Player] = Save()
-			end
-			task.spawn(function (): ()
-				local EventQueue = Queue.Reliable[4] or {}
-				Queue.Reliable[4] = nil
-				for Index, Arguments in EventQueue do
-					Events.Reliable[4](table.unpack(Arguments))
-				end
-			end)
-		end
-		},
-		requestDetailsInTower = {
+		requestDecorationInTower = {
 		on = function(Listener: (Player, nil) -> (Instance)): ()
-			Events.Reliable[5] = function(Player: Player, Value: nil, InvocationIdentifier: number): ()
+			Events.Reliable[3] = function(Player: Player, Value: nil, InvocationIdentifier: number): ()
 				local ReturnValue: Instance;
 				local Success, Error = pcall(function ()
 					ReturnValue = Listener(Player, Value)
@@ -555,20 +466,20 @@ local Returns = table.freeze({
 				Load(PlayersMap[Player])
 				if Success ~= true then
 					local Position = Allocate(3)
-					buffer.writeu8(SendBuffer, Position, 5)
+					buffer.writeu8(SendBuffer, Position, 3)
 					buffer.writeu8(SendBuffer, Position + 1, InvocationIdentifier)
 					buffer.writeu8(SendBuffer, Position + 2, 0)
-					warn(`"requestDetailsInTower" encountered an error, {Error}`)
+					warn(`"requestDecorationInTower" encountered an error, {Error}`)
 				else
-					towers_WriteFUNCTION_RETURN_requestDetailsInTower(ReturnValue, InvocationIdentifier)
+					towers_WriteFUNCTION_RETURN_requestDecorationInTower(ReturnValue, InvocationIdentifier)
 				end
 				PlayersMap[Player] = Save()
 			end
 			task.spawn(function (): ()
-				local EventQueue = Queue.Reliable[5] or {}
-				Queue.Reliable[5] = nil
+				local EventQueue = Queue.Reliable[3] or {}
+				Queue.Reliable[3] = nil
 				for Index, Arguments in EventQueue do
-					Events.Reliable[5](table.unpack(Arguments))
+					Events.Reliable[3](table.unpack(Arguments))
 				end
 			end)
 		end

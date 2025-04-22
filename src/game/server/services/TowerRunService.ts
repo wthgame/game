@@ -1,7 +1,7 @@
 import { OnTick, Service } from "@flamework/core";
+import { Blink } from "core/shared/decorators";
+import { trace, warn } from "core/shared/log";
 import { towers } from "game/server/net";
-import { Blink } from "game/shared/decorators";
-import { trace, warn } from "game/shared/log";
 import { StartTowerRun, StartTowerRunResult } from "game/shared/types";
 import { PlayerService } from "./PlayerService";
 import { TowerService } from "./TowerService";
@@ -49,10 +49,10 @@ export class TowerRunService implements OnTick {
 		const towerInstance = tower.instance.Clone();
 		const mechanics = tower.mechanics.Clone();
 		const obby = tower.obby.Clone();
-		const details = tower.details.Clone();
+		const decoration = tower.decoration.Clone();
 		mechanics.Parent = towerInstance;
 		obby.Parent = towerInstance;
-		details.Parent = towerInstance;
+		decoration.Parent = towerInstance;
 		towerInstance.Parent = player;
 
 		const result: StartTowerRunResult = {

@@ -6,7 +6,7 @@ type Bindings = {
 }
 
 local bindings = require(
-	ReplicatedStorage:WaitForChild("WTHClient")
+	ReplicatedStorage:WaitForChild("WTHClientCore")
 		:WaitForChild("controllers")
 		:WaitForChild("MechanicController")
 		:WaitForChild("bindings")

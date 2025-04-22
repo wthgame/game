@@ -1,7 +1,7 @@
 import { Controller, OnStart } from "@flamework/core";
 import { Players } from "@rbxts/services";
 import Vide, { effect, mount, Source, source } from "@rbxts/vide";
-import { debug } from "game/shared/log";
+import { debug } from "core/shared/log";
 
 @Controller()
 export class MainViewController implements OnStart {

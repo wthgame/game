@@ -14,4 +14,4 @@ strip_extensions = true
 
 [inputs.assets]
 path = "assets/**/*"
-output_path = "src/shared/shared"
+output_path = "src/core/shared"

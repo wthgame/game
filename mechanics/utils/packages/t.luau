@@ -112,7 +112,7 @@ export type t = {
 
 local t: t = require(
 	game:GetService("ReplicatedStorage")
-		:WaitForChild("WTHShared")
+		:WaitForChild("WTHSharedCore")
 		:WaitForChild("include")
 		:WaitForChild("node_modules")
 		:WaitForChild("@rbxts")

@@ -14,19 +14,6 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 type FollowMode = "LookAt" | "RotationOf" | "PositionOf" | "PivotOf" | "None"
 type FollowTarget = "Character" | "Mouse" | "Camera" | "None"
 
-type FollowPartAttributes = {
-	Enabled: boolean,
-	FollowMode: FollowMode,
-	FollowTarget: FollowTarget,
-	Lerp: boolean,
-	LerpAlpha: number,
-	-- TODO: these are not implemented
-	XAxis: boolean,
-	YAxis: boolean,
-	ZAxis: boolean,
-	UseRelativeTransform: boolean,
-}
-
 local MAX_RAY_LENGTH = 10_000
 local mouse = Players.LocalPlayer:GetMouse()
 
@@ -53,49 +40,31 @@ local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFr
 end
 
 local function init(wth: utils.WTH)
-	local Follower = {
-		type = "Mechanic",
-		minimumKitVersion = "1",
-		instanceTag = "Follower",
-		instanceCheck = utils.t.instanceIsA("PVInstance"),
-		defaultAttributes = {
-			Enabled = true,
-			FollowMode = "None",
-			FollowTarget = "None",
-			UseRelativeTransform = false,
-			XAxis = true,
-			YAxis = true,
-			ZAxis = true,
-			Lerp = false,
-			LerpAlpha = 1,
-		},
-		attributeChecks = {
-			Enabled = utils.t.boolean,
-			FollowMode = utils.t.literal("LookAt", "RotationOf", "PositionOf", "PivotOf", "None"),
-			FollowTarget = utils.t.literal("Character", "Mouse", "Camera", "None"),
-			UseRelativeTransform = utils.t.boolean,
-			XAxis = utils.t.boolean,
-			YAxis = utils.t.boolean,
-			ZAxis = utils.t.boolean,
-			Lerp = utils.t.boolean,
-			LerpAlpha = utils.t.number,
-		},
-	} :: utils.Mechanic<PVInstance, FollowPartAttributes>
+	local Follower = wth:tag("Follower", utils.t.instanceIsA("PVInstance") :: utils.check<PVInstance>)
 
-	function Follower:renderStepped(trove, dt, kit)
+	local FollowMode =
+		utils.attribute("FollowMode", utils.t.literal("LookAt", "RotationOf", "PositionOf", "PivotOf", "None"), "None")
+	local FollowTarget =
+		utils.attribute("FollowTarget", utils.t.literal("Character", "Mouse", "Camera", "None"), "None")
+	-- local UseRelativeTransform = utils.attribute("UseRelativeTransform", utils.t.boolean, false)
+	-- local XAxis = utils.attribute("XAxis", utils.t.boolean, true)
+	-- local YAxis = utils.attribute("YAxis", utils.t.boolean, true)
+	-- local ZAxis = utils.attribute("ZAxis", utils.t.boolean, true)
+	local Lerp = utils.attribute("Lerp", utils.t.boolean, false)
+	local LerpAlpha = utils.attribute("LerpAlpha", utils.t.numberPositive, 1)
+
+	wth:onRender(function(trove, dt)
 		debug.profilebegin("Follower")
-		local instances = self:instances()
 
 		local params = RaycastParams.new()
 		params:AddToFilter(CollectionService:GetTagged("MouseFollowerIgnored"))
 		params.FilterType = Enum.RaycastFilterType.Exclude
 
-		for _, pv in instances do
-			local enabled: FollowTarget = self:attribute(pv, "Enabled")
-			local target: FollowTarget = self:attribute(pv, "FollowTarget")
-			local mode: FollowMode = self:attribute(pv, "FollowMode")
+		for _, pv in Follower:instances() do
+			local mode: FollowMode = FollowMode(pv)
+			local target: FollowTarget = FollowTarget(pv)
 
-			if not enabled or mode == "None" or target == "None" then
+			if not utils.isEnabled(pv) or mode == "None" or target == "None" then
 				continue
 			end
 
@@ -114,18 +83,16 @@ local function init(wth: utils.WTH)
 					error("Invalid FollowMode (unreachable?)")
 				end
 
-				local lerp = self:attribute(pv, "Lerp")
+				local lerp = Lerp(pv)
 				if lerp then
-					pv:PivotTo(pv:GetPivot():Lerp(newCFrame, 1 / self:attribute(pv, "LerpAlpha")))
+					pv:PivotTo(pv:GetPivot():Lerp(newCFrame, 1 / LerpAlpha(pv)))
 				else
 					pv:PivotTo(newCFrame)
 				end
 			end
 		end
 		debug.profileend()
-	end
-
-	wth.registerMechanic(Follower)
+	end)
 end
 
 return init

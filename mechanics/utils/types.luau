@@ -8,34 +8,20 @@ local trove = require("./packages/trove")
 export type Map<K, V> = { [K]: V }
 export type Set<T> = { [T]: true }
 
-export type KitContext = {
-	isDebug: (self: KitContext) -> boolean,
-}
-
-export type MechanicContext<I, A> = {
-	instances: (self: MechanicContext<I, A>) -> { I },
-	attribute: (self: MechanicContext<I, A>, instance: I, key: string) -> any,
-}
-
-export type Mechanic<I, A> = {
-	type: "Mechanic",
-	minimumKitVersion: string?,
-	instanceTag: string,
-	instanceCheck: t.check<any>?,
-	defaultAttributes: Map<string, any>,
-	attributeChecks: Map<string, t.check<any>>,
-	persistent: boolean?,
-
-	loaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, instance: I, kit: KitContext) -> (),
-	unloaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, instance: I, kit: KitContext) -> (),
-	kitLoaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, kit: KitContext) -> (),
-	kitUnloaded: (mechanic: MechanicContext<I, A>, trove: trove.Trove, kit: KitContext) -> (),
-	physicStepped: (mechanic: MechanicContext<I, A>, trove: trove.Trove, dt: number, kit: KitContext) -> (),
-	renderStepped: (mechanic: MechanicContext<I, A>, trove: trove.Trove, dt: number, kit: KitContext) -> (),
+export type InstanceTag<I> = {
+	instances: (self: InstanceTag<I>) -> { I },
+	onLoaded: (self: InstanceTag<I>, callback: (trove: trove.Trove, instance: I) -> ()) -> (),
+	onUnloaded: (self: InstanceTag<I>, callback: (trove: trove.Trove, instance: I) -> ()) -> (),
 }
 
 export type WTH = {
-	registerMechanic: (...Mechanic<any, any>) -> (),
+	tag: ((self: WTH, tagName: string) -> InstanceTag<Instance>)
+		& (<I>(self: WTH, tagName: string, check: t.check<I>?) -> InstanceTag<I>),
+	onRender: (self: WTH, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
+	onPhysics: (self: WTH, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
+	onTick: (self: WTH, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
+	onMechanicsLoaded: (self: WTH, callback: (trove: trove.Trove) -> ()) -> (),
+	onMechanicsUnloaded: (self: WTH, callback: (trove: trove.Trove) -> ()) -> (),
 }
 
 export type Character = Model & {

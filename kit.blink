@@ -1,26 +1,17 @@
 option ClientOutput = "src/kit/client/net.luau"
 option ServerOutput = "src/kit/server/net.luau"
 option Typescript = true
-option PromiseLibrary = "ReplicatedStorage.WTHShared.include.Promise"
+option PromiseLibrary = "ReplicatedStorage.WTHSharedCore.include.Promise"
 option Casing = Camel
+option RemoteScope = "WELCOME_TO_HELL_KIT"
 
-enum DamageKind = {
-    Normal,
-    Heavy,
-    Super,
-    Lethal
+function loadKitMechanics {
+    yield: Promise,
+    return: Instance?
 }
 
-event damageSelfVariable {
+event confirmKitLoaded {
     from: Client,
     type: Reliable,
-    call: ManyAsync,
-    data: u32
-}
-
-event damageSelf {
-    from: Client,
-    type: Reliable,
-    call: ManyAsync,
-    data: DamageKind
+    call: ManyAsync
 }

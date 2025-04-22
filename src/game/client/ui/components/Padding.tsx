@@ -13,7 +13,6 @@ export interface PaddingProps {
 const ZERO_UDIM = new UDim();
 
 export function Padding({
-	// scope,
 	padding,
 	paddingX,
 	paddingY,
@@ -24,7 +23,6 @@ export function Padding({
 }: PaddingProps) {
 	return (
 		<uipadding
-			// scope={scope}
 			Name="Padding"
 			PaddingLeft={() => read(paddingLeft) ?? read(paddingX) ?? read(padding) ?? ZERO_UDIM}
 			PaddingRight={() => read(paddingRight) ?? read(paddingX) ?? read(padding) ?? ZERO_UDIM}

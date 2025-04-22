@@ -9,8 +9,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Promise = require(ReplicatedStorage.WTHShared.include.Promise)
-local BASE_EVENT_NAME = "BLINK"
+local Promise = require(ReplicatedStorage.WTHSharedCore.include.Promise)
+local BASE_EVENT_NAME = "WELCOME_TO_HELL_GAME_BLINK"
 local Invocations = 0
 
 local SendSize = 64
@@ -151,43 +151,18 @@ local Queue: any = {
     Unreliable = table.create(256)
 }
 
+Queue.Reliable[0] = table.create(256)
 Queue.Reliable[2] = table.create(256)
-Queue.Reliable[4] = table.create(256)
-Queue.Reliable[5] = table.create(256)
+Queue.Reliable[3] = table.create(256)
 Events.Unreliable[0] = {}
 Queue.Unreliable[0] = table.create(256)
-export type kit_DamageKind = ("Normal" | "Heavy" | "Super" | "Lethal")
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
 export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
-local function kit_WriteEVENT_damageSelfVariable(Value: number): ()
-	-- Allocate BLOCK: 5 bytes
-	local BLOCK_START = Allocate(5)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 0)
-	buffer.writeu32(SendBuffer, BLOCK_START + 1, Value)
-end
-
-local function kit_WriteEVENT_damageSelf(Value: ("Normal" | "Heavy" | "Super" | "Lethal")): ()
-	-- Allocate BLOCK: 2 bytes
-	local BLOCK_START = Allocate(2)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 1)
-	if Value == "Normal" then
-		buffer.writeu8(SendBuffer, BLOCK_START + 1, 0)
-	elseif Value == "Heavy" then
-		buffer.writeu8(SendBuffer, BLOCK_START + 1, 1)
-	elseif Value == "Super" then
-		buffer.writeu8(SendBuffer, BLOCK_START + 1, 2)
-	elseif Value == "Lethal" then
-		buffer.writeu8(SendBuffer, BLOCK_START + 1, 3)
-	else
-		error(`Unexpected enum: {Value}, expected one of "Normal" or "Heavy" or "Super" or "Lethal".`)
-	end
-end
-
 local function areas_WriteFUNCTION_DATA_loadArea(Value: string, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 4 bytes
 	local BLOCK_START = Allocate(4)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 2)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 0)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 	local Length = #Value
 	buffer.writeu16(SendBuffer, BLOCK_START + 2, Length)
@@ -212,13 +187,13 @@ end
 local function areas_WriteEVENT_confirmAreaLoaded(Value: nil): ()
 	-- Allocate BLOCK: 1 bytes
 	local BLOCK_START = Allocate(1)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 3)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 1)
 end
 
 local function towers_WriteFUNCTION_DATA_startTowerRun(Value: { towerType: ("Standard" | "Practice"), towerName: string }, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 5 bytes
 	local BLOCK_START = Allocate(5)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 4)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 2)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 	if Value.towerType == "Standard" then
 		buffer.writeu8(SendBuffer, BLOCK_START + 2, 0)
@@ -255,14 +230,14 @@ local function towers_ReadFUNCTION_RETURN_startTowerRun(): ({ instance: Instance
 	return Value
 end
 
-local function towers_WriteFUNCTION_DATA_requestDetailsInTower(Value: nil, InvocationIdentifier: number): ()
+local function towers_WriteFUNCTION_DATA_requestDecorationInTower(Value: nil, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 2 bytes
 	local BLOCK_START = Allocate(2)
-	buffer.writeu8(SendBuffer, BLOCK_START + 0, 5)
+	buffer.writeu8(SendBuffer, BLOCK_START + 0, 3)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 end
 
-local function towers_ReadFUNCTION_RETURN_requestDetailsInTower(): (Instance)
+local function towers_ReadFUNCTION_RETURN_requestDecorationInTower(): (Instance)
 	-- Read BLOCK: 1 bytes
 	local BLOCK_START = Read(1)
 	local Success = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
@@ -286,14 +261,6 @@ end
 if not RunService:IsRunning() then
 	local NOOP = function() end
 	local Returns = table.freeze({
-	kit = {
-		damageSelfVariable = {
-			fire = NOOP
-		},
-		damageSelf = {
-			fire = NOOP
-		},
-	},
 	areas = {
 		loadArea = {
 			invoke = NOOP
@@ -306,7 +273,7 @@ if not RunService:IsRunning() then
 		startTowerRun = {
 			invoke = NOOP
 		},
-		requestDetailsInTower = {
+		requestDecorationInTower = {
 			invoke = NOOP
 		},
 		syncElapsedTime = {
@@ -357,7 +324,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 		-- Read BLOCK: 1 bytes
 		local BLOCK_START = Read(1)
 		local Index = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
-		if Index == 2 then
+		if Index == 0 then
 			-- Read BLOCK: 1 bytes
 			local BLOCK_START = Read(1)
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
@@ -368,7 +335,7 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
 			end
-		elseif Index == 4 then
+		elseif Index == 2 then
 			-- Read BLOCK: 1 bytes
 			local BLOCK_START = Read(1)
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
@@ -379,13 +346,13 @@ Reliable.OnClientEvent:Connect(function(Buffer: buffer, Instances: {Instance})
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
 			end
-		elseif Index == 5 then
+		elseif Index == 3 then
 			-- Read BLOCK: 1 bytes
 			local BLOCK_START = Read(1)
 			local InvocationIdentifier = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 			if Calls[InvocationIdentifier] ~= nil then
 				local Success, ReturnValue = pcall(function ()
-					return towers_ReadFUNCTION_RETURN_requestDetailsInTower()
+					return towers_ReadFUNCTION_RETURN_requestDecorationInTower()
 				end)
 				task.spawn(Calls[InvocationIdentifier], Success, ReturnValue)
 				Calls[InvocationIdentifier] = nil
@@ -416,18 +383,6 @@ end)
 local Returns = table.freeze({
 	stepReplication = StepReplication,
 
-	kit = {
-		damageSelfVariable = {
-			fire = function(Value: number): ()
-				kit_WriteEVENT_damageSelfVariable(Value)
-			end
-		},
-		damageSelf = {
-			fire = function(Value: ("Normal" | "Heavy" | "Super" | "Lethal")): ()
-				kit_WriteEVENT_damageSelf(Value)
-			end
-		},
-	},
 	areas = {
 		loadArea = {
 			invoke = function(Value: string): any
@@ -480,7 +435,7 @@ local Returns = table.freeze({
 				end)
 			end
 		},
-		requestDetailsInTower = {
+		requestDecorationInTower = {
 			invoke = function(Value: nil): any
 				return Promise.new(function (Resolve, Reject, OnCancel)
 					local InvocationIdentifier = Invoke()
@@ -488,14 +443,14 @@ local Returns = table.freeze({
 						Invocations -= 1
 						error("More than 256 calls are awaiting a response, this packet has been dropped.")
 					end
-					towers_WriteFUNCTION_DATA_requestDetailsInTower(Value, InvocationIdentifier)
+					towers_WriteFUNCTION_DATA_requestDecorationInTower(Value, InvocationIdentifier)
 					Calls[InvocationIdentifier] = coroutine.running()
 					OnCancel(function ()
 						Calls[InvocationIdentifier] = nil
 					end)
 					local Success, ReturnValue: Instance = coroutine.yield()
 					if Success ~= true then
-						Reject("There was an exception while processing \"requestDetailsInTower\".")
+						Reject("There was an exception while processing \"requestDecorationInTower\".")
 						return 
 					end
 					Resolve(ReturnValue)

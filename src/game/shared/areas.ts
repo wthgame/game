@@ -46,7 +46,7 @@ export interface TowerInfo {
 export interface TowerInstance extends Instance {
 	Mechanics: Instance;
 	Obby: Instance;
-	Details: Instance;
+	Decoration: Instance;
 	Frame: Instance;
 	Spawn: BasePart;
 }

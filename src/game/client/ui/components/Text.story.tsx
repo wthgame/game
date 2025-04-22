@@ -4,7 +4,7 @@ import { Text, TextStyle } from "game/client/ui/components/Text";
 // import { debug, setWTHAsDefaultLogger } from "shared/log";
 import { Choose, CreateVideStory } from "@rbxts/ui-labs";
 import Vide, { read } from "@rbxts/vide";
-import { setWTHAsDefaultLogger } from "game/shared/log";
+import { setWTHAsDefaultLogger } from "core/shared/log";
 
 const STORY_TEXT_STYLES: Array<[label: string, value: TextStyle]> = [
 	["Title", TextStyle.Title],

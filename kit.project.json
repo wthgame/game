@@ -1,6 +1,9 @@
 {
     "name": "Welcome to Hell Kit",
     "emitLegacyScripts": false,
+    "servePlaceIds": [
+        113552277431105
+    ],
     "globIgnorePaths": [
         "**/package.json",
         "**/tsconfig.json"
@@ -9,11 +12,11 @@
         "$className": "DataModel",
         "ServerScriptService": {
             "$className": "ServerScriptService",
-            "WTHServer": {
-                "$path": "out/kit/server",
-                "core": {
-                    "$path": "out/core/server"
-                }
+            "WTHServerCore": {
+                "$path": "out/core/server"
+            },
+            "WTHServerKit": {
+                "$path": "out/kit/server"
             }
         },
         "ReplicatedStorage": {
@@ -34,11 +37,8 @@
             "MechanicUtils": {
                 "$path": "mechanics/utils"
             },
-            "WTHShared": {
-                "$path": "out/kit/shared",
-                "core": {
-                    "$path": "out/core/shared"
-                },
+            "WTHSharedCore": {
+                "$path": "out/core/shared",
                 "include": {
                     "$path": "include",
                     "node_modules": {
@@ -52,11 +52,14 @@
                     }
                 }
             },
-            "WTHClient": {
-                "$path": "out/kit/client",
-                "core": {
-                    "$path": "out/core/client"
-                }
+            "WTHSharedKit": {
+                "$path": "out/kit/shared"
+            },
+            "WTHClientCore": {
+                "$path": "out/core/client"
+            },
+            "WTHClientKit": {
+                "$path": "out/kit/client"
             }
         }
     }

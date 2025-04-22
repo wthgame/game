@@ -2,15 +2,6 @@
 // This file is not meant to be edited
 
 export declare const stepReplication: () => void
-export declare namespace kit {
-	type DamageKind = "Normal" | "Heavy" | "Super" | "Lethal"
-	export const damageSelfVariable: {
-		on: (Listener: (Player: Player, Value: number) => void) => (() => void)
-	}
-	export const damageSelf: {
-		on: (Listener: (Player: Player, Value: "Normal" | "Heavy" | "Super" | "Lethal") => void) => (() => void)
-	}
-}
 export declare namespace areas {
 	export const loadArea: {
 		on: (Listener: (Player: Player, Value: string) => Instance) => void
@@ -26,7 +17,7 @@ export declare namespace towers {
 	export const startTowerRun: {
 		on: (Listener: (Player: Player, Value: { towerType: "Standard" | "Practice", towerName: string }) => { instance: Instance, mechanics: Instance } | undefined) => void
 	}
-	export const requestDetailsInTower: {
+	export const requestDecorationInTower: {
 		on: (Listener: (Player: Player, Value: void) => Instance) => void
 	}
 	export const syncElapsedTime: {

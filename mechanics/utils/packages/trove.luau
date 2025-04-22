@@ -71,7 +71,7 @@ export type TroveLib = {
 
 local trove: TroveLib = require(
 	game:GetService("ReplicatedStorage")
-		:WaitForChild("WTHShared")
+		:WaitForChild("WTHSharedCore")
 		:WaitForChild("include")
 		:WaitForChild("node_modules")
 		:WaitForChild("@rbxts")

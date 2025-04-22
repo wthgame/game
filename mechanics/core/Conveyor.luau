@@ -5,38 +5,20 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
-type ConveyorAttributes = {
-	Enabled: boolean,
-	Speed: number,
-	SynchronizeConveyorBeams: boolean,
-}
-
 local function init(wth: utils.WTH)
-	local Conveyor = {
-		type = "Mechanic",
-		minimumKitVersion = "1",
-		instanceTag = "Conveyor",
-		instanceCheck = utils.t.instanceIsA("BasePart"),
-		defaultAttributes = {
-			Enabled = true,
-			Speed = 0,
-			SynchronizeConveyorBeams = true,
-		},
-		attributeChecks = {
-			Enabled = utils.t.boolean,
-			Speed = utils.t.numberPositive,
-			SynchronizeConveyorBeams = utils.t.boolean,
-		},
-	} :: utils.Mechanic<BasePart, ConveyorAttributes>
+	local Conveyor = wth:tag("Conveyor", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
-	function Conveyor:physicStepped(trove, dt, kit)
+	local Speed = utils.attribute("Speed", utils.t.numberPositive, 0)
+	local SynchronizeConveyorBeams = utils.attribute("SynchronizeConveyorBeams", utils.t.boolean, true)
+
+	wth:onPhysics(function(trove, dt)
 		local alreadySynchronized: utils.Set<Instance> = {}
 
-		for _, conveyor in self:instances() do
-			local speed: number = self:attribute(conveyor, "Enabled") and self:attribute(conveyor, "Speed") or 0
+		for _, conveyor in Conveyor:instances() do
+			local speed: number = utils.isEnabled(conveyor) and Speed(conveyor) or 0
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
 
-			if self:attribute(conveyor, "SynchronizeConveyorBeams") then
+			if SynchronizeConveyorBeams(conveyor) then
 				for _, beam in conveyor:GetDescendants() do
 					if not alreadySynchronized[beam] then
 						if beam.Name == "ConveyorBeam" and beam:IsA("Beam") then
@@ -49,9 +31,7 @@ local function init(wth: utils.WTH)
 		end
 
 		table.clear(alreadySynchronized)
-	end
-
-	wth.registerMechanic(Conveyor)
+	end)
 end
 
 return init

@@ -3,10 +3,10 @@ import { Lazy } from "@rbxts/lazy";
 import Make from "@rbxts/make";
 import { Workspace } from "@rbxts/services";
 import { t } from "@rbxts/t";
+import { Blink } from "core/shared/decorators";
+import { trace, warn } from "core/shared/log";
 import { areas } from "game/server/net";
 import { AreaInfo, AreaInstance, NAME_TO_AREA } from "game/shared/areas";
-import { Blink } from "game/shared/decorators";
-import { trace, warn } from "game/shared/log";
 import { TowerService } from "./TowerService";
 
 export interface Area {

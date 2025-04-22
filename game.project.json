@@ -12,11 +12,11 @@
         "$className": "DataModel",
         "ServerScriptService": {
             "$className": "ServerScriptService",
-            "WTHServer": {
-                "$path": "out/game/server",
-                "core": {
-                    "$path": "out/core/server"
-                }
+            "WTHServerCore": {
+                "$path": "out/core/server"
+            },
+            "WTHServerGame": {
+                "$path": "out/game/server"
             }
         },
         "ReplicatedStorage": {
@@ -40,11 +40,8 @@
             "MechanicUtils": {
                 "$path": "mechanics/utils"
             },
-            "WTHShared": {
-                "$path": "out/game/shared",
-                "core": {
-                    "$path": "out/core/shared"
-                },
+            "WTHSharedCore": {
+                "$path": "out/core/shared",
                 "include": {
                     "$path": "include",
                     "node_modules": {
@@ -58,11 +55,14 @@
                     }
                 }
             },
-            "WTHClient": {
-                "$path": "out/game/client",
-                "core": {
-                    "$path": "out/core/client"
-                }
+            "WTHSharedGame": {
+                "$path": "out/game/shared"
+            },
+            "WTHClientCore": {
+                "$path": "out/core/client"
+            },
+            "WTHClientGame": {
+                "$path": "out/game/client"
             }
         }
     }

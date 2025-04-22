@@ -7,14 +7,6 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
-type WindAttributes = {
-	Enabled: boolean,
-	Power: number,
-	MaxForce: number,
-	Vector: Vector,
-	SupportsLocalCharacter: boolean,
-}
-
 local function wind(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
 	velocityAttachment.Name = "WindAttachment"
@@ -32,52 +24,37 @@ local function wind(trove: utils.Trove, parent: BasePart, power: number, maxAxes
 	velocityAttachment.Parent = parent
 end
 
+local function windUpTrove(
+	outerTrove: utils.Trove,
+	part: BasePart,
+	power: number,
+	maxAxesForce: Vector3,
+	faceVector: Vector3
+): utils.Trove
+	local trove = outerTrove:extend()
+	outerTrove:attachToInstance(part)
+	wind(trove, part, power, maxAxesForce, faceVector)
+	return trove
+end
+
 local function init(wth: utils.WTH)
-	local Wind = {
-		type = "Mechanic",
-		minimumKitVersion = "1",
-		instanceTag = "Wind",
-		instanceCheck = utils.t.instanceIsA("BasePart"),
-		defaultAttributes = {
-			Enabled = true,
-			Power = 0,
-			MaxForce = math.huge,
-			Vector = "Up",
-			SupportsLocalCharacter = true,
-		},
-		attributeChecks = {
-			Enabled = utils.t.boolean,
-			Power = utils.t.numberPositive,
-			MaxForce = utils.t.numberPositive,
-			Vector = utils.t.literal("Up", "Right", "Look", "Z"),
-			SupportsLocalCharacter = utils.t.boolean,
-		},
-	} :: utils.Mechanic<BasePart, WindAttributes>
+	local Wind = wth:tag("Wind", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
-	local function windUpTrove(
-		outerTrove: utils.Trove,
-		part: BasePart,
-		power: number,
-		maxAxesForce: Vector3,
-		faceVector: Vector3
-	): utils.Trove
-		local trove = outerTrove:extend()
-		outerTrove:attachToInstance(part)
-		wind(trove, part, power, maxAxesForce, faceVector)
-		return trove
-	end
+	local Power = utils.attribute("Power", utils.t.numberPositive, 0)
+	local MaxForce = utils.attribute("MaxForce", utils.t.numberPositive, math.huge)
+	local Vector = utils.attribute("Vector", utils.t.literal("Up", "Right", "Look", "Z"), "Up")
+	local SupportsCharacter = utils.attribute("SupportsCharacter", utils.t.boolean, true)
 
-	function Wind:loaded(trove, instance)
+	Wind:onLoaded(function(trove, instance)
 		local windTroves: utils.Map<BasePart, utils.Trove> = {}
 		trove:connect(instance.Touched, function(toucher)
-			if not self:attribute(instance, "Enabled") then
+			if not utils.isEnabled(instance) then
 				return
 			end
 
 			local partToWind: BasePart? = nil
 
-			local isCharacter = self:attribute(instance, "SupportsLocalCharacter")
-				and utils.isFromMaybeLocalCharacter(toucher)
+			local isCharacter = SupportsCharacter(instance) and utils.isFromMaybeLocalCharacter(toucher)
 
 			if isCharacter then
 				-- For consistency, only wind up the humanoid root part.
@@ -92,8 +69,8 @@ local function init(wth: utils.WTH)
 				return
 			end
 
-			local maxForce: number = self:attribute(instance, "MaxForce")
-			local launcherVector: Vector = self:attribute(instance, "Vector")
+			local maxForce: number = MaxForce(instance)
+			local launcherVector: Vector = Vector(instance)
 
 			local faceVector: Vector3
 			if launcherVector == "Up" then
@@ -121,7 +98,7 @@ local function init(wth: utils.WTH)
 			local windTrove = windUpTrove(
 			    trove,
 				partToWind,
-				self:attribute(instance, "Power"),
+				Power(instance),
 				maxAxesForce,
 				faceVector
 			)
@@ -130,8 +107,7 @@ local function init(wth: utils.WTH)
 		end)
 
 		trove:connect(instance.TouchEnded, function(toucher)
-			local isCharacter = self:attribute(instance, "SupportsLocalCharacter")
-				and utils.isFromMaybeLocalCharacter(toucher)
+			local isCharacter = SupportsCharacter(instance) and utils.isFromMaybeLocalCharacter(toucher)
 
 			if isCharacter then
 				-- For consistency, only the humanoid root part should be winded
@@ -151,9 +127,7 @@ local function init(wth: utils.WTH)
 				windTroves[toucher] = nil
 			end
 		end)
-	end
-
-	wth.registerMechanic(Wind)
+	end)
 end
 
 return init

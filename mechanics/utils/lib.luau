@@ -4,6 +4,7 @@
 
 local CullThrottle = require("./packages/cull-throttle")
 local assets = require("./assets")
+local attributes = require("./attributes")
 local audio = require("./audio")
 local bindings = require("./bindings")
 local character = require("./character")
@@ -15,12 +16,12 @@ local types = require("./types")
 
 export type Map<K, V> = types.Map<K, V>
 export type Set<T> = types.Set<T>
-export type KitContext = types.KitContext
-export type Mechanic<Instance, Attributes> = types.Mechanic<Instance, Attributes>
-export type MechanicContext<Instance, Attributes> = types.MechanicContext<Instance, Attributes>
-export type PlaySoundConfig = types.PlaySoundConfig
+export type InstanceTag<I> = types.InstanceTag<I>
 export type WTH = types.WTH
+export type Character = types.Character
+export type PlaySoundConfig = types.PlaySoundConfig
 
+export type check<T> = t.check<T>
 export type Trove = trove.Trove
 
 --[=[
@@ -43,6 +44,9 @@ local utils = table.freeze({
 		The utils version, pairing with the kit version.
     ]=]
 	version = "1.0.0-dev",
+
+	attribute = attributes.attribute,
+	isEnabled = attributes.isEnabled,
 
 	--[=[
         @prop ASSETS typeof(assets)
