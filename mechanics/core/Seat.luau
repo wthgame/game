@@ -21,7 +21,7 @@ local function init(wth: utils.WTH)
 	Seat:onLoaded(function(trove, instance)
 		local debounce = false
 		trove:add(instance.Touched:Connect(function(toucher)
-			local canBeSeated = utils.isEnabled(instance)
+			local canBeSeated = utils.isActive(instance)
 				and not seated
 				and not debounce
 				and utils.isFromMaybeLocalCharacter(toucher)

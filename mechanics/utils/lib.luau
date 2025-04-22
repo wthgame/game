@@ -46,7 +46,7 @@ local utils = table.freeze({
 	version = "1.0.0-dev",
 
 	attribute = attributes.attribute,
-	isEnabled = attributes.isEnabled,
+	isActive = attributes.isActive,
 
 	--[=[
         @prop ASSETS typeof(assets)

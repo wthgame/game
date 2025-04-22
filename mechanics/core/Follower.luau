@@ -64,7 +64,7 @@ local function init(wth: utils.WTH)
 			local mode: FollowMode = FollowMode(pv)
 			local target: FollowTarget = FollowTarget(pv)
 
-			if not utils.isEnabled(pv) or mode == "None" or target == "None" then
+			if not utils.isActive(pv) or mode == "None" or target == "None" then
 				continue
 			end
 

@@ -45,7 +45,7 @@ local function init(wth: utils.WTH)
 		end
 
 		trove:connect(instance.Touched, function(toucher)
-			if not utils.isEnabled(instance) or debounce then
+			if not utils.isActive(instance) or debounce then
 				return
 			end
 

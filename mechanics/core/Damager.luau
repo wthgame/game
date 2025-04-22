@@ -19,7 +19,7 @@ local function init(wth: utils.WTH)
 
 	Damager:onLoaded(function(trove, dam)
 		trove:add(dam.Touched:Connect(function(toucher)
-			if utils.isEnabled(dam) and utils.isFromMaybeLocalCharacter(toucher) then
+			if utils.isActive(dam) and utils.isFromMaybeLocalCharacter(toucher) then
 				local damage = Damage(dam)
 				if typeof(damage) == "number" then
 					net.damageSelfVariable.fire(damage)

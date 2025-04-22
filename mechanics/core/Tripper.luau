@@ -16,7 +16,7 @@ local function init(wth: utils.WTH)
 				return
 			end
 
-			if utils.isEnabled(instance) and utils.isFromMaybeLocalCharacter(toucher) then
+			if utils.isActive(instance) and utils.isFromMaybeLocalCharacter(toucher) then
 				local humanoid = assert(utils.getMaybeLocalHumanoid(), "can be assumed it exists")
 				humanoid.Sit = true
 

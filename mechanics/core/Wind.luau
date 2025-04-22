@@ -48,7 +48,11 @@ local function init(wth: utils.WTH)
 	Wind:onLoaded(function(trove, instance)
 		local windTroves: utils.Map<BasePart, utils.Trove> = {}
 		trove:connect(instance.Touched, function(toucher)
-			if not utils.isEnabled(instance) then
+			if not utils.isActive(instance) then
+				for part, trove in windTroves do
+					(trove :: any):clean()
+				end
+				table.clear(windTroves)
 				return
 			end
 
