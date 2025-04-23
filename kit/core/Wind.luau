@@ -3,7 +3,7 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
@@ -42,8 +42,11 @@ local function windUpTrove(
 	return trove
 end
 
-local function init(wth: utils.WTH)
-	local Wind = wth:tag("Wind", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
+
+function self:run(kit: utils.Kit)
+	local Wind = kit:tag("Wind", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	Wind:onLoaded(function(trove, instance)
 		local windTroves: utils.Map<BasePart, utils.Trove> = {}
@@ -134,4 +137,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

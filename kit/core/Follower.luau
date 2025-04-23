@@ -9,7 +9,7 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 type FollowMode = "LookAt" | "RotationOf" | "PositionOf" | "PivotOf" | "None"
 type FollowTarget = "Character" | "Mouse" | "Camera" | "None"
@@ -49,10 +49,13 @@ local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFr
 	return nil
 end
 
-local function init(wth: utils.WTH)
-	local Follower = wth:tag("Follower", utils.t.instanceIsA("PVInstance") :: utils.check<PVInstance>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
 
-	wth:onRender(function(trove, dt)
+function self:run(kit: utils.Kit)
+	local Follower = kit:tag("Follower", utils.t.instanceIsA("PVInstance") :: utils.check<PVInstance>)
+
+	kit:onRender(function(trove, dt)
 		debug.profilebegin("Follower")
 
 		local params = RaycastParams.new()
@@ -94,4 +97,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

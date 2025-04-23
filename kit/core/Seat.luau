@@ -4,7 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local DISTANCE_FROM_ROOT_TO_GROUND = 3
 local OFFSET_CHARACTER_BY = DISTANCE_FROM_ROOT_TO_GROUND / 2
@@ -13,8 +13,11 @@ local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
 local JumpOnDismount = utils.attribute("JumpOnDismount", utils.t.boolean, true)
 -- local Visualize = utils.attribute("Visualize", utils.t.boolean, true)
 
-local function init(wth: utils.WTH)
-	local Seat = wth:tag("Seat", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
+
+function self:run(kit: utils.Kit)
+	local Seat = kit:tag("Seat", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	local seated = false
 
@@ -64,4 +67,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

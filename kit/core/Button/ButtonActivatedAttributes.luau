@@ -3,7 +3,7 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local Invert = utils.attribute("Invert", utils.t.boolean, false)
 local KeepCollision = utils.attribute("KeepCollision", utils.t.boolean, false)

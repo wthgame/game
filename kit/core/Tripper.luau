@@ -3,12 +3,15 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
 
-local function init(wth: utils.WTH)
-	local Tripper = wth:tag("Tripper", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
+
+function self:run(kit: utils.Kit)
+	local Tripper = kit:tag("Tripper", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	Tripper:onLoaded(function(trove, instance)
 		local debounce = false
@@ -30,4 +33,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

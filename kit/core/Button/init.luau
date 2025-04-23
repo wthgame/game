@@ -5,7 +5,7 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local ButtonActivatedAttributes = require(script:WaitForChild("ButtonActivatedAttributes"))
 local Invert = ButtonActivatedAttributes.Invert
@@ -27,9 +27,12 @@ local BUTTON_PRESS_TWEEN: utils.TweenConfig = {
 	easingDirection = Enum.EasingDirection.Out,
 }
 
-local function init(wth: utils.WTH)
-	local Button = wth:tag("Button", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-	local ButtonActivated = wth:tag("ButtonActivated")
+local self = {} :: utils.KitScript
+self.type = "KitScript"
+
+function self:run(kit: utils.Kit)
+	local Button = kit:tag("Button", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local ButtonActivated = kit:tag("ButtonActivated")
 
 	-- baby i'd
 	local buttonActivatedsById: utils.Map<string, utils.Set<Instance>> = {}
@@ -237,4 +240,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

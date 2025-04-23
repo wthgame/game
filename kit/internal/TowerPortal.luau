@@ -1,12 +1,15 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local ShouldPrompt = utils.attribute("ShouldPrompt", utils.t.boolean, false)
 local TowerName = utils.attribute("TowerName", utils.t.string)
 
-local function init(wth: utils.WTH)
-	local TowerPortal = wth:tag("TowerPortal", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
+
+function self:run(kit: utils.Kit)
+	local TowerPortal = kit:tag("TowerPortal", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	TowerPortal:onLoaded(function(trove, portal)
 		if not ShouldPrompt(portal) then
@@ -33,4 +36,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

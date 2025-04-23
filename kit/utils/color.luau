@@ -1,5 +1,5 @@
 --[=[
-    @within MechanicUtils
+    @within KitUtils
     @tag Color
 ]=]
 local function roundColor(color: Color3): Color3

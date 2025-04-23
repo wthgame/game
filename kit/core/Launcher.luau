@@ -4,7 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
@@ -34,8 +34,11 @@ local function launch(trove: utils.Trove, parent: BasePart, power: number, maxAx
 	velocityAttachment.Parent = parent
 end
 
-local function init(wth: utils.WTH)
-	local Launcher = wth:tag("Launcher", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
+
+function self:run(kit: utils.Kit)
+	local Launcher = kit:tag("Launcher", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	Launcher:onLoaded(function(trove, instance)
 		local debounce = false
@@ -107,4 +110,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

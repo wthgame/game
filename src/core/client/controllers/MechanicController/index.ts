@@ -4,12 +4,11 @@ import ty from "@rbxts/libopen-ty";
 import { ReplicatedStorage, RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
-import { warn } from "core/shared/log";
+import { trace, warn } from "core/shared/log";
 
 export class InstanceTag {
 	readonly _instances = new Array<Instance>();
 	readonly onLoadedCallbacks = new Set<(trove: Trove, instance: Instance) => void>();
-	readonly onUnloadedCallbacks = new Set<(trove: Trove, instance: Instance) => void>();
 
 	constructor(
 		readonly tagName: string,
@@ -23,28 +22,39 @@ export class InstanceTag {
 	onLoaded(callback: (trove: Trove, instance: Instance) => void): void {
 		this.onLoadedCallbacks.add(ty.Function.CastOrError(callback));
 	}
-
-	onUnloaded(callback: (trove: Trove, instance: Instance) => void): void {
-		this.onUnloadedCallbacks.add(ty.Function.CastOrError(callback));
-	}
 }
 
-export interface WTH {
+export interface Kit {
+	trove: Trove;
 	tag(tagName: string, check?: t.check<Instance>): InstanceTag;
 	onRender(callback: (trove: Trove, dt: number) => void): void;
 	onPhysics(callback: (trove: Trove, dt: number) => void): void;
 	onTick(callback: (trove: Trove, dt: number) => void): void;
-	onMechanicsLoaded(callback: (trove: Trove) => void): void;
-	onMechanicsUnloaded(callback: (trove: Trove) => void): void;
 }
+
+export interface KitScript {
+	type: "KitScript";
+	run: (self: KitScript, kit: Kit) => void;
+}
+
+const KitScript = ty
+	.Struct(
+		{ exhaustive: false },
+		{
+			type: ty.Just("KitScript"),
+			run: ty.Function,
+		},
+	)
+	.Nicknamed("KitScript")
+	.Retype<KitScript>();
 
 const optionalCheck = ty.Function.Optional().Retype<Maybe<t.check<any>>>();
 
-const MECHANIC_MODULES_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("Mechanics"));
+const MECHANIC_MODULES_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("KitScripts"));
 
 @Controller()
 export class MechanicController implements OnInit {
-	private initToModule = new Map<(wth: WTH) => void, Instance>();
+	private scriptToModule = new Map<KitScript, Instance>();
 
 	onInit(): void {
 		for (const module of MECHANIC_MODULES_PARENT.getValue().GetDescendants()) {
@@ -52,13 +62,13 @@ export class MechanicController implements OnInit {
 
 			const [requireSuccess, requireValue] = pcall(require, module);
 			if (requireSuccess) {
-				const maybe = ty.Function.Cast(requireValue);
+				const maybe = KitScript.Cast(requireValue);
 				if (maybe.some) {
-					this.initToModule.set(maybe.value, module);
+					this.scriptToModule.set(requireValue as never, module);
 					continue;
 				}
 
-				warn(
+				trace(
 					"Ignoring module",
 					module.GetFullName(),
 					"because it is not a function:",
@@ -68,7 +78,7 @@ export class MechanicController implements OnInit {
 				continue;
 			}
 
-			warn("Cannot require mechanic module", module.GetFullName(), "because of:", tostring(requireValue));
+			warn("Cannot require kit script", module.GetFullName(), "because of:", tostring(requireValue));
 		}
 	}
 
@@ -77,10 +87,9 @@ export class MechanicController implements OnInit {
 		const onRenderCallbacks = new Array<(trove: Trove, dt: number) => void>();
 		const onPhysicsCallbacks = new Array<(trove: Trove, dt: number) => void>();
 		const onTickCallbacks = new Array<(trove: Trove, dt: number) => void>();
-		const onMechanicsLoadedCallbacks = new Array<(trove: Trove) => void>();
-		const onMechanicsUnloadedCallbacks = new Array<(trove: Trove) => void>();
 
-		const wth = table.freeze<WTH>({
+		const kit = table.freeze<Kit>({
+			trove,
 			tag(tagName: string, check?: t.check<Instance>): InstanceTag {
 				const instanceTag = new InstanceTag(ty.String.CastOrError(tagName), optionalCheck.CastOrError(check));
 				tags.add(instanceTag);
@@ -95,17 +104,11 @@ export class MechanicController implements OnInit {
 			onTick(callback: (trove: Trove, dt: number) => void): void {
 				onTickCallbacks.push(ty.Function.CastOrError(callback));
 			},
-			onMechanicsLoaded(callback: (trove: Trove) => void): void {
-				onMechanicsLoadedCallbacks.push(ty.Function.CastOrError(callback));
-			},
-			onMechanicsUnloaded(callback: (trove: Trove) => void): void {
-				onMechanicsUnloadedCallbacks.push(ty.Function.CastOrError(callback));
-			},
 		});
 
-		for (const [init, module] of this.initToModule) {
-			const [initSuccess, initError] = pcall(init, wth);
-			if (!initSuccess) warn(`Cannot initialize module ${module.GetFullName()}: ${initError}`);
+		for (const [script, module] of this.scriptToModule) {
+			const [runSuccess, runError] = pcall(script.run, script, kit);
+			if (!runSuccess) warn(`Cannot initialize module ${module.GetFullName()}: ${runError}`);
 		}
 
 		const tagLoadedThreads = new Array<thread>();
@@ -122,12 +125,6 @@ export class MechanicController implements OnInit {
 					}
 				}),
 			);
-
-			instanceTrove.add(() => {
-				for (const unloaded of tag.onUnloadedCallbacks) {
-					unloaded(instanceTrove, instance);
-				}
-			});
 
 			tag._instances.push(instance);
 		}
@@ -164,20 +161,6 @@ export class MechanicController implements OnInit {
 			trove.connect(RunService.PostSimulation, (dt) => {
 				for (const render of onTickCallbacks) {
 					render(trove, dt);
-				}
-			});
-		}
-
-		if (onMechanicsLoadedCallbacks.size() > 0) {
-			for (const mechanicsLoaded of onMechanicsLoadedCallbacks) {
-				mechanicsLoaded(trove);
-			}
-		}
-
-		if (onMechanicsUnloadedCallbacks.size() > 0) {
-			trove.add(() => {
-				for (const mechanicsUnloaded of onMechanicsUnloadedCallbacks) {
-					mechanicsUnloaded(trove);
 				}
 			});
 		}

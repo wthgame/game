@@ -21,24 +21,24 @@
         },
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
-            "Mechanics": {
+            "KitScripts": {
                 "$className": "Folder",
                 "$ignoreUnknownInstances": true,
                 "Core": {
-                    "$path": "mechanics/core"
+                    "$path": "kit/core"
                 },
                 "Internal": {
-                    "$path": "mechanics/internal"
+                    "$path": "kit/internal"
                 },
                 "Template": {
-                    "$path": "mechanics/Template.luau"
+                    "$path": "kit/Template.luau"
                 },
                 "TemplateNoComment": {
-                    "$path": "mechanics/TemplateNoComment.luau"
+                    "$path": "kit/TemplateNoComment.luau"
                 }
             },
-            "MechanicUtils": {
-                "$path": "mechanics/utils"
+            "KitUtils": {
+                "$path": "kit/utils"
             },
             "WTHSharedCore": {
                 "$path": "out/core/shared",

@@ -4,9 +4,9 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local net = require(ReplicatedStorage:WaitForChild("WTHClientCore"):WaitForChild("net"))
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
-type Damage = number | "Normal" | "Heavy" | "Super" | "Lethal"
+export type Damage = number | "Normal" | "Heavy" | "Super" | "Lethal"
 
 local Damage = utils.attribute(
 	"Damage",
@@ -14,8 +14,11 @@ local Damage = utils.attribute(
 	0
 )
 
-local function init(wth: utils.WTH)
-	local Damager = wth:tag("Damager", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
+
+function self:run(kit: utils.Kit)
+	local Damager = kit:tag("Damager", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	Damager:onLoaded(function(trove, dam)
 		trove:add(dam.Touched:Connect(function(toucher)
@@ -31,4 +34,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self

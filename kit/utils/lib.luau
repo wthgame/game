@@ -17,8 +17,9 @@ local types = require("./types")
 
 export type Map<K, V> = types.Map<K, V>
 export type Set<T> = types.Set<T>
+export type Kit = types.Kit
+export type KitScript<Self = {}> = types.KitScript<Self>
 export type InstanceTag<I> = types.InstanceTag<I>
-export type WTH = types.WTH
 export type Character = types.Character
 export type PlaySoundConfig = types.PlaySoundConfig
 export type TweenConfig = types.TweenConfig
@@ -27,7 +28,7 @@ export type check<T> = t.check<T>
 export type Trove = trove.Trove
 
 --[=[
-    @class MechanicUtils
+    @class KitUtils
 
     In addition to the Welcome To Hell API which is bundled as part of the kit,
     the game also provides this sibling package that contains a set of utilities
@@ -35,13 +36,13 @@ export type Trove = trove.Trove
 
     ```Lua
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+    local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
     ```
 ]=]
 local utils = table.freeze({
 	--[=[
         @prop version string
-	    @within MechanicUtils
+	    @within KitUtils
 
 		The utils version, pairing with the kit version.
     ]=]
@@ -68,7 +69,7 @@ local utils = table.freeze({
 
 	--[=[
         @prop ASSETS typeof(assets)
-	    @within MechanicUtils
+	    @within KitUtils
 
 		Image and sound assets used by Welcome To Hell.
     ]=]

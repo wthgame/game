@@ -1,6 +1,6 @@
 local trove = require("./packages/trove")
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Physics
 --- Welds the `weldToTarget` to the `target`. Optionally unanchors the
 --- `weldToTarget`.
@@ -22,7 +22,7 @@ local function weld(
 	return trove:add(weldConstraint)
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Physics
 --- Creates 2 attachments and sets them to the constraint attachment properties.
 local function populateConstraintAttachments(constraint: Constraint): (Attachment, Attachment)

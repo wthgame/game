@@ -11,17 +11,20 @@ export type Set<T> = { [T]: true }
 export type InstanceTag<I> = {
 	instances: (self: InstanceTag<I>) -> { I },
 	onLoaded: (self: InstanceTag<I>, callback: (trove: trove.Trove, instance: I) -> ()) -> (),
-	onUnloaded: (self: InstanceTag<I>, callback: (trove: trove.Trove, instance: I) -> ()) -> (),
 }
 
-export type WTH = {
-	tag: ((self: WTH, tagName: string) -> InstanceTag<Instance>)
-		& (<I>(self: WTH, tagName: string, check: t.check<I>?) -> InstanceTag<I>),
-	onRender: (self: WTH, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
-	onPhysics: (self: WTH, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
-	onTick: (self: WTH, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
-	onMechanicsLoaded: (self: WTH, callback: (trove: trove.Trove) -> ()) -> (),
-	onMechanicsUnloaded: (self: WTH, callback: (trove: trove.Trove) -> ()) -> (),
+export type Kit = {
+	trove: trove.Trove,
+	tag: ((self: Kit, tagName: string) -> InstanceTag<Instance>)
+		& (<I>(self: Kit, tagName: string, check: t.check<I>?) -> InstanceTag<I>),
+	onRender: (self: Kit, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
+	onPhysics: (self: Kit, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
+	onTick: (self: Kit, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
+}
+
+export type KitScript<Self> = Self & {
+	type: "KitScript",
+	run: (self: KitScript<Self>, kit: Kit) -> (),
 }
 
 export type Character = Model & {

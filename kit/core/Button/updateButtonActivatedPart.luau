@@ -4,7 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ButtonActivatedAttributes = require("./ButtonActivatedAttributes")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local KeepCollision = ButtonActivatedAttributes.KeepCollision
 local KeepTransparency = ButtonActivatedAttributes.KeepTransparency

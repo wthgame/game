@@ -6,42 +6,42 @@ local Players = game:GetService("Players")
 
 local types = require("./types")
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns true if a model is a character
 local function isCharacter(character: Instance): boolean
 	return Players:GetPlayerFromCharacter(character :: Model) ~= nil
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns true if a model is the local player's character
 local function isLocalPlayerCharacter(character: Instance): boolean
 	return Players:GetPlayerFromCharacter(character :: Model) == Players.LocalPlayer
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns the local player's character if it exists
 local function getMaybeLocalCharacter(): types.Character?
 	return Players.LocalPlayer.Character
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Waits for and returns the local player's character when it is added
 local function waitForLocalCharacter(): types.Character
 	return Players.LocalPlayer.CharacterAdded:Wait()
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns current character if it exists. Otherwise, wait for it to be added.
 local function getLocalCharacter(): types.Character
 	return getMaybeLocalCharacter() or waitForLocalCharacter()
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns true if the character exists and the given instance is a descendant
 --- of the local character.
@@ -50,14 +50,14 @@ local function isFromMaybeLocalCharacter(instance: Instance): boolean
 	return if character then character:IsAncestorOf(instance) else false
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns true if the given instance is a descendant of the local character.
 local function isFromLocalCharacter(instance: Instance): boolean
 	return getLocalCharacter():IsAncestorOf(instance)
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns the character's HumanoidRootPart if it exists.
 local function getMaybeLocalHumanoidRootPart(): BasePart?
@@ -68,7 +68,7 @@ local function getMaybeLocalHumanoidRootPart(): BasePart?
 	return nil
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns the character's HumanoidRootPart if it exists. Otherwise, wait for
 --- it to be added.
@@ -76,7 +76,7 @@ local function getLocalHumanoidRootPart(): BasePart
 	return getLocalCharacter():WaitForChild("HumanoidRootPart") :: BasePart
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns the character's Humanoid if it exists.
 local function getMaybeLocalHumanoid(): Humanoid?
@@ -87,7 +87,7 @@ local function getMaybeLocalHumanoid(): Humanoid?
 	return nil
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns the character's Humanoid if it exists. Otherwise, waits for it to
 --- be added.
@@ -95,7 +95,7 @@ local function getLocalHumanoid(): Humanoid
 	return getLocalCharacter():WaitForChild("Humanoid") :: Humanoid
 end
 
---- @within MechanicUtils
+--- @within KitUtils
 --- @tag Character
 --- Returns true if the character is alive.
 local function isLocalCharacterAlive(): boolean

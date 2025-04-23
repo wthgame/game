@@ -3,15 +3,18 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local Speed = utils.attribute("Speed", utils.t.numberPositive, 0)
 local SynchronizeConveyorBeams = utils.attribute("SynchronizeConveyorBeams", utils.t.boolean, true)
 
-local function init(wth: utils.WTH)
-	local Conveyor = wth:tag("Conveyor", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
 
-	wth:onPhysics(function(trove, dt)
+function self:run(kit: utils.Kit)
+	local Conveyor = kit:tag("Conveyor", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+
+	kit:onPhysics(function(trove, dt)
 		local alreadySynchronized: utils.Set<Instance> = {}
 
 		for _, conveyor in Conveyor:instances() do
@@ -34,4 +37,4 @@ local function init(wth: utils.WTH)
 	end)
 end
 
-return init
+return self
