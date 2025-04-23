@@ -7,74 +7,25 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
--- TODO: control
-type ActivatedBy = "Touch" | "Prompt" | "Click"
+local ButtonActivatedAttributes = require(script:WaitForChild("ButtonActivatedAttributes"))
+local Invert = ButtonActivatedAttributes.Invert
+local ButtonAttributes = require(script:WaitForChild("ButtonAttributes"))
+local ButtonId = ButtonAttributes.ButtonId
+local ButtonPressed = ButtonAttributes.ButtonPressed
+local ActivatedBy = ButtonAttributes.ActivatedBy
+local MaxActivationDistance = ButtonAttributes.MaxActivationDistance
+local Duration = ButtonAttributes.Duration
+local SupportsCharacter = ButtonAttributes.SupportsCharacter
+local PressOffset = ButtonAttributes.PressOffset
+local createDefaultClickDetector = require(script:WaitForChild("createDefaultClickDetector"))
+local createDefaultPrompt = require(script:WaitForChild("createDefaultPrompt"))
+local updateButtonActivatedPart = require(script:WaitForChild("updateButtonActivatedPart"))
 
-local DEFAULT_ACTIVE_TRANSPARENCY = 0
-local DEFAULT_INACTIVE_TRANSPARENCY = 0.6
-
-local ButtonId = utils.attribute("ButtonId", utils.t.string)
-local ButtonPressed = utils.attribute("ButtonPressed", utils.t.boolean, false)
-local ActivatedBy = utils.attribute("ActivatedBy", utils.t.literal("Touch", "Prompt", "Click"), "Touch")
-local HoldDuration = utils.attribute("HoldDuration", utils.t.numberPositive, 0)
-local MaxActivationDistance = utils.attribute("MaxActivationDistance", utils.t.numberPositive, math.huge)
-local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
-local Duration = utils.attribute("Duration", utils.t.numberPositive, 0)
-local SupportsCharacter = utils.attribute("SupportsCharacter", utils.t.boolean, true)
-
-local Invert = utils.attribute("Invert", utils.t.boolean, false)
-
-local function createDefaultPrompt(trove: utils.Trove, btn: BasePart)
-	local promptAttachment = trove:add(Instance.new("Attachment"))
-	promptAttachment.Name = "ButtonPromptAttachment"
-
-	local prompt = trove:add(Instance.new("ProximityPrompt"))
-	prompt.Name = "ButtonProximityPrompt"
-	prompt.ActionText = "Activate"
-	prompt.RequiresLineOfSight = false
-
-	prompt.Parent = btn
-	promptAttachment.Parent = btn
-
-	return prompt
-end
-
-local function createDefaultClickDetector(trove: utils.Trove, btn: BasePart)
-	local clickDetector = trove:add(Instance.new("ClickDetector"))
-	clickDetector.Name = "ButtonClickDetector"
-	clickDetector.Parent = btn
-
-	return clickDetector
-end
-
-local function toggleVisibilityAndCollision(instance: BasePart, active: boolean)
-	local nextState = if active then "Active" else "Inactive"
-	local currentState = if active then "Inactive" else "Active"
-	local defaultTransparency = if active then DEFAULT_ACTIVE_TRANSPARENCY else DEFAULT_INACTIVE_TRANSPARENCY
-
-	if not instance:GetAttribute(`{currentState}Transparency`) then
-		instance:SetAttribute(`{currentState}Transparency`, instance.Transparency)
-	end
-
-	if not instance:GetAttribute(`{nextState}Transparency`) then
-		instance:SetAttribute(`{nextState}Transparency`, defaultTransparency)
-	end
-
-	if not instance:GetAttribute("KeepCollision") then
-		instance.CanCollide = not instance.CanCollide
-	end
-
-	instance.Transparency = instance:GetAttribute(`{nextState}Transparency`) :: any
-	-- local tweenInfo = tweenInfo()
-
-	-- local tweenParameters = {}
-	-- tweenParameters.Transparency = transparency
-
-	-- TweenService:Create(instance, tweenInfo, tweenParameters):Play()
-	-- for _, descendant in instance:GetDescendants() do
-	-- 	updateGraphics(descendant, transparency, active, tweenInfo)
-	-- end
-end
+local BUTTON_PRESS_TWEEN: utils.TweenConfig = {
+	time = 0.25,
+	easingStyle = Enum.EasingStyle.Quad,
+	easingDirection = Enum.EasingDirection.Out,
+}
 
 local function new(wth: utils.WTH)
 	local Button = wth:tag("Button", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
@@ -146,7 +97,7 @@ local function new(wth: utils.WTH)
 				if Invert(ba) then
 					active = not active
 				end
-				toggleVisibilityAndCollision(ba, active)
+				updateButtonActivatedPart(ba, active)
 			end
 		end
 	end
@@ -165,12 +116,30 @@ local function new(wth: utils.WTH)
 
 		btn.Material = Enum.Material.Neon
 
+		local originalCFrame = btn.CFrame
+		local pressOffset = PressOffset(btn)
+		local finalPressOffset = CFrame.new(Vector3.yAxis * -0.75)
+		if typeof(pressOffset) == "number" then
+			finalPressOffset = CFrame.new(Vector3.yAxis * -pressOffset)
+		elseif typeof(pressOffset) == "Vector3" then
+			finalPressOffset = CFrame.new(pressOffset)
+		elseif typeof(pressOffset) == "CFrame" then
+			finalPressOffset = pressOffset
+		end
+
+		if btn.Anchored then
+			utils.tween(btn, { CFrame = originalCFrame * finalPressOffset }, BUTTON_PRESS_TWEEN)
+		end
+
 		task.delay(Duration(btn), function()
 			btn:SetAttribute("ButtonPressed", false)
+			if btn.Anchored then
+				utils.tween(btn, { CFrame = originalCFrame }, BUTTON_PRESS_TWEEN)
+			end
 		end)
 	end
 
-	local function bindActivation(outerTrove: utils.Trove, btn: BasePart, activatedBy: ActivatedBy)
+	local function bindActivation(outerTrove: utils.Trove, btn: BasePart, activatedBy: ButtonAttributes.ActivatedBy)
 		local trove = outerTrove:extend()
 
 		if activatedBy == "Touch" then
@@ -226,6 +195,13 @@ local function new(wth: utils.WTH)
 		return trove
 	end
 
+	local function tryUpdateIdOfButton(btn: Instance)
+		local id = ButtonId(btn)
+		if id then
+			updateId(id)
+		end
+	end
+
 	Button:onLoaded(function(trove, btn)
 		local activationTrove = bindActivation(trove, btn, ActivatedBy(btn))
 
@@ -250,6 +226,13 @@ local function new(wth: utils.WTH)
 			if id then
 				updateId(id)
 			end
+		end)
+
+		-- Update once to set initial visibilities
+		tryUpdateIdOfButton(btn)
+
+		trove:connect(btn:GetAttributeChangedSignal("ButtonId"), function()
+			-- TOOD
 		end)
 	end)
 end

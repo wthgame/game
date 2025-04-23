@@ -5,10 +5,10 @@
 
 [tools]
 blink = "1Axen/blink@0.17.0"
-luau-lsp = "JohnnyMorganz/luau-lsp@1.42.1"
-stylua = "JohnnyMorganz/StyLua@2.0.2"
+luau-lsp = "JohnnyMorganz/luau-lsp@1.43.0"
+stylua = "JohnnyMorganz/StyLua@2.1.0"
 lune = "lune-org/lune@0.8.9"
 rojo = "rojo-rbx/rojo@7.4.4"
-asphalt = "jacktabscode/asphalt@1.0.0-pre.5"
+asphalt = "jacktabscode/asphalt@0.9.1"
 # asphalt = "roblaudio/asphalt@0.8.41"
 selene = "kampfkarren/selene@0.28.0"

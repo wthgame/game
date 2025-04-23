@@ -3,6 +3,7 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 local CullThrottle = require("./packages/cull-throttle")
+local animation = require("./animation")
 local assets = require("./assets")
 local attributes = require("./attributes")
 local audio = require("./audio")
@@ -20,6 +21,7 @@ export type InstanceTag<I> = types.InstanceTag<I>
 export type WTH = types.WTH
 export type Character = types.Character
 export type PlaySoundConfig = types.PlaySoundConfig
+export type TweenConfig = types.TweenConfig
 
 export type check<T> = t.check<T>
 export type Trove = trove.Trove
@@ -47,22 +49,7 @@ local utils = table.freeze({
 
 	attribute = attributes.attribute,
 	isActive = attributes.isActive,
-
-	--[=[
-        @prop ASSETS typeof(assets)
-	    @within MechanicUtils
-
-		Image and sound assets used by Welcome To Hell.
-    ]=]
-	ASSETS = assets,
-
-	SOUND_ASSETS = audio.SOUND_ASSETS,
-	playSound = audio.playSound,
-	playSoundFromGameAssets = audio.playSoundFromGameAssets,
-
-	promptToStartNewTowerRun = bindings.promptToStartNewTowerRun,
-
-	roundColor = color.roundColor,
+	getEnumFromString = attributes.getEnumFromString,
 
 	getMaybeLocalCharacter = character.getMaybeLocalCharacter,
 	waitForLocalCharacter = character.waitForLocalCharacter,
@@ -76,6 +63,22 @@ local utils = table.freeze({
 	isCharacter = character.isCharacter,
 	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
 	isLocalCharacterAlive = character.isLocalCharacterAlive,
+
+	tween = animation.tween,
+
+	--[=[
+        @prop ASSETS typeof(assets)
+	    @within MechanicUtils
+
+		Image and sound assets used by Welcome To Hell.
+    ]=]
+	ASSETS = assets,
+
+	SOUND_ASSETS = audio.SOUND_ASSETS,
+	playSound = audio.playSound,
+	playSoundFromGameAssets = audio.playSoundFromGameAssets,
+
+	roundColor = color.roundColor,
 
 	weld = physics.weld,
 	populateConstraintAttachments = physics.populateConstraintAttachments,

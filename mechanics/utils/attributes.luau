@@ -11,6 +11,16 @@ local function attribute<T>(attributeName: string, check: t.check<T>, defaultVal
 	end
 end
 
+local function getEnumFromString(enumLike: string | EnumItem, defaultValue: EnumItem): any
+	if typeof(enumLike) == "EnumItem" and enumLike.EnumType == defaultValue.EnumType then
+		return enumLike
+	end
+	local success: boolean, enum: EnumItem? = pcall(function()
+		return (defaultValue.EnumType :: any)[enumLike]
+	end)
+	return if success then enum else defaultValue
+end
+
 return {
 	attribute = attribute :: (<T>(attributeName: string, check: t.check<T>) -> (instance: Instance) -> T?) & (<T>(
 		attributeName: string,
@@ -18,4 +28,5 @@ return {
 		defaultValue: T
 	) -> (instance: Instance) -> T),
 	isActive = attribute("Active", t.boolean, false),
+	getEnumFromString = getEnumFromString :: <T>(enumLike: string | EnumItem, defaultValue: T & EnumItem) -> T,
 }
