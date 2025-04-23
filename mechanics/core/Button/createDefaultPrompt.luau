@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 local function createDefaultPrompt(trove: utils.Trove, btn: BasePart)
+	print(trove)
 	local promptAttachment = trove:add(Instance.new("Attachment"))
 	promptAttachment.Name = "ButtonPromptAttachment"
 
