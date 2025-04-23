@@ -17,6 +17,7 @@
         "@rbxts/libopen-ty": "1.0.0",
         "@rbxts/libopen-whyhttp": "1.0.0",
         "@rbxts/make": "^1.0.6",
+        "@rbxts/mechanism": "^1.1.1",
         "@rbxts/object-utils": "^1.0.4",
         "@rbxts/pretty-vide-utils": "^0.0.5",
         "@rbxts/ripple": "^0.9.3",
@@ -85,17 +86,25 @@
 
     "@rbxts/cullthrottle": ["@rbxts/cullthrottle@0.1.0-rc.3", "", {}, "sha512-WPAL/ml1WWlAaWKDFTzFV06OHIrr/LL2Zsutf4ULCriaTWYRgxMdrLMFsvmQ6D5ZwccKfAzuhgtXyzaWhmh7ug=="],
 
+    "@rbxts/destroyable": ["@rbxts/destroyable@1.0.1", "", { "dependencies": { "@rbxts/janitor": "^1.17.0-ts.1" } }, "sha512-zgjeae17KVeDcYpnCYTKTO1xcnN0Xv7dnFCkitTUT0Y0rXQyi1JcqoUBI7Bzv2U75lajvBHY0tHjCIA9MRwVBQ=="],
+
     "@rbxts/flamework-meta-utils": ["@rbxts/flamework-meta-utils@1.0.1", "", { "dependencies": { "@flamework/components": "^1.2.3", "@flamework/core": "^1.2.3" } }, "sha512-vsg3B7LKWoVaK5BPJ9J6idEyiW3Y6x125SIOB4AzPuaSKM9/ECMHxAvDFqMq8/WiCbHzKGfzbC338vQ0AxTt7A=="],
+
+    "@rbxts/id": ["@rbxts/id@1.0.0", "", { "dependencies": { "@rbxts/services": "^1.5.5" } }, "sha512-u0LJj5zg/9PZTmr1l4QbrDULXBAX9DikW+LIr8X/HVqNE+GRX5nzeopJUJegDCeQZ0vHtzVphgcljdzIw/nqhw=="],
 
     "@rbxts/iris": ["@rbxts/iris@2.3.1-ts.1", "", {}, "sha512-L/lja+ugKNH3ywdz5c8omXUS34L9oGKlul3yVifzTfQVJS4ryePU/hS6IdMaSbIwNda+qEOehXbSxglF9qxa/A=="],
 
     "@rbxts/jabby": ["@rbxts/jabby@0.2.1", "", { "dependencies": { "@rbxts/pebble": "0.1.2", "@rbxts/vide": "^0.5.2" }, "peerDependencies": { "@rbxts/jecs": "^0.5.1" } }, "sha512-kFLPqThgUHvSNnXdDLs/2YNaRfNTVJLyuUJpCSKa106PJuGnZO3ipMeweEF/eNlbeV8dsKYWE30cIHQ8aBqmXQ=="],
+
+    "@rbxts/janitor": ["@rbxts/janitor@1.17.0-ts.1", "", {}, "sha512-LFtmpiwx1lixjVH1HV0EUUPaDF8BCmw41vjgsXcRq+d4yl2dVmT+oVHrMkdYWxltSezjDpK+9GbL18twlAGSwg=="],
 
     "@rbxts/jecs": ["@rbxts/jecs@0.6.0-rc.1", "", {}, "sha512-0u7wf/buozH/u5ZBtNnuuN85UqQ8i4HZzc14W4lFdELogpM9XimfH7vQLuf94Gul+HhmPYkMh+LWLWdjJZMtzg=="],
 
     "@rbxts/lapis": ["@rbxts/lapis@0.3.8", "", { "peerDependencies": { "@rbxts/t": "*" } }, "sha512-SQTVdSp47Rh7nzuI/ArUsGssz2+KmciPlue4Qlj3i9iO2p3Xgf1ZsgfhvMemPih/kFdjSH47E8wHGA4dY/Y+AA=="],
 
     "@rbxts/lazy": ["@rbxts/lazy@1.0.1", "", { "dependencies": { "@rbxts/services": "^1.2.0", "@rbxts/testez": "^0.3.1-ts.7" } }, "sha512-GjZzNb3oNFKyMqrWxBF10BEsua53iODnfsHeOyHsEI3vMGdRcHPm2ueqFdaSJTm7BV1m0tORVbrLPJBWL9m6Ow=="],
+
+    "@rbxts/lemon-signal": ["@rbxts/lemon-signal@1.2.0", "", {}, "sha512-R8iZqtwqLCnA4g2gS8d8j/QVnctkvzLQspq3VfuKfFbXp+Zqs7rw/2LebD/9ifX/NGpHAGgatRqj0C6DABT9Rw=="],
 
     "@rbxts/libopen-event": ["@rbxts/libopen-event@1.0.1", "", {}, "sha512-o2odA08gcvlwnvfmDlhI937uZ3L04zSsHsRzR+cSoICQR8XgPmvqKiSsrioh+tXm7pwOVg1fxWWwwzSGWMiunA=="],
 
@@ -108,6 +117,8 @@
     "@rbxts/maid": ["@rbxts/maid@1.1.0", "", {}, "sha512-bVWXZ0p2M3OJzPzvN5fY0T4s37ezUMY7EX31Xspp7Ds4C/K9yE4MHMRXjtlNvsYVPmoc5tdhAbpZY02Veix5lg=="],
 
     "@rbxts/make": ["@rbxts/make@1.0.6", "", { "dependencies": { "@rbxts/compiler-types": "^1.2.3-types.1", "@rbxts/types": "^1.0.537" } }, "sha512-ZL1FMxDqWv1TIzE064JFen75rgybV7ulQHTUVqXuvngDBa3lP3btFiIdUO2MMJAOZpHKinC9jFudcCenrprcPg=="],
+
+    "@rbxts/mechanism": ["@rbxts/mechanism@1.1.1", "", { "dependencies": { "@rbxts/destroyable": "^1.0.1", "@rbxts/id": "^1.0.0", "@rbxts/lemon-signal": "^1.2.0" } }, "sha512-1tGWXZCmu9fIbfItBGPX4tlVowZF/rJ5UmsN4vYGB8mLNXzmuPLc3WmvKi0O9O1UA+VrgIJiMJ2y4l5mEuU3DQ=="],
 
     "@rbxts/object-utils": ["@rbxts/object-utils@1.0.4", "", {}, "sha512-dLLhf022ipV+9i910sOE7kl9losKHoon0WgeerHqVMQA5EYsLUsVT2AxhJuhk8MiDn5oJ2GiFofE/LadY9TpJQ=="],
 

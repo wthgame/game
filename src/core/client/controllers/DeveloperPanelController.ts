@@ -1,6 +1,8 @@
 import { Controller, Modding, OnStart } from "@flamework/core";
 import Iris from "@rbxts/iris";
-import { RunService, UserInputService } from "@rbxts/services";
+import { StandardActionBuilder } from "@rbxts/mechanism";
+import { RunService } from "@rbxts/services";
+import { OnInput } from "../decorators";
 
 export interface DeveloperPanelDropdownRenderer {
 	renderDeveloperPanelDropdown(): void;
@@ -8,7 +10,7 @@ export interface DeveloperPanelDropdownRenderer {
 
 @Controller()
 export class DeveloperPanelController implements OnStart {
-	private open = RunService.IsStudio() || !RunService.IsRunning();
+	private isOpen = RunService.IsStudio() || !RunService.IsRunning();
 	private dropdownRenderers = new Array<DeveloperPanelDropdownRenderer>();
 
 	onStart(): void {
@@ -23,14 +25,15 @@ export class DeveloperPanelController implements OnStart {
 		Iris.UpdateGlobalConfig(Iris.TemplateConfig.colorDark);
 		Iris.UpdateGlobalConfig(Iris.TemplateConfig.sizeClear);
 		Iris.Connect(() => this.render());
+	}
 
-		UserInputService.InputBegan.Connect((input, gp) => {
-			if (!gp && input.KeyCode === Enum.KeyCode.Comma) this.open = !this.open;
-		});
+	@OnInput(new StandardActionBuilder("Comma"))
+	open() {
+		this.isOpen = !this.isOpen;
 	}
 
 	render() {
-		if (!this.open) return;
+		if (!this.isOpen) return;
 		Iris.Window(["Welcome To Hell Developer Panel"]);
 		for (const renderer of this.dropdownRenderers) {
 			Iris.Tree([tostring(renderer)]);
