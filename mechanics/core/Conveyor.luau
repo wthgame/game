@@ -5,11 +5,11 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
+local Speed = utils.attribute("Speed", utils.t.numberPositive, 0)
+local SynchronizeConveyorBeams = utils.attribute("SynchronizeConveyorBeams", utils.t.boolean, true)
+
 local function init(wth: utils.WTH)
 	local Conveyor = wth:tag("Conveyor", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-
-	local Speed = utils.attribute("Speed", utils.t.numberPositive, 0)
-	local SynchronizeConveyorBeams = utils.attribute("SynchronizeConveyorBeams", utils.t.boolean, true)
 
 	wth:onPhysics(function(trove, dt)
 		local alreadySynchronized: utils.Set<Instance> = {}

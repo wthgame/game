@@ -9,12 +9,12 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 local DISTANCE_FROM_ROOT_TO_GROUND = 3
 local OFFSET_CHARACTER_BY = DISTANCE_FROM_ROOT_TO_GROUND / 2
 
+local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
+local JumpOnDismount = utils.attribute("JumpOnDismount", utils.t.boolean, true)
+-- local Visualize = utils.attribute("Visualize", utils.t.boolean, true)
+
 local function init(wth: utils.WTH)
 	local Seat = wth:tag("Seat", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-
-	local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
-	local JumpOnDismount = utils.attribute("JumpOnDismount", utils.t.boolean, true)
-	-- local Visualize = utils.attribute("Visualize", utils.t.boolean, true)
 
 	local seated = false
 

@@ -8,14 +8,14 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 type Damage = number | "Normal" | "Heavy" | "Super" | "Lethal"
 
+local Damage = utils.attribute(
+	"Damage",
+	utils.t.union(utils.t.numberPositive, utils.t.literal("Normal", "Heavy", "Super", "Lethal")) :: utils.check<Damage>,
+	0
+)
+
 local function init(wth: utils.WTH)
 	local Damager = wth:tag("Damager", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-
-	local Damage = utils.attribute(
-		"Damage",
-		utils.t.union(utils.t.numberPositive, utils.t.literal("Normal", "Heavy", "Super", "Lethal")) :: utils.check<Damage>,
-		0
-	)
 
 	Damager:onLoaded(function(trove, dam)
 		trove:add(dam.Touched:Connect(function(toucher)

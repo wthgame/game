@@ -27,7 +27,7 @@ local BUTTON_PRESS_TWEEN: utils.TweenConfig = {
 	easingDirection = Enum.EasingDirection.Out,
 }
 
-local function new(wth: utils.WTH)
+local function init(wth: utils.WTH)
 	local Button = wth:tag("Button", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 	local ButtonActivated = wth:tag("ButtonActivated")
 
@@ -237,4 +237,4 @@ local function new(wth: utils.WTH)
 	end)
 end
 
-return new
+return init

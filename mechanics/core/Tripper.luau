@@ -5,9 +5,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
+local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
+
 local function init(wth: utils.WTH)
 	local Tripper = wth:tag("Tripper", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-	local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
 
 	Tripper:onLoaded(function(trove, instance)
 		local debounce = false

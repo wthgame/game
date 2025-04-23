@@ -7,6 +7,11 @@ local utils = require(ReplicatedStorage:WaitForChild("MechanicUtils"))
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
+local Power = utils.attribute("Power", utils.t.numberPositive, 0)
+local MaxForce = utils.attribute("MaxForce", utils.t.numberPositive, math.huge)
+local Vector = utils.attribute("Vector", utils.t.literal("Up", "Right", "Look", "Z"), "Up")
+local SupportsCharacter = utils.attribute("SupportsCharacter", utils.t.boolean, true)
+
 local function wind(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
 	velocityAttachment.Name = "WindAttachment"
@@ -39,11 +44,6 @@ end
 
 local function init(wth: utils.WTH)
 	local Wind = wth:tag("Wind", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-
-	local Power = utils.attribute("Power", utils.t.numberPositive, 0)
-	local MaxForce = utils.attribute("MaxForce", utils.t.numberPositive, math.huge)
-	local Vector = utils.attribute("Vector", utils.t.literal("Up", "Right", "Look", "Z"), "Up")
-	local SupportsCharacter = utils.attribute("SupportsCharacter", utils.t.boolean, true)
 
 	Wind:onLoaded(function(trove, instance)
 		local windTroves: utils.Map<BasePart, utils.Trove> = {}

@@ -17,6 +17,16 @@ type FollowTarget = "Character" | "Mouse" | "Camera" | "None"
 local MAX_RAY_LENGTH = 10_000
 local mouse = Players.LocalPlayer:GetMouse()
 
+local FollowMode =
+	utils.attribute("FollowMode", utils.t.literal("LookAt", "RotationOf", "PositionOf", "PivotOf", "None"), "None")
+local FollowTarget = utils.attribute("FollowTarget", utils.t.literal("Character", "Mouse", "Camera", "None"), "None")
+-- local UseRelativeTransform = utils.attribute("UseRelativeTransform", utils.t.boolean, false)
+-- local XAxis = utils.attribute("XAxis", utils.t.boolean, true)
+-- local YAxis = utils.attribute("YAxis", utils.t.boolean, true)
+-- local ZAxis = utils.attribute("ZAxis", utils.t.boolean, true)
+local Lerp = utils.attribute("Lerp", utils.t.boolean, false)
+local LerpAlpha = utils.attribute("LerpAlpha", utils.t.numberPositive, 1)
+
 local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFrame?
 	if target == "Character" then
 		local root = utils.getLocalHumanoidRootPart()
@@ -41,17 +51,6 @@ end
 
 local function init(wth: utils.WTH)
 	local Follower = wth:tag("Follower", utils.t.instanceIsA("PVInstance") :: utils.check<PVInstance>)
-
-	local FollowMode =
-		utils.attribute("FollowMode", utils.t.literal("LookAt", "RotationOf", "PositionOf", "PivotOf", "None"), "None")
-	local FollowTarget =
-		utils.attribute("FollowTarget", utils.t.literal("Character", "Mouse", "Camera", "None"), "None")
-	-- local UseRelativeTransform = utils.attribute("UseRelativeTransform", utils.t.boolean, false)
-	-- local XAxis = utils.attribute("XAxis", utils.t.boolean, true)
-	-- local YAxis = utils.attribute("YAxis", utils.t.boolean, true)
-	-- local ZAxis = utils.attribute("ZAxis", utils.t.boolean, true)
-	local Lerp = utils.attribute("Lerp", utils.t.boolean, false)
-	local LerpAlpha = utils.attribute("LerpAlpha", utils.t.numberPositive, 1)
 
 	wth:onRender(function(trove, dt)
 		debug.profilebegin("Follower")
