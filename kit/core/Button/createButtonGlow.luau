@@ -12,7 +12,7 @@ local PressEasingDirection = ButtonAttributes.PressEasingDirection
 
 local function createButtonGlow(outerTrove: utils.Trove, btn: BasePart)
 	local trove = outerTrove:extend()
-	local instanceTrove = outerTrove:extend()
+	local instanceTrove = utils.Trove.new()
 
 	-- don't add to trove yet, we will when we finish animations
 	local glow = instanceTrove:clone(btn)
@@ -22,13 +22,16 @@ local function createButtonGlow(outerTrove: utils.Trove, btn: BasePart)
 	glow.CanQuery = false
 	glow.Material = Enum.Material.Neon
 	glow.Name = "ButtonGlow"
-	glow.Size *= Vector3.new(1.005, 1.005, 1.005)
+	glow.Size *= Vector3.new(1.008, 1.008, 1.008)
 	glow.Massless = true
 	glow.Transparency = 1
 
 	local alignPosition = instanceTrove:add(Instance.new("AlignPosition"))
+	alignPosition.MaxForce = math.huge
 	alignPosition.Responsiveness = 200
 	local alignOrientation = instanceTrove:add(Instance.new("AlignOrientation"))
+	alignOrientation.MaxAngularVelocity = math.huge
+	alignOrientation.MaxTorque = math.huge
 	alignOrientation.Responsiveness = 200
 
 	local attachment0, attachment1 = utils.populateConstraintAttachments(alignPosition)
