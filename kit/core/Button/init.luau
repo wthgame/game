@@ -101,32 +101,26 @@ local function activate(trove: utils.Trove, btn: BasePart)
 	end
 
 	if btn.Anchored then
-		local pressTime = PressTime(btn)
-		if pressTime > 0 then
-			utils.tween(btn, { CFrame = originalCFrame * finalPressOffset }, {
-				time = PressTime(btn),
-				easingStyle = PressEasingStyle(btn),
-				easingDirection = PressEasingDirection(btn),
-			})
-		else
-			btn.CFrame = originalCFrame * finalPressOffset
-		end
+		utils.tweenMaybeInstant(btn, { CFrame = originalCFrame * finalPressOffset }, {
+			time = PressTime(btn),
+			easingStyle = PressEasingStyle(btn),
+			easingDirection = PressEasingDirection(btn),
+		})
 	end
 
-	task.delay(Duration(btn), function()
+	local function deactivate()
 		btn:SetAttribute("ButtonPressed", false)
+		utils.tweenMaybeInstant(btn, { CFrame = originalCFrame }, {
+			time = PressTime(btn),
+			easingStyle = PressEasingStyle(btn),
+			easingDirection = PressEasingDirection(btn),
+		})
+	end
 
-		local pressTime = PressTime(btn)
-		if pressTime > 0 then
-			utils.tween(btn, { CFrame = originalCFrame * finalPressOffset }, {
-				time = PressTime(btn),
-				easingStyle = PressEasingStyle(btn),
-				easingDirection = PressEasingDirection(btn),
-			})
-		else
-			btn.CFrame = originalCFrame
-		end
-	end)
+	local duration = Duration(btn)
+	if duration >= 0 then
+		task.delay(duration, deactivate)
+	end
 end
 
 local function bindActivation(outerTrove: utils.Trove, btn: BasePart, activatedBy: ActivatedBy)

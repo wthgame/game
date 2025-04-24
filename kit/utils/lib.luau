@@ -71,6 +71,7 @@ local utils = table.freeze({
 	isLocalCharacterAlive = character.isLocalCharacterAlive,
 
 	tween = animation.tween,
+	tweenMaybeInstant = animation.tweenMaybeInstant,
 
 	--[=[
         @prop ASSETS typeof(assets)
