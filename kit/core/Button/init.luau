@@ -1,7 +1,7 @@
 --!strict
 
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
--- TODO: this is a very rough implementation
+-- TODO: button timers and tick sounds
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
