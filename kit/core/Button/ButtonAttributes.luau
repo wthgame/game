@@ -20,15 +20,15 @@ local PressOffset = utils.attribute(
 	utils.t.union(utils.t.number, utils.t.Vector3, utils.t.CFrame),
 	Vector3.new(0, -0.5, 0)
 )
-local PressTime = utils.attribute("TransitionTime", utils.t.numberPositive, 0.25)
+local PressTime = utils.attribute("PressTime", utils.t.numberPositive, 0.25)
 -- NOTE: Enums can be used as attributes, it just needs to be added by a script
 local PressEasingStyle = utils.attribute(
-	"TransitionEasingStyle",
+	"PressEasingStyle",
 	utils.t.enum(Enum.EasingStyle) :: utils.check<Enum.EasingStyle>,
 	Enum.EasingStyle.Quad
 )
 local PressEasingDirection = utils.attribute(
-	"TransitionEasingDirection",
+	"PressEasingDirection",
 	utils.t.enum(Enum.EasingDirection) :: utils.check<Enum.EasingDirection>,
 	Enum.EasingDirection.Out
 )
