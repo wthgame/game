@@ -18,30 +18,16 @@ function self:run(kit: utils.Kit)
 
 	ButtonDeactivator:onLoaded(function(trove, deactivator)
 		trove:connect(deactivator.Touched, function(toucher)
-			print("now touched, checking")
-
-			if not utils.isToucher(deactivator, toucher) then
-				return
-			end
-
-			print("is touched")
-
 			local id = ButtonId(deactivator)
-			if not id then
-				return
-			end
-
-			print("deactivating", id)
-
-			local buttons = buttonsPressedById[id]
-			if buttons then
-				for btn in buttons do
-					print("deactivating btn", btn)
-					btn:SetAttribute("ButtonPressed", false)
+			if utils.Active(deactivator) and utils.isToucher(deactivator, toucher) and id then
+				local buttons = buttonsPressedById[id]
+				if buttons then
+					for btn in buttons do
+						btn:SetAttribute("ButtonPressed", false)
+					end
+					updateId(id)
 				end
 			end
-
-			updateId(id)
 		end)
 	end)
 end

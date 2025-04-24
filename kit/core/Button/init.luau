@@ -3,7 +3,6 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 -- TODO: this is a very rough implementation
 
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
@@ -12,15 +11,13 @@ local ButtonAttributes = require(script:WaitForChild("ButtonAttributes"))
 export type ActivatedBy = ButtonAttributes.ActivatedBy
 local ButtonId = ButtonAttributes.ButtonId
 local ButtonPressed = ButtonAttributes.ButtonPressed
-local ActivatedBy = ButtonAttributes.ActivatedBy
-local MaxActivationDistance = ButtonAttributes.MaxActivationDistance
 local Duration = ButtonAttributes.Duration
 local PressOffset = ButtonAttributes.PressOffset
 local PressTime = ButtonAttributes.PressTime
 local PressEasingStyle = ButtonAttributes.PressEasingStyle
 local PressEasingDirection = ButtonAttributes.PressEasingDirection
-local createDefaultClickDetector = require(script:WaitForChild("createDefaultClickDetector"))
-local createDefaultPrompt = require(script:WaitForChild("createDefaultPrompt"))
+local bindActivationToTrove = require(script:WaitForChild("bindActivationToTrove"))
+local flashButtonGlow = require(script:WaitForChild("flashButtonGlow"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
 local buttonActivatedsById: utils.Map<string, utils.Set<Instance>> = {}
@@ -82,8 +79,6 @@ local function activate(trove: utils.Trove, btn: BasePart)
 	btn:SetAttribute("ButtonPressed", true)
 	trackButtonPressedById(id, btn)
 
-	btn.Material = Enum.Material.Neon
-
 	local originalCFrame = btn.CFrame
 	local pressOffset = PressOffset(btn)
 	local finalPressOffset = CFrame.new(Vector3.yAxis * -0.75)
@@ -113,6 +108,8 @@ local function activate(trove: utils.Trove, btn: BasePart)
 		})
 	end)
 
+	flashButtonGlow(deactivateTrove, btn)
+
 	local duration = Duration(btn)
 	if duration >= 0 then
 		task.delay(duration, function()
@@ -125,61 +122,6 @@ local function activate(trove: utils.Trove, btn: BasePart)
 			deactivateTrove:clean()
 		end
 	end)
-end
-
-local function bindActivation(outerTrove: utils.Trove, btn: BasePart, activatedBy: ActivatedBy)
-	local trove = outerTrove:extend()
-
-	if activatedBy == "Touch" then
-		trove:connect(btn.Touched, function(toucher)
-			if utils.isToucher(btn, toucher) then
-				activate(outerTrove, btn)
-			end
-		end)
-	elseif activatedBy == "Prompt" then
-		local buttonPrompt = btn:FindFirstChild("ButtonProximityPrompt", true) :: ProximityPrompt
-
-		if not buttonPrompt then
-			buttonPrompt = createDefaultPrompt(trove, btn)
-		elseif buttonPrompt.ClassName ~= "ProximityPrompt" then
-			-- someones trying to troll the game
-			buttonPrompt.Name ..= "_OLD"
-			buttonPrompt = createDefaultPrompt(trove, btn)
-		end
-
-		buttonPrompt.MaxActivationDistance = MaxActivationDistance(btn)
-
-		trove:connect(buttonPrompt.Triggered, function(player: Player)
-			-- TODO: do we need this?
-			if player == Players.LocalPlayer then
-				activate(outerTrove, btn)
-			end
-		end)
-	elseif activatedBy == "Click" then
-		local buttonClick = btn:FindFirstChild("ButtonClickDetector", true) :: ClickDetector
-
-		if not buttonClick then
-			buttonClick = createDefaultClickDetector(trove, btn)
-		elseif buttonClick.ClassName ~= "ClickDetector" then
-			-- someones trying to troll the game
-			buttonClick.Name ..= "_OLD"
-			buttonClick = createDefaultClickDetector(trove, btn)
-		end
-
-		buttonClick.MaxActivationDistance = MaxActivationDistance(btn)
-
-		trove:connect(buttonClick.MouseClick, function(player: Player)
-			-- TODO: do we need this?
-			if player == Players.LocalPlayer then
-				activate(outerTrove, btn)
-			end
-		end)
-	elseif activatedBy == "Control" then
-	else
-		error("Invalid ActivatedBy (unreachable?)")
-	end
-
-	return trove
 end
 
 local function tryUpdateIdOfButton(btn: Instance)
@@ -195,6 +137,7 @@ local self = {} :: utils.KitScript<typeof(ButtonAttributes) & typeof(ButtonActiv
 	trackButtonPressedById: (id: string, button: BasePart) -> (),
 	untrackButtonPressedById: (id: string, button: BasePart) -> (),
 	getButtonsPressedById: (id: string) -> utils.Set<BasePart>,
+	bindActivationToTrove: (trove: utils.Trove, btn: BasePart, onActivated: () -> ()) -> (),
 	updateId: (id: string) -> (),
 }>
 self.type = "KitScript"
@@ -203,6 +146,7 @@ self.trackButtonActivatedById = trackButtonActivatedById
 self.trackButtonPressedById = trackButtonPressedById
 self.untrackButtonPressedById = untrackButtonPressedById
 self.getButtonsPressedById = getButtonsPressedById
+self.bindActivationToTrove = bindActivationToTrove
 self.updateId = updateId
 
 for key, value in ButtonAttributes do
@@ -232,24 +176,30 @@ function self:run(kit: utils.Kit)
 	end)
 
 	Button:onLoaded(function(trove, btn)
-		local activationTrove = bindActivation(trove, btn, ActivatedBy(btn))
+		local activationTrove = trove:extend()
+		local function activateSelf()
+			activationTrove:clean()
+			activate(trove, btn)
+		end
+
+		bindActivationToTrove(activationTrove, btn, activateSelf)
 
 		trove:connect(btn:GetAttributeChangedSignal("ActivatedBy"), function()
 			activationTrove:clean()
-			activationTrove = bindActivation(trove, btn, ActivatedBy(btn))
+			activationTrove = trove:extend()
+			bindActivationToTrove(activationTrove, btn, activateSelf)
 		end)
 
-		local originalMaterial = btn.Material
 		trove:connect(btn:GetAttributeChangedSignal("ButtonPressed"), function()
 			local id = ButtonId(btn)
 
 			activationTrove:clean()
 			if not ButtonPressed(btn) then
-				activationTrove = bindActivation(trove, btn, ActivatedBy(btn))
+				activationTrove = trove:extend()
+				bindActivationToTrove(activationTrove, btn, activateSelf)
 				if id then
 					untrackButtonPressedById(id, btn)
 				end
-				btn.Material = originalMaterial
 			end
 
 			if id then
