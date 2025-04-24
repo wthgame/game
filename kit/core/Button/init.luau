@@ -17,7 +17,7 @@ local PressTime = ButtonAttributes.PressTime
 local PressEasingStyle = ButtonAttributes.PressEasingStyle
 local PressEasingDirection = ButtonAttributes.PressEasingDirection
 local bindActivationToTrove = require(script:WaitForChild("bindActivationToTrove"))
-local flashButtonGlow = require(script:WaitForChild("flashButtonGlow"))
+local createButtonGlow = require(script:WaitForChild("createButtonGlow"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
 local buttonActivatedsById: utils.Map<string, utils.Set<Instance>> = {}
@@ -108,7 +108,7 @@ local function activate(trove: utils.Trove, btn: BasePart)
 		})
 	end)
 
-	flashButtonGlow(deactivateTrove, btn)
+	createButtonGlow(deactivateTrove, btn)
 
 	local duration = Duration(btn)
 	if duration >= 0 then

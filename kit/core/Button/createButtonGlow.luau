@@ -10,7 +10,7 @@ local PressTime = ButtonAttributes.PressTime
 local PressEasingStyle = ButtonAttributes.PressEasingStyle
 local PressEasingDirection = ButtonAttributes.PressEasingDirection
 
-local function flashButtonGlow(outerTrove: utils.Trove, btn: BasePart)
+local function createButtonGlow(outerTrove: utils.Trove, btn: BasePart)
 	local trove = outerTrove:extend()
 	local instanceTrove = outerTrove:extend()
 
@@ -62,4 +62,4 @@ local function flashButtonGlow(outerTrove: utils.Trove, btn: BasePart)
 	end)
 end
 
-return flashButtonGlow
+return createButtonGlow
