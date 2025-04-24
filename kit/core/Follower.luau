@@ -56,8 +56,6 @@ function self:run(kit: utils.Kit)
 	local Follower = kit:tag("Follower", utils.t.instanceIsA("PVInstance") :: utils.check<PVInstance>)
 
 	kit:onRender(function(trove, dt)
-		debug.profilebegin("Follower")
-
 		local params = RaycastParams.new()
 		params:AddToFilter(CollectionService:GetTagged("MouseFollowerIgnored"))
 		params.FilterType = Enum.RaycastFilterType.Exclude
@@ -66,7 +64,7 @@ function self:run(kit: utils.Kit)
 			local mode: FollowMode = FollowMode(pv)
 			local target: FollowTarget = FollowTarget(pv)
 
-			if not utils.isActive(pv) or mode == "None" or target == "None" then
+			if not utils.Active(pv) or mode == "None" or target == "None" then
 				continue
 			end
 
@@ -93,7 +91,6 @@ function self:run(kit: utils.Kit)
 				end
 			end
 		end
-		debug.profileend()
 	end)
 end
 

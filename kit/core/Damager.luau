@@ -22,7 +22,7 @@ function self:run(kit: utils.Kit)
 
 	Damager:onLoaded(function(trove, dam)
 		trove:add(dam.Touched:Connect(function(toucher)
-			if utils.isActive(dam) and utils.isFromMaybeLocalCharacter(toucher) then
+			if utils.Active(dam) and utils.isFromMaybeLocalCharacter(toucher) then
 				local damage = Damage(dam)
 				if typeof(damage) == "number" then
 					net.damageSelfVariable.fire(damage)

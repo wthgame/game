@@ -1,3 +1,7 @@
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 --[=[
     @within KitUtils
     @tag Color

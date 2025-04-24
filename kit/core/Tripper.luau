@@ -20,7 +20,7 @@ function self:run(kit: utils.Kit)
 				return
 			end
 
-			if utils.isActive(instance) and utils.isFromMaybeLocalCharacter(toucher) then
+			if utils.Active(instance) and utils.isFromMaybeLocalCharacter(toucher) then
 				local humanoid = assert(utils.getMaybeLocalHumanoid(), "can be assumed it exists")
 				humanoid.Sit = true
 

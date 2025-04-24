@@ -1,3 +1,7 @@
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local t = require("./packages/t")
 
 local function attribute<T>(attributeName: string, check: t.check<T>, defaultValue: T?)
@@ -27,6 +31,7 @@ return {
 		check: t.check<T>,
 		defaultValue: T
 	) -> (instance: Instance) -> T),
-	isActive = attribute("Active", t.boolean, false),
+	Active = attribute("Active", t.boolean, false),
+	SupportsCharacter = attribute("SupportsCharacter", t.boolean, false),
 	getEnumFromString = getEnumFromString :: <T>(enumLike: string | EnumItem, defaultValue: T & EnumItem) -> T,
 }

@@ -15,7 +15,6 @@ local MaxForce = utils.attribute("MaxForce", utils.t.numberPositive, math.huge)
 local Vector = utils.attribute("Vector", utils.t.literal("Up", "Right", "Look", "Z"), "Up")
 local PlaySound = utils.attribute("PlaySound", utils.t.boolean, true)
 local Sound = utils.attribute("Sound", utils.t.string, utils.SOUND_ASSETS.dash)
-local SupportsCharacter = utils.attribute("SupportsCharacter", utils.t.boolean, true)
 
 local function launch(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
@@ -48,11 +47,11 @@ function self:run(kit: utils.Kit)
 		end
 
 		trove:connect(instance.Touched, function(toucher)
-			if not utils.isActive(instance) or debounce then
+			if not utils.Active(instance) or debounce then
 				return
 			end
 
-			local isCharacterTouched = SupportsCharacter(instance) and utils.isFromMaybeLocalCharacter(toucher)
+			local isCharacterTouched = utils.isToucherCharacter(instance, toucher)
 			if not isCharacterTouched then
 				return
 			end

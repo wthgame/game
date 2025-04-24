@@ -18,7 +18,7 @@ function self:run(kit: utils.Kit)
 		local alreadySynchronized: utils.Set<Instance> = {}
 
 		for _, conveyor in Conveyor:instances() do
-			local speed: number = utils.isActive(conveyor) and Speed(conveyor) or 0
+			local speed: number = utils.Active(conveyor) and Speed(conveyor) or 0
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
 
 			if SynchronizeConveyorBeams(conveyor) then

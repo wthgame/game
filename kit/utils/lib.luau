@@ -12,6 +12,7 @@ local character = require("./character")
 local color = require("./color")
 local physics = require("./physics")
 local t = require("./packages/t")
+local touch = require("./touch")
 local trove = require("./packages/trove")
 local types = require("./types")
 
@@ -49,8 +50,12 @@ local utils = table.freeze({
 	version = "1.0.0-dev",
 
 	attribute = attributes.attribute,
-	isActive = attributes.isActive,
 	getEnumFromString = attributes.getEnumFromString,
+	Active = attributes.Active,
+	SupportsCharacter = attributes.SupportsCharacter,
+
+	isToucher = touch.isToucher,
+	isToucherCharacter = touch.isToucherCharacter,
 
 	getMaybeLocalCharacter = character.getMaybeLocalCharacter,
 	waitForLocalCharacter = character.waitForLocalCharacter,
@@ -79,10 +84,10 @@ local utils = table.freeze({
 	playSound = audio.playSound,
 	playSoundFromGameAssets = audio.playSoundFromGameAssets,
 
-	roundColor = color.roundColor,
-
 	weld = physics.weld,
 	populateConstraintAttachments = physics.populateConstraintAttachments,
+
+	roundColor = color.roundColor,
 
 	t = t,
 	Trove = trove.Trove,

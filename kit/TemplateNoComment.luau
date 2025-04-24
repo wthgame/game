@@ -1,8 +1,11 @@
--- --!strict
+--!strict
 
--- local ReplicatedStorage = game:GetService("ReplicatedStorage")
--- local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
--- local function init(wth: utils.WTH) end
+local self = {} :: utils.KitScript
+self.type = "KitScript"
 
--- return init
+function self:run(kit: utils.Kit) end
+
+return self

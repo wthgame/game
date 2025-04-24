@@ -1,3 +1,7 @@
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
 

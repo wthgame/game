@@ -1,8 +1,6 @@
 import { Controller, Modding, OnStart } from "@flamework/core";
 import Iris from "@rbxts/iris";
-import { StandardActionBuilder } from "@rbxts/mechanism";
-import { RunService } from "@rbxts/services";
-import { OnInput } from "../decorators";
+import { UserInputService } from "@rbxts/services";
 
 export interface DeveloperPanelDropdownRenderer {
 	renderDeveloperPanelDropdown(): void;
@@ -10,7 +8,7 @@ export interface DeveloperPanelDropdownRenderer {
 
 @Controller()
 export class DeveloperPanelController implements OnStart {
-	private isOpen = RunService.IsStudio() || !RunService.IsRunning();
+	private isOpen = false;
 	private dropdownRenderers = new Array<DeveloperPanelDropdownRenderer>();
 
 	onStart(): void {
@@ -25,12 +23,16 @@ export class DeveloperPanelController implements OnStart {
 		Iris.UpdateGlobalConfig(Iris.TemplateConfig.colorDark);
 		Iris.UpdateGlobalConfig(Iris.TemplateConfig.sizeClear);
 		Iris.Connect(() => this.render());
+
+		UserInputService.InputBegan.Connect((input, gc) => {
+			if (!gc && input.KeyCode === Enum.KeyCode.Comma) this.isOpen = !this.isOpen;
+		});
 	}
 
-	@OnInput(new StandardActionBuilder("Comma"))
-	open() {
-		this.isOpen = !this.isOpen;
-	}
+	// @OnInput(new StandardActionBuilder("Comma"))
+	// open() {
+	// 	this.isOpen = !this.isOpen;
+	// }
 
 	render() {
 		if (!this.isOpen) return;

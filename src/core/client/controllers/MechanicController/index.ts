@@ -71,7 +71,7 @@ export class MechanicController implements OnInit {
 				trace(
 					"Ignoring module",
 					module.GetFullName(),
-					"because it is not a function:",
+					"because of bad type:",
 					maybe.reason ?? "(no reason provided)",
 				);
 
@@ -90,7 +90,7 @@ export class MechanicController implements OnInit {
 
 		const kit = table.freeze<Kit>({
 			trove,
-			tag(tagName: string, check?: t.check<Instance>): InstanceTag {
+			tag(tagName: string, check: t.check<Instance> = t.Instance): InstanceTag {
 				const instanceTag = new InstanceTag(ty.String.CastOrError(tagName), optionalCheck.CastOrError(check));
 				tags.add(instanceTag);
 				return instanceTag;
@@ -108,7 +108,7 @@ export class MechanicController implements OnInit {
 
 		for (const [script, module] of this.scriptToModule) {
 			const [runSuccess, runError] = pcall(script.run, script, kit);
-			if (!runSuccess) warn(`Cannot initialize module ${module.GetFullName()}: ${runError}`);
+			if (!runSuccess) warn(`Cannot run kit script ${module.GetFullName()}: ${runError}`);
 		}
 
 		const tagLoadedThreads = new Array<thread>();
@@ -118,6 +118,7 @@ export class MechanicController implements OnInit {
 			const instanceTrove = trove.extend();
 			instanceTrove.attachToInstance(instance);
 
+			// spawn loaded threads later so all instances can be tagged
 			tagLoadedThreads.push(
 				coroutine.create(() => {
 					for (const loaded of tag.onLoadedCallbacks) {
@@ -132,37 +133,23 @@ export class MechanicController implements OnInit {
 		const tagPromises = new Array<Promise<void>>();
 		for (const descendant of parent.GetDescendants()) {
 			for (const t of tags) {
-				if (descendant.HasTag(t.tagName)) {
-					tagPromises.push(tryTagInstance(descendant, t));
-				}
+				if (descendant.HasTag(t.tagName)) tagPromises.push(tryTagInstance(descendant, t));
 			}
 		}
 
 		await Promise.all(tagPromises);
 		for (const thread of tagLoadedThreads) task.spawn(thread);
 
-		if (onRenderCallbacks.size() > 0) {
-			trove.connect(RunService.PreRender, (dt) => {
-				for (const render of onRenderCallbacks) {
-					render(trove, dt);
-				}
-			});
-		}
+		trove.connect(RunService.PreRender, (dt) => {
+			for (const render of onRenderCallbacks) render(trove, dt);
+		});
 
-		if (onPhysicsCallbacks.size() > 0) {
-			trove.connect(RunService.PreSimulation, (dt) => {
-				for (const render of onPhysicsCallbacks) {
-					render(trove, dt);
-				}
-			});
-		}
+		trove.connect(RunService.PreSimulation, (dt) => {
+			for (const physics of onPhysicsCallbacks) physics(trove, dt);
+		});
 
-		if (onTickCallbacks.size() > 0) {
-			trove.connect(RunService.PostSimulation, (dt) => {
-				for (const render of onTickCallbacks) {
-					render(trove, dt);
-				}
-			});
-		}
+		trove.connect(RunService.PostSimulation, (dt) => {
+			for (const tick of onTickCallbacks) tick(trove, dt);
+		});
 	}
 }

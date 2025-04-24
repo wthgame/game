@@ -10,7 +10,6 @@ type Vector = "Up" | "Right" | "Look" | "Z"
 local Power = utils.attribute("Power", utils.t.numberPositive, 0)
 local MaxForce = utils.attribute("MaxForce", utils.t.numberPositive, math.huge)
 local Vector = utils.attribute("Vector", utils.t.literal("Up", "Right", "Look", "Z"), "Up")
-local SupportsCharacter = utils.attribute("SupportsCharacter", utils.t.boolean, true)
 
 local function wind(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
@@ -51,7 +50,7 @@ function self:run(kit: utils.Kit)
 	Wind:onLoaded(function(trove, instance)
 		local windTroves: utils.Map<BasePart, utils.Trove> = {}
 		trove:connect(instance.Touched, function(toucher)
-			if not utils.isActive(instance) then
+			if not utils.Active(instance) then
 				for part, trove in windTroves do
 					(trove :: any):clean()
 				end
@@ -61,9 +60,9 @@ function self:run(kit: utils.Kit)
 
 			local partToWind: BasePart? = nil
 
-			local isCharacter = SupportsCharacter(instance) and utils.isFromMaybeLocalCharacter(toucher)
+			local isToucherCharacter = utils.isToucherCharacter(instance, toucher)
 
-			if isCharacter then
+			if isToucherCharacter then
 				-- For consistency, only wind up the humanoid root part.
 				local root = utils.getLocalHumanoidRootPart()
 				if windTroves[root] then
@@ -114,9 +113,9 @@ function self:run(kit: utils.Kit)
 		end)
 
 		trove:connect(instance.TouchEnded, function(toucher)
-			local isCharacter = SupportsCharacter(instance) and utils.isFromMaybeLocalCharacter(toucher)
+			local isToucherCharacter = utils.isToucherCharacter(instance, toucher)
 
-			if isCharacter then
+			if isToucherCharacter then
 				-- For consistency, only the humanoid root part should be winded
 				-- up.
 				local root = utils.getLocalHumanoidRootPart()

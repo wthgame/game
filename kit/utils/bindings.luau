@@ -1,3 +1,7 @@
+--!strict
+
+-- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 type Bindings = {
@@ -12,13 +16,7 @@ local bindings = require(
 		:WaitForChild("bindings")
 ) :: Bindings
 
-local function promptToStartNewTowerRun(name: string)
-	bindings.callMechanicBinding("TowerRunController.promptToStartNewTowerRun", name)
-end
-
 return {
-	promptToStartNewTowerRun = promptToStartNewTowerRun,
-
 	addMechanicBinding = bindings.addMechanicBinding,
 	callMechanicBinding = bindings.callMechanicBinding,
 }
