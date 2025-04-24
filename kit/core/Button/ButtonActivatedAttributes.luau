@@ -8,6 +8,7 @@ local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 local Invert = utils.attribute("Invert", utils.t.boolean, false)
 local KeepCollision = utils.attribute("KeepCollision", utils.t.boolean, false)
 local KeepTransparency = utils.attribute("KeepTransparency", utils.t.boolean, false)
+local KeepEnabled = utils.attribute("KeepEnabled", utils.t.boolean, false)
 local ActiveTransparency = utils.attribute("ActiveTransparency", utils.t.numberConstrained(0, 1), 0)
 local InactiveTransparency = utils.attribute("InactiveTransparency", utils.t.numberConstrained(0, 1), 0.6)
 local TransitionTime = utils.attribute("TransitionTime", utils.t.numberPositive, 0.25)
@@ -27,6 +28,7 @@ return {
 	Invert = Invert,
 	KeepCollision = KeepCollision,
 	KeepTransparency = KeepTransparency,
+	KeepEnabled = KeepEnabled,
 	ActiveTransparency = ActiveTransparency,
 	InactiveTransparency = InactiveTransparency,
 	TransitionTime = TransitionTime,

@@ -8,7 +8,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local ButtonActivatedAttributes = require(script:WaitForChild("ButtonActivatedAttributes"))
-local Invert = ButtonActivatedAttributes.Invert
 local ButtonAttributes = require(script:WaitForChild("ButtonAttributes"))
 export type ActivatedBy = ButtonAttributes.ActivatedBy
 local ButtonId = ButtonAttributes.ButtonId
@@ -22,7 +21,7 @@ local PressEasingStyle = ButtonAttributes.PressEasingStyle
 local PressEasingDirection = ButtonAttributes.PressEasingDirection
 local createDefaultClickDetector = require(script:WaitForChild("createDefaultClickDetector"))
 local createDefaultPrompt = require(script:WaitForChild("createDefaultPrompt"))
-local updateButtonActivatedPart = require(script:WaitForChild("updateButtonActivatedPart"))
+local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
 local buttonActivatedsById: utils.Map<string, utils.Set<Instance>> = {}
 
@@ -36,6 +35,7 @@ local function trackButtonActivatedById(id: string, buttonActivated: Instance)
 end
 
 local buttonsPressedById: utils.Map<string, utils.Set<BasePart>> = {}
+
 local function trackButtonPressedById(id: string, button: BasePart)
 	local existing = buttonsPressedById[id]
 	if existing then
@@ -65,13 +65,8 @@ local function updateId(id: string)
 	local isPressed = next(getButtonsPressedById(id)) ~= nil
 
 	for ba in buttonActivateds do
-		if ba:IsA("BasePart") then
-			local active = isPressed
-			if Invert(ba) then
-				active = not active
-			end
-			updateButtonActivatedPart(ba, active)
-		end
+		-- updateButtonActivated(ba, isPressed)
+		task.spawn(updateButtonActivated, ba, isPressed)
 	end
 end
 
@@ -108,19 +103,28 @@ local function activate(trove: utils.Trove, btn: BasePart)
 		})
 	end
 
-	local function deactivate()
+	local deactivateTrove = trove:extend()
+	deactivateTrove:add(function()
 		btn:SetAttribute("ButtonPressed", false)
 		utils.tweenMaybeInstant(btn, { CFrame = originalCFrame }, {
 			time = PressTime(btn),
 			easingStyle = PressEasingStyle(btn),
 			easingDirection = PressEasingDirection(btn),
 		})
-	end
+	end)
 
 	local duration = Duration(btn)
 	if duration >= 0 then
-		task.delay(duration, deactivate)
+		task.delay(duration, function()
+			deactivateTrove:clean()
+		end)
 	end
+
+	deactivateTrove:connect(btn:GetAttributeChangedSignal("ButtonPressed"), function()
+		if not ButtonPressed(btn) then
+			deactivateTrove:clean()
+		end
+	end)
 end
 
 local function bindActivation(outerTrove: utils.Trove, btn: BasePart, activatedBy: ActivatedBy)
@@ -186,6 +190,7 @@ local function tryUpdateIdOfButton(btn: Instance)
 end
 
 local self = {} :: utils.KitScript<typeof(ButtonAttributes) & typeof(ButtonActivatedAttributes) & {
+	buttonsPressedById: utils.Map<string, utils.Set<BasePart>>,
 	trackButtonActivatedById: (id: string, buttonActivated: Instance) -> (),
 	trackButtonPressedById: (id: string, button: BasePart) -> (),
 	untrackButtonPressedById: (id: string, button: BasePart) -> (),
@@ -193,6 +198,7 @@ local self = {} :: utils.KitScript<typeof(ButtonAttributes) & typeof(ButtonActiv
 	updateId: (id: string) -> (),
 }>
 self.type = "KitScript"
+self.buttonsPressedById = buttonsPressedById
 self.trackButtonActivatedById = trackButtonActivatedById
 self.trackButtonPressedById = trackButtonPressedById
 self.untrackButtonPressedById = untrackButtonPressedById
