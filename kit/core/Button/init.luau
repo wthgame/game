@@ -17,7 +17,7 @@ local PressTime = ButtonAttributes.PressTime
 local PressEasingStyle = ButtonAttributes.PressEasingStyle
 local PressEasingDirection = ButtonAttributes.PressEasingDirection
 local bindActivationToTrove = require(script:WaitForChild("bindActivationToTrove"))
-local createButtonGlow = require(script:WaitForChild("createButtonGlow"))
+local glowButton = require(script:WaitForChild("glowButton"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
 local buttonActivatedsById: utils.Map<string, utils.Set<Instance>> = {}
@@ -108,7 +108,7 @@ local function activate(trove: utils.Trove, btn: BasePart)
 		})
 	end)
 
-	createButtonGlow(deactivateTrove, btn)
+	glowButton(deactivateTrove, btn)
 
 	local duration = Duration(btn)
 	if duration >= 0 then
@@ -138,6 +138,7 @@ local self = {} :: utils.KitScript<typeof(ButtonAttributes) & typeof(ButtonActiv
 	untrackButtonPressedById: (id: string, button: BasePart) -> (),
 	getButtonsPressedById: (id: string) -> utils.Set<BasePart>,
 	bindActivationToTrove: (trove: utils.Trove, btn: BasePart, onActivated: () -> ()) -> (),
+	glowButton: (trove: utils.Trove, btn: BasePart, flash: boolean?) -> (),
 	updateId: (id: string) -> (),
 }>
 self.type = "KitScript"
@@ -147,6 +148,7 @@ self.trackButtonPressedById = trackButtonPressedById
 self.untrackButtonPressedById = untrackButtonPressedById
 self.getButtonsPressedById = getButtonsPressedById
 self.bindActivationToTrove = bindActivationToTrove
+self.glowButton = glowButton
 self.updateId = updateId
 
 for key, value in ButtonAttributes do
