@@ -72,15 +72,7 @@ export class AreaController implements OnStart {
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
-	private async loadAreaMechanics(trove: Trove, mechanics: Instance) {
-		trace("Loading mechanics");
-		await this.mechanicController.loadMechanicsFromParent(trove, mechanics);
-
-		this.isLoaded(true);
-		this.isLoadingArea = false;
-
-		trace("Finished loading mechanics");
-	}
+	private async loadAreaMechanics(trove: Trove, mechanics: Instance) {}
 
 	// private async setAreaServices(trove: Trove, areaInstance: Instance) {
 	// 	trace("Setting area services");
@@ -120,9 +112,14 @@ export class AreaController implements OnStart {
 			this.lightingController.setLightingAtPriority(lighting.GetAttributes() as never, LightingPriority.Area);
 		}
 
-		await this.loadAreaMechanics(trove, clone.FindFirstChild("Mechanics")!);
+		trace("Loading mechanics");
+		await this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
+		trace("Finished loading mechanics");
 
 		trace("Finished loading area");
+
+		this.isLoaded(true);
+		this.isLoadingArea = false;
 
 		return trove;
 	}
