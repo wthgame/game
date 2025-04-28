@@ -9,7 +9,6 @@
         "@rbxts/cullthrottle": "^0.1.0-rc.3",
         "@rbxts/flamework-meta-utils": "1.0.1",
         "@rbxts/iris": "2.3.1-ts.1",
-        "@rbxts/jabby": "^0.2.1",
         "@rbxts/lapis": "^0.3.8",
         "@rbxts/lazy": "^1.0.1",
         "@rbxts/libopen-event": "^1.0.1",
@@ -94,11 +93,7 @@
 
     "@rbxts/iris": ["@rbxts/iris@2.3.1-ts.1", "", {}, "sha512-L/lja+ugKNH3ywdz5c8omXUS34L9oGKlul3yVifzTfQVJS4ryePU/hS6IdMaSbIwNda+qEOehXbSxglF9qxa/A=="],
 
-    "@rbxts/jabby": ["@rbxts/jabby@0.2.1", "", { "dependencies": { "@rbxts/pebble": "0.1.2", "@rbxts/vide": "^0.5.2" }, "peerDependencies": { "@rbxts/jecs": "^0.5.1" } }, "sha512-kFLPqThgUHvSNnXdDLs/2YNaRfNTVJLyuUJpCSKa106PJuGnZO3ipMeweEF/eNlbeV8dsKYWE30cIHQ8aBqmXQ=="],
-
     "@rbxts/janitor": ["@rbxts/janitor@1.17.0-ts.1", "", {}, "sha512-LFtmpiwx1lixjVH1HV0EUUPaDF8BCmw41vjgsXcRq+d4yl2dVmT+oVHrMkdYWxltSezjDpK+9GbL18twlAGSwg=="],
-
-    "@rbxts/jecs": ["@rbxts/jecs@0.6.0-rc.1", "", {}, "sha512-0u7wf/buozH/u5ZBtNnuuN85UqQ8i4HZzc14W4lFdELogpM9XimfH7vQLuf94Gul+HhmPYkMh+LWLWdjJZMtzg=="],
 
     "@rbxts/lapis": ["@rbxts/lapis@0.3.8", "", { "peerDependencies": { "@rbxts/t": "*" } }, "sha512-SQTVdSp47Rh7nzuI/ArUsGssz2+KmciPlue4Qlj3i9iO2p3Xgf1ZsgfhvMemPih/kFdjSH47E8wHGA4dY/Y+AA=="],
 
@@ -121,8 +116,6 @@
     "@rbxts/mechanism": ["@rbxts/mechanism@1.1.1", "", { "dependencies": { "@rbxts/destroyable": "^1.0.1", "@rbxts/id": "^1.0.0", "@rbxts/lemon-signal": "^1.2.0" } }, "sha512-1tGWXZCmu9fIbfItBGPX4tlVowZF/rJ5UmsN4vYGB8mLNXzmuPLc3WmvKi0O9O1UA+VrgIJiMJ2y4l5mEuU3DQ=="],
 
     "@rbxts/object-utils": ["@rbxts/object-utils@1.0.4", "", {}, "sha512-dLLhf022ipV+9i910sOE7kl9losKHoon0WgeerHqVMQA5EYsLUsVT2AxhJuhk8MiDn5oJ2GiFofE/LadY9TpJQ=="],
-
-    "@rbxts/pebble": ["@rbxts/pebble@0.1.2", "", { "dependencies": { "@rbxts/vide": "^0.5.0" } }, "sha512-mlsWya5odOuXoyRLmn9idNXfDd8WpWAayDSAW6qwjrTgbGwJp8HRm2dfyeWY8pmmezqZNSWu9k1qf32OPH3NVA=="],
 
     "@rbxts/pretty-vide-utils": ["@rbxts/pretty-vide-utils@0.0.5", "", { "dependencies": { "@rbxts/ripple": "^0.9.0", "@rbxts/services": "^1.5.1", "@rbxts/set-timeout": "^1.1.2", "@rbxts/vide": "^0.5.0" } }, "sha512-zPfuL7Qt5wEox9zh8XNjXnhb7SuqHtaLpPvBYPw/a8RnpIymCDhLY2J/mJUKAwTqVJxH+7opZIhw4C4MWa13bg=="],
 

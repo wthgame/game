@@ -72,19 +72,6 @@ export interface AreaInstance extends Instance {
 
 export const AREAS: AreaInfo[] = [
 	{
-		name: "KitDevelopment",
-		title: "Welcome To Hell Kit Development",
-		towers: [
-			{
-				name: "ET",
-				title: "Example Tower",
-				type: TowerType.Tower,
-				difficulty: TowerDifficulty.Easy + TowerDifficultyIncrement.Bottom,
-				creatorUserIds: [UserId.ImNotFireMan123],
-			},
-		],
-	},
-	{
 		name: "A1MoltenHeart",
 		actNumber: 1,
 		title: "Molten Heart",
@@ -159,19 +146,19 @@ export const AREAS: AreaInfo[] = [
 		],
 	},
 	{
-		name: "A2FeveredEyes",
+		name: "A2BloodyHands",
 		actNumber: 2,
-		title: "Fevered Eyes",
+		title: "Bloody Hands",
 		towers: [],
 	},
 	{
-		name: "A3OhNoItsASeriousRobloxGame",
+		name: "A3FeveredEyes",
 		actNumber: 3,
-		title: "Oh No, It's a Serious Roblox Game",
+		title: "Fevered Eyes",
 		towers: [
 			{
-				name: "MoBH",
-				title: "Monument of Bleeding Heart",
+				name: "MoDHIaSRG",
+				title: "Monument of Dear Hell, It's a Serious Roblox Game",
 				type: TowerType.Monument,
 				hidden: true,
 				difficulty: TowerDifficulty.Challenging + TowerDifficultyIncrement.Low,

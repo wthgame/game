@@ -61,6 +61,27 @@
             "WTHClientKit": {
                 "$path": "out/kit/client"
             }
+        },
+        "Workspace": {
+            "$className": "Workspace",
+            "$ignoreUnknownInstances": true,
+            "$properties": {
+                "StreamingEnabled": false,
+                "PhysicsSteppingMethod": "Fixed",
+                "SignalBehavior": "Immediate"
+            }
+        },
+        "HttpService": {
+            "$className": "HttpService",
+            "$properties": {
+                "HttpEnabled": true
+            }
+        },
+        "StarterPlayer": {
+            "$className": "StarterPlayer",
+            "$properties": {
+                "GameSettingsAvatar": "R6"
+            }
         }
     }
 }

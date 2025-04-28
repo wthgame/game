@@ -39,6 +39,14 @@ export type Character = Model & {
 	Head: BasePart,
 }
 
+export type InstanceByIds<T = Instance, I = string> = {
+	getAll: (self: InstanceByIds<T, I>) -> Map<I, Set<T>>,
+	getId: (self: InstanceByIds<T, I>, id: I) -> Set<T>,
+	add: (self: InstanceByIds<T, I>, instance: T, id: I) -> T,
+	remove: (self: InstanceByIds<T, I>, instance: T, id: I) -> T,
+	destroy: (self: InstanceByIds<T, I>) -> (),
+}
+
 export type PlaySoundConfig = {
 	speed: number?,
 	volume: number?,

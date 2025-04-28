@@ -6,9 +6,10 @@ local utils = require(script.lib)
 
 export type Map<K, V> = utils.Map<K, V>
 export type Set<T> = utils.Set<T>
-export type InstanceTag<I> = utils.InstanceTag<I>
 export type Kit = utils.Kit
 export type KitScript<Self = {}> = utils.KitScript<Self>
+export type InstanceTag<I> = utils.InstanceTag<I>
+export type InstanceByIds<Instance, Id> = utils.InstanceByIds<Instance, Id>
 export type Character = utils.Character
 export type PlaySoundConfig = utils.PlaySoundConfig
 export type TweenConfig = utils.TweenConfig

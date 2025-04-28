@@ -10,6 +10,7 @@ local audio = require("./audio")
 local bindings = require("./bindings")
 local character = require("./character")
 local color = require("./color")
+local id = require("./id")
 local physics = require("./physics")
 local t = require("./packages/t")
 local touch = require("./touch")
@@ -21,6 +22,7 @@ export type Set<T> = types.Set<T>
 export type Kit = types.Kit
 export type KitScript<Self = {}> = types.KitScript<Self>
 export type InstanceTag<I> = types.InstanceTag<I>
+export type InstanceByIds<Instance, Id> = types.InstanceByIds<Instance, Id>
 export type Character = types.Character
 export type PlaySoundConfig = types.PlaySoundConfig
 export type TweenConfig = types.TweenConfig
@@ -57,6 +59,8 @@ local utils = table.freeze({
 	isToucher = touch.isToucher,
 	isToucherCharacter = touch.isToucherCharacter,
 
+	trackInstanceByIds = id.trackInstanceByIds,
+
 	getMaybeLocalCharacter = character.getMaybeLocalCharacter,
 	waitForLocalCharacter = character.waitForLocalCharacter,
 	getLocalCharacter = character.getLocalCharacter,
@@ -82,6 +86,7 @@ local utils = table.freeze({
 	ASSETS = assets,
 
 	SOUND_ASSETS = audio.SOUND_ASSETS,
+	inferAndPlaySound = audio.inferAndPlaySound,
 	playSound = audio.playSound,
 	playSoundFromGameAssets = audio.playSoundFromGameAssets,
 

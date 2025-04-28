@@ -4,6 +4,7 @@ import { Players, Workspace } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
 import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
+import { LightingController, LightingPriority } from "core/client/controllers/LightingController";
 import { MechanicController } from "core/client/controllers/MechanicController";
 import { trace } from "core/shared/log";
 import { areas } from "game/client/net";
@@ -54,7 +55,10 @@ export class AreaController implements OnStart {
 	isLoadingArea = false;
 	isLoaded = atom(false);
 
-	constructor(private mechanicController: MechanicController) {}
+	constructor(
+		private mechanicController: MechanicController,
+		private lightingController: LightingController,
+	) {}
 
 	onStart(): void {
 		mount(() => {
@@ -68,38 +72,57 @@ export class AreaController implements OnStart {
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
+	private async loadAreaMechanics(trove: Trove, mechanics: Instance) {
+		trace("Loading mechanics");
+		await this.mechanicController.loadMechanicsFromParent(trove, mechanics);
+
+		this.isLoaded(true);
+		this.isLoadingArea = false;
+
+		trace("Finished loading mechanics");
+	}
+
+	// private async setAreaServices(trove: Trove, areaInstance: Instance) {
+	// 	trace("Setting area services");
+	// 	const services = areaInstance.FindFirstChild("Services");
+	// 	if (services) {
+	// 		for (const s of services.GetChildren()) {
+	// 			const realService = game.GetService(s.Name as never);
+	// 			for (const [property, value] of pairs(s.GetAttributes())) {
+	// 				(realService as Map<unknown, unknown>).set(property, value);
+	// 			}
+	// 			for (const child of s.GetChildren()) trove.add(child).Parent = realService;
+	// 		}
+	// 	}
+	// 	trace("Finished setting area services");
+	// }
+
 	async loadArea(area: AreaInfo) {
 		if (this.isLoadingArea) return;
 		this.isLoadingArea = true;
 
 		trace(`Requesting to load area ${area.name}`);
 
-		const inst = areas.loadArea.invoke(area.name).expect();
+		const areaInstance = areas.loadArea.invoke(area.name).expect();
 
 		trace("Got area");
-
-		trace("Cloning");
-		const clone = inst.Clone();
-		trace("Cloned");
+		const clone = areaInstance.Clone();
 		clone.Parent = Workspace;
-		print(clone);
-		print(clone.WaitForChild("Mechanics"));
 
-		inst.Destroy();
-
-		// i have no fucking clue why ts not working ????
-		task.wait(1);
+		areaInstance.Destroy();
+		areas.confirmAreaLoaded.fire();
 
 		const trove = new Trove();
 
-		trace("Loading mechanics");
-		await this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
-		trace("Finished loading mechanics");
+		const lighting = clone.FindFirstChild("Lighting");
+		if (lighting) {
+			trace("Setting area lighting");
+			this.lightingController.setLightingAtPriority(lighting.GetAttributes() as never, LightingPriority.Area);
+		}
 
-		this.isLoaded(true);
-		this.isLoadingArea = false;
+		await this.loadAreaMechanics(trove, clone.FindFirstChild("Mechanics")!);
 
-		areas.confirmAreaLoaded.fire();
+		trace("Finished loading area");
 
 		return trove;
 	}
