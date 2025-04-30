@@ -115,8 +115,6 @@ local function connectActivationOnce<T>(
 				elseif connectTo:IsA("BasePart") then getActivationProximityPrompt(activationTrove, connectTo)
 				else nil
 
-			print(prompt)
-
 			if prompt then
 				activationTrove:connect(prompt.Triggered, function(player: Player)
 					-- TODO: do we need this?
