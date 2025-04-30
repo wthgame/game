@@ -10,6 +10,8 @@ export type Kit = utils.Kit
 export type KitScript<Self = {}> = utils.KitScript<Self>
 export type InstanceTag<I> = utils.InstanceTag<I>
 export type InstanceByIds<Instance, Id> = utils.InstanceByIds<Instance, Id>
+export type InstanceAttribute<T> = utils.InstanceAttribute<T>
+export type ActivationMode = utils.ActivationMode
 export type Character = utils.Character
 export type PlaySoundConfig = utils.PlaySoundConfig
 export type TweenConfig = utils.TweenConfig

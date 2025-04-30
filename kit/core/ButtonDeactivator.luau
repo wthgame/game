@@ -13,22 +13,24 @@ local updateId = Button.updateId
 local self = {} :: utils.KitScript
 self.type = "KitScript"
 
+local function deactivate(_, deactivator: BasePart)
+	local id = ButtonId(deactivator)
+	if id then
+		local buttons = buttonsPressedById[id]
+		if buttons then
+			for btn in buttons do
+				btn:SetAttribute("ButtonPressed", false)
+			end
+			updateId(id)
+		end
+	end
+end
+
 function self:run(kit: utils.Kit)
 	local ButtonDeactivator = kit:tag("ButtonDeactivator", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	ButtonDeactivator:onLoaded(function(trove, deactivator)
-		trove:connect(deactivator.Touched, function(toucher)
-			local id = ButtonId(deactivator)
-			if utils.Active(deactivator) and utils.isToucher(deactivator, toucher) and id then
-				local buttons = buttonsPressedById[id]
-				if buttons then
-					for btn in buttons do
-						btn:SetAttribute("ButtonPressed", false)
-					end
-					updateId(id)
-				end
-			end
-		end)
+		utils.connectActivation(trove, deactivator, deactivate)
 	end)
 end
 

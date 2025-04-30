@@ -5,6 +5,15 @@
 local TweenService = game:GetService("TweenService")
 local types = require("./types")
 
+export type TweenConfig = {
+	time: number?,
+	easingStyle: Enum.EasingStyle?,
+	easingDirection: Enum.EasingDirection?,
+	repeatCount: number?,
+	reverse: boolean?,
+	delayTime: number?,
+}
+
 local function tween(instance: Instance, propertyTable: { [string]: unknown }, config: types.TweenConfig?)
 	local config: types.TweenConfig = config or {}
 

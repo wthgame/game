@@ -16,7 +16,6 @@ local PressOffset = ButtonAttributes.PressOffset
 local PressTime = ButtonAttributes.PressTime
 local PressEasingStyle = ButtonAttributes.PressEasingStyle
 local PressEasingDirection = ButtonAttributes.PressEasingDirection
-local bindActivationToTrove = require(script:WaitForChild("bindActivationToTrove"))
 local glowButton = require(script:WaitForChild("glowButton"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
@@ -67,13 +66,14 @@ local function updateId(id: string)
 	end
 end
 
-local function activate(trove: utils.Trove, btn: BasePart)
+local function pressButton(trove: utils.Trove, btn: BasePart, activationTrove: utils.Trove)
 	local id = ButtonId(btn)
 
 	if ButtonPressed(btn) or not id then
 		return
 	end
 
+	activationTrove:clean()
 	utils.playSound(utils.SOUND_ASSETS.button)
 
 	btn:SetAttribute("ButtonPressed", true)
@@ -106,6 +106,8 @@ local function activate(trove: utils.Trove, btn: BasePart)
 			easingStyle = PressEasingStyle(btn),
 			easingDirection = PressEasingDirection(btn),
 		})
+
+		utils.connectActivation(trove, btn, pressButton)
 	end)
 
 	glowButton(deactivateTrove, btn)
@@ -137,7 +139,6 @@ local self = {} :: utils.KitScript<typeof(ButtonAttributes) & typeof(ButtonActiv
 	trackButtonPressedById: (id: string, button: BasePart) -> (),
 	untrackButtonPressedById: (id: string, button: BasePart) -> (),
 	getButtonsPressedById: (id: string) -> utils.Set<BasePart>,
-	bindActivationToTrove: (trove: utils.Trove, btn: BasePart, onActivated: () -> ()) -> (),
 	glowButton: (trove: utils.Trove, btn: BasePart, flash: boolean?) -> (),
 	updateId: (id: string) -> (),
 }>
@@ -147,7 +148,6 @@ self.trackButtonActivatedById = trackButtonActivatedById
 self.trackButtonPressedById = trackButtonPressedById
 self.untrackButtonPressedById = untrackButtonPressedById
 self.getButtonsPressedById = getButtonsPressedById
-self.bindActivationToTrove = bindActivationToTrove
 self.glowButton = glowButton
 self.updateId = updateId
 
@@ -160,7 +160,7 @@ for key, value in ButtonActivatedAttributes do
 end
 
 function self:run(kit: utils.Kit)
-	local Button = kit:tag("Button", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local Button = kit:tag("Button", utils.isBasePart)
 	local ButtonActivated = kit:tag("ButtonActivated")
 
 	ButtonActivated:onLoaded(function(trove, ba)
@@ -178,27 +178,13 @@ function self:run(kit: utils.Kit)
 	end)
 
 	Button:onLoaded(function(trove, btn)
-		local activationTrove = trove:extend()
-		local function activateSelf()
-			activationTrove:clean()
-			activate(trove, btn)
-		end
-
-		bindActivationToTrove(activationTrove, btn, activateSelf)
-
-		trove:connect(btn:GetAttributeChangedSignal("ActivatedBy"), function()
-			activationTrove:clean()
-			activationTrove = trove:extend()
-			bindActivationToTrove(activationTrove, btn, activateSelf)
-		end)
+		print("LOADED", btn)
+		utils.connectActivation(trove, btn, pressButton)
 
 		trove:connect(btn:GetAttributeChangedSignal("ButtonPressed"), function()
 			local id = ButtonId(btn)
 
-			activationTrove:clean()
 			if not ButtonPressed(btn) then
-				activationTrove = trove:extend()
-				bindActivationToTrove(activationTrove, btn, activateSelf)
 				if id then
 					untrackButtonPressedById(id, btn)
 				end

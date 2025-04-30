@@ -23,45 +23,45 @@ end
 --- @within KitUtils
 --- @tag Character
 --- Returns the local player's character if it exists
-local function getMaybeLocalCharacter(): types.Character?
+local function getMaybeCharacter(): types.Character?
 	return Players.LocalPlayer.Character
 end
 
 --- @within KitUtils
 --- @tag Character
 --- Waits for and returns the local player's character when it is added
-local function waitForLocalCharacter(): types.Character
+local function waitForCharacter(): types.Character
 	return Players.LocalPlayer.CharacterAdded:Wait()
 end
 
 --- @within KitUtils
 --- @tag Character
 --- Returns current character if it exists. Otherwise, wait for it to be added.
-local function getLocalCharacter(): types.Character
-	return getMaybeLocalCharacter() or waitForLocalCharacter()
+local function getCharacter(): types.Character
+	return getMaybeCharacter() or waitForCharacter()
 end
 
 --- @within KitUtils
 --- @tag Character
 --- Returns true if the character exists and the given instance is a descendant
 --- of the local character.
-local function isFromMaybeLocalCharacter(instance: Instance): boolean
-	local character = getMaybeLocalCharacter()
+local function isFromMaybeCharacter(instance: Instance): boolean
+	local character = getMaybeCharacter()
 	return if character then character:IsAncestorOf(instance) else false
 end
 
 --- @within KitUtils
 --- @tag Character
 --- Returns true if the given instance is a descendant of the local character.
-local function isFromLocalCharacter(instance: Instance): boolean
-	return getLocalCharacter():IsAncestorOf(instance)
+local function isFromCharacter(instance: Instance): boolean
+	return getCharacter():IsAncestorOf(instance)
 end
 
 --- @within KitUtils
 --- @tag Character
 --- Returns the character's HumanoidRootPart if it exists.
-local function getMaybeLocalHumanoidRootPart(): BasePart?
-	local character = getMaybeLocalCharacter()
+local function getMaybeHumanoidRootPart(): BasePart?
+	local character = getMaybeCharacter()
 	if character then
 		return character:FindFirstChild("HumanoidRootPart") :: BasePart
 	end
@@ -72,15 +72,15 @@ end
 --- @tag Character
 --- Returns the character's HumanoidRootPart if it exists. Otherwise, wait for
 --- it to be added.
-local function getLocalHumanoidRootPart(): BasePart
-	return getLocalCharacter():WaitForChild("HumanoidRootPart") :: BasePart
+local function getHumanoidRootPart(): BasePart
+	return getCharacter():WaitForChild("HumanoidRootPart") :: BasePart
 end
 
 --- @within KitUtils
 --- @tag Character
 --- Returns the character's Humanoid if it exists.
-local function getMaybeLocalHumanoid(): Humanoid?
-	local character = getMaybeLocalCharacter()
+local function getMaybeHumanoid(): Humanoid?
+	local character = getMaybeCharacter()
 	if character then
 		return character:FindFirstChild("Humanoid") :: Humanoid
 	end
@@ -91,15 +91,15 @@ end
 --- @tag Character
 --- Returns the character's Humanoid if it exists. Otherwise, waits for it to
 --- be added.
-local function getLocalHumanoid(): Humanoid
-	return getLocalCharacter():WaitForChild("Humanoid") :: Humanoid
+local function getHumanoid(): Humanoid
+	return getCharacter():WaitForChild("Humanoid") :: Humanoid
 end
 
 --- @within KitUtils
 --- @tag Character
 --- Returns true if the character is alive.
-local function isLocalCharacterAlive(): boolean
-	local humanoid = getMaybeLocalHumanoid()
+local function isCharacterAlive(): boolean
+	local humanoid = getMaybeHumanoid()
 	return humanoid ~= nil and humanoid.Health > 0
 end
 
@@ -109,14 +109,14 @@ end
 return {
 	isCharacter = isCharacter,
 	isLocalPlayerCharacter = isLocalPlayerCharacter,
-	getMaybeLocalCharacter = getMaybeLocalCharacter,
-	waitForLocalCharacter = waitForLocalCharacter,
-	getLocalCharacter = getLocalCharacter,
-	isFromMaybeLocalCharacter = isFromMaybeLocalCharacter,
-	isFromLocalCharacter = isFromLocalCharacter,
-	getMaybeLocalHumanoidRootPart = getMaybeLocalHumanoidRootPart,
-	getLocalHumanoidRootPart = getLocalHumanoidRootPart,
-	getMaybeLocalHumanoid = getMaybeLocalHumanoid,
-	getLocalHumanoid = getLocalHumanoid,
-	isLocalCharacterAlive = isLocalCharacterAlive,
+	getMaybeCharacter = getMaybeCharacter,
+	waitForCharacter = waitForCharacter,
+	getCharacter = getCharacter,
+	isFromMaybeCharacter = isFromMaybeCharacter,
+	isFromCharacter = isFromCharacter,
+	getMaybeHumanoidRootPart = getMaybeHumanoidRootPart,
+	getHumanoidRootPart = getHumanoidRootPart,
+	getMaybeHumanoid = getMaybeHumanoid,
+	getHumanoid = getHumanoid,
+	isCharacterAlive = isCharacterAlive,
 }

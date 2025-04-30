@@ -1,10 +1,15 @@
 local attributes = require("./attributes")
-local SupportsCharacter = attributes.SupportsCharacter
 local character = require("./character")
-local isFromMaybeLocalCharacter = character.isFromMaybeLocalCharacter
+local isFromMaybeCharacter = character.isFromMaybeCharacter
+local t = require("./packages/t")
 
-local function isToucher(target: Instance, toucher: BasePart)
-	if SupportsCharacter(target) and isFromMaybeLocalCharacter(toucher) then
+local SupportsCharacter = attributes.attribute("SupportsCharacter", t.boolean, false)
+local SupportsBoxes = attributes.attribute("SupportsBoxes", t.boolean, false)
+local BoxesRequiresMatchingId = attributes.attribute("BoxesRequiresMatchingId", t.boolean, false)
+local RequiredBoxId = attributes.attribute("RequiredBoxId", t.string)
+
+local function isToucherValid(target: Instance, toucher: BasePart)
+	if SupportsCharacter(target) and isFromMaybeCharacter(toucher) then
 		return true
 	end
 
@@ -12,10 +17,14 @@ local function isToucher(target: Instance, toucher: BasePart)
 end
 
 local function isToucherCharacter(target: Instance, toucher: BasePart)
-	return SupportsCharacter(target) and isFromMaybeLocalCharacter(toucher)
+	return SupportsCharacter(target) and isFromMaybeCharacter(toucher)
 end
 
 return {
-	isToucher = isToucher,
+	isToucherValid = isToucherValid,
 	isToucherCharacter = isToucherCharacter,
+	SupportsCharacter = SupportsCharacter,
+	SupportsBoxes = SupportsBoxes,
+	BoxesRequiresMatchingId = BoxesRequiresMatchingId,
+	RequiredBoxId = RequiredBoxId,
 }

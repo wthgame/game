@@ -3,6 +3,7 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 local CullThrottle = require("./packages/cull-throttle")
+local activation = require("./activation")
 local animation = require("./animation")
 local assets = require("./assets")
 local attributes = require("./attributes")
@@ -23,9 +24,11 @@ export type Kit = types.Kit
 export type KitScript<Self = {}> = types.KitScript<Self>
 export type InstanceTag<I> = types.InstanceTag<I>
 export type InstanceByIds<Instance, Id> = types.InstanceByIds<Instance, Id>
+export type InstanceAttribute<T> = attributes.InstanceAttribute<T>
+export type ActivationMode = activation.ActivationMode
 export type Character = types.Character
-export type PlaySoundConfig = types.PlaySoundConfig
-export type TweenConfig = types.TweenConfig
+export type PlaySoundConfig = audio.PlaySoundConfig
+export type TweenConfig = animation.TweenConfig
 
 export type check<T> = t.check<T>
 export type Trove = trove.Trove
@@ -44,48 +47,49 @@ export type Trove = trove.Trove
 ]=]
 local utils = table.freeze({
 	--[=[
+        @within KitUtils
         @prop version string
-	    @within KitUtils
 
 		The utils version, pairing with the kit version.
     ]=]
 	version = "1.0.0-dev",
 
 	attribute = attributes.attribute,
-	getEnumFromString = attributes.getEnumFromString,
-	Active = attributes.Active,
-	SupportsCharacter = attributes.SupportsCharacter,
 
-	isToucher = touch.isToucher,
+	connectActivation = activation.connectActivation,
+	Active = activation.Active,
+	ActivationMode = activation.ActivationMode,
+	MaxActivationDistance = activation.MaxActivationDistance,
+	ActivationKeyCode = activation.ActivationKeyCode,
+
+	isToucherValid = touch.isToucherValid,
 	isToucherCharacter = touch.isToucherCharacter,
+	SupportsCharacter = touch.SupportsCharacter,
+	SupportsBoxes = touch.SupportsBoxes,
+	BoxesRequiresMatchingId = touch.BoxesRequiresMatchingId,
+	RequiredBoxId = touch.RequiredBoxId,
 
 	trackInstanceByIds = id.trackInstanceByIds,
 
-	getMaybeLocalCharacter = character.getMaybeLocalCharacter,
-	waitForLocalCharacter = character.waitForLocalCharacter,
-	getLocalCharacter = character.getLocalCharacter,
-	isFromMaybeLocalCharacter = character.isFromMaybeLocalCharacter,
-	isFromLocalCharacter = character.isFromLocalCharacter,
-	getMaybeLocalHumanoidRootPart = character.getMaybeLocalHumanoidRootPart,
-	getLocalHumanoidRootPart = character.getLocalHumanoidRootPart,
-	getMaybeLocalHumanoid = character.getMaybeLocalHumanoid,
-	getLocalHumanoid = character.getLocalHumanoid,
+	getMaybeCharacter = character.getMaybeCharacter,
+	waitForCharacter = character.waitForCharacter,
+	getCharacter = character.getCharacter,
+	isFromMaybeCharacter = character.isFromMaybeCharacter,
+	isFromCharacter = character.isFromCharacter,
+	getMaybeHumanoidRootPart = character.getMaybeHumanoidRootPart,
+	getHumanoidRootPart = character.getHumanoidRootPart,
+	getMaybeHumanoid = character.getMaybeHumanoid,
+	getHumanoid = character.getHumanoid,
 	isCharacter = character.isCharacter,
 	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
-	isLocalCharacterAlive = character.isLocalCharacterAlive,
+	isCharacterAlive = character.isCharacterAlive,
 
 	tween = animation.tween,
 	tweenMaybeInstant = animation.tweenMaybeInstant,
 
-	--[=[
-        @prop ASSETS typeof(assets)
-	    @within KitUtils
+	UI_ASSETS = assets.UI_ASSETS,
+	SOUND_ASSETS = assets.SOUND_ASSETS,
 
-		Image and sound assets used by Welcome To Hell.
-    ]=]
-	ASSETS = assets,
-
-	SOUND_ASSETS = audio.SOUND_ASSETS,
 	inferAndPlaySound = audio.inferAndPlaySound,
 	playSound = audio.playSound,
 	playSoundFromGameAssets = audio.playSoundFromGameAssets,
@@ -96,6 +100,8 @@ local utils = table.freeze({
 	roundColor = color.roundColor,
 
 	t = t,
+	isBasePart = t.instanceIsA("BasePart") :: check<BasePart>,
+
 	Trove = trove.Trove,
 	CullThrottle = CullThrottle,
 

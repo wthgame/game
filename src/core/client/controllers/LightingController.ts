@@ -224,12 +224,12 @@ interface Attribute {
 @Controller()
 export class LightingController implements OnInit, OnStart {
 	private attributeDefs = new Map<string, Attribute>();
-	private currentAttributes = atom<LightingAttributes[]>([]);
+	private currentAttributes = atom(new Map<number, LightingAttributes[]>());
 
 	onInit(): void {
 		this.currentAttributes((currentAttributes) => {
 			currentAttributes = table.clone(currentAttributes);
-			currentAttributes[LightingPriority.Base] = BASE_LIGHTING_ATTRIBUTES;
+			currentAttributes.set(LightingPriority.Base, [BASE_LIGHTING_ATTRIBUTES]);
 			return currentAttributes;
 		});
 
@@ -258,10 +258,18 @@ export class LightingController implements OnInit, OnStart {
 
 		const TowerLightingPriority = ty.Number.IntoDefault(LightingPriority.Tower);
 		addMechanicBinding("setTowerLighting", async (attributes, priority) => {
-			this.setLightingAtPriority(
-				LightingAttributes.CastOrError(attributes),
-				TowerLightingPriority.CastOrError(priority),
-			);
+			const castedAttributes = LightingAttributes.CastOrError(attributes);
+			const castedPriority = TowerLightingPriority.CastOrError(priority);
+			this.setLightingAtPriority(castedAttributes, castedPriority);
+			return () => {
+				this.currentAttributes((currentAttributes) => {
+					currentAttributes = table.clone(currentAttributes);
+					currentAttributes.set(castedPriority, currentAttributes.get(castedPriority) ?? []);
+					const index = currentAttributes.get(castedPriority)!.indexOf(castedAttributes);
+					if (index) currentAttributes.get(castedPriority)!.remove(index);
+					return currentAttributes;
+				});
+			};
 		});
 	}
 
@@ -270,7 +278,7 @@ export class LightingController implements OnInit, OnStart {
 	}
 
 	// TODO: Atmosphere_Enabled is hardcoded right now, can we not do that?
-	private updateLightingAttributes(currentAttributes: LightingAttributes[]) {
+	private updateLightingAttributes(currentAttributes: Map<number, LightingAttributes[]>) {
 		interface AttributeToApply {
 			priority: number;
 			value: unknown;
@@ -293,21 +301,23 @@ export class LightingController implements OnInit, OnStart {
 		}
 
 		for (const [priority, attributes] of pairs(currentAttributes)) {
-			for (const [attributeName, value] of pairs(attributes)) {
-				const thisAttribute = this.attributeDefs.get(attributeName);
+			for (const a of attributes) {
+				for (const [attributeName, value] of pairs(a)) {
+					const thisAttribute = this.attributeDefs.get(attributeName);
 
-				if (!thisAttribute) {
-					if (attributeName === "Atmosphere_Enabled") {
-						// NOTE: it doesnt matter here
-						trySetAttribute("Atmosphere_Enabled", value, priority, undefined as never);
-					} else warn(`Invalid lighting attribute "${attributeName}" (internal bug?)`);
-					continue;
+					if (!thisAttribute) {
+						if (attributeName === "Atmosphere_Enabled") {
+							// NOTE: it doesnt matter here
+							trySetAttribute("Atmosphere_Enabled", value, priority, undefined as never);
+						} else warn(`Invalid lighting attribute "${attributeName}" (internal bug?)`);
+						continue;
+					}
+
+					const castValue = thisAttribute.def.Cast(value);
+
+					if (castValue.some) trySetAttribute(attributeName, castValue.value, priority, thisAttribute);
+					else warn(`Invalid type for lighting attribute "${attributeName}": ${castValue.reason}`);
 				}
-
-				const castValue = thisAttribute.def.Cast(value);
-
-				if (castValue.some) trySetAttribute(attributeName, castValue.value, priority, thisAttribute);
-				else warn(`Invalid type for lighting attribute "${attributeName}": ${castValue.reason}`);
 			}
 		}
 
@@ -324,9 +334,9 @@ export class LightingController implements OnInit, OnStart {
 
 	setLightingAtPriority(attributes: LightingAttributes, priority: LightingPriority): void {
 		this.currentAttributes((currentAttributes) => {
-			// NOTE: fuck you roblox-ts for indexes
 			currentAttributes = table.clone(currentAttributes);
-			currentAttributes[priority - 1] = attributes;
+			currentAttributes.set(priority, currentAttributes.get(priority) ?? []);
+			currentAttributes.get(priority)?.push(attributes);
 			return currentAttributes;
 		});
 	}

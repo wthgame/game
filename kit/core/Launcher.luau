@@ -46,6 +46,7 @@ function self:run(kit: utils.Kit)
 			debounce = false
 		end
 
+		-- TODO: figure out how to do utils.connectActivation
 		trove:connect(instance.Touched, function(toucher)
 			if not utils.Active(instance) or debounce then
 				return
@@ -83,7 +84,7 @@ function self:run(kit: utils.Kit)
 				maxAxesForce = Vector3.new(maxAxesForce.X, maxAxesForce.Y, maxForce)
 			end
 
-			local root = utils.getLocalHumanoidRootPart()
+			local root = utils.getHumanoidRootPart()
 
 			local velocityTrove = trove:extend()
 			launch(velocityTrove, root, Power(instance), maxAxesForce, faceVector)

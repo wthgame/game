@@ -7,6 +7,7 @@ import { Blink } from "core/shared/decorators";
 import { trace, warn } from "core/shared/log";
 import { areas } from "game/server/net";
 import { AreaInfo, AreaInstance, NAME_TO_AREA } from "game/shared/areas";
+import { PlayerService } from "./PlayerService";
 import { TowerService } from "./TowerService";
 
 export interface Area {
@@ -41,7 +42,10 @@ export class AreaService implements OnInit {
 	private nameToArea = new Map<string, Area>();
 	private loadingStates = new Map<Player, PlayerAreaLoadingState>();
 
-	constructor(private towerService: TowerService) {}
+	constructor(
+		private towerService: TowerService,
+		private playerService: PlayerService,
+	) {}
 
 	onInit(): void {
 		const initPromises = new Array<Promise<void>>();
@@ -107,9 +111,14 @@ export class AreaService implements OnInit {
 		trace("Cancelling timeout thread");
 		pcall(task.cancel, timeoutThread);
 
-		trace("Pivoting player");
+		// trace("Pivoting player");
+		// const root = player.Character?.FindFirstChild<BasePart>("HumanoidRootPart");
+		// if (root) root.CFrame = area.spawn.CFrame.mul(new CFrame(0, 3, 0));
+		player.LoadCharacter();
 		const root = player.Character?.FindFirstChild<BasePart>("HumanoidRootPart");
 		if (root) root.CFrame = area.spawn.CFrame.mul(new CFrame(0, 3, 0));
+
+		this.playerService.setInfo(player, "isLoadingArea", false);
 
 		trace("Cleaned up area loading server-side");
 	}
@@ -121,6 +130,10 @@ export class AreaService implements OnInit {
 
 		if (!info) throw `No area named ${areaName}`;
 		const area = this.infoToArea.get(info)!;
+
+		if (this.playerService.getInfo(player).isLoadingArea) throw "Already loading area";
+		this.playerService.setInfo(player, "isLoadingArea", true);
+		this.playerService.setInfo(player, "currentArea", area);
 
 		trace("Cloning area");
 		const instance = area.instance.Clone();

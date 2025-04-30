@@ -4,34 +4,53 @@
 
 local t = require("./packages/t")
 
-local function attribute<T>(attributeName: string, check: t.check<T>, defaultValue: T?)
-	return function(instance: Instance): T
-		local value = instance:GetAttribute(attributeName)
-		if value == nil or (check and not check(value)) then
-			instance:SetAttribute(attributeName, defaultValue)
-			return defaultValue :: T
-		end
-		return value :: T
+-- ew... metatables...
+export type InstanceAttribute<T> = typeof(setmetatable(
+	{} :: {
+		name: string,
+		check: t.check<T>?,
+		defaultValue: T?,
+		get: (self: InstanceAttribute<T>, instance: Instance) -> T,
+		assert: (self: InstanceAttribute<T>, instance: Instance) -> typeof(assert((nil :: any) :: T)),
+	},
+	{} :: {
+		__tostring: (self: InstanceAttribute<T>) -> string,
+		__call: (self: InstanceAttribute<T>, instance: Instance) -> T,
+	}
+))
+
+local function getAttribute(self: InstanceAttribute<any>, instance: Instance)
+	local value = instance:GetAttribute(self.name)
+	if value == nil or (self.check and not self.check(value)) then
+		instance:SetAttribute(self.name, self.defaultValue)
+		return self.defaultValue
 	end
+	return value
 end
 
-local function getEnumFromString(enumLike: string | EnumItem, defaultValue: EnumItem): any
-	if typeof(enumLike) == "EnumItem" and enumLike.EnumType == defaultValue.EnumType then
-		return enumLike
-	end
-	local success: boolean, enum: EnumItem? = pcall(function()
-		return (defaultValue.EnumType :: any)[enumLike]
-	end)
-	return if success then enum else defaultValue
+local function assertAttribute(self: InstanceAttribute<any>, instance: Instance)
+	return assert(getAttribute(self, instance), `No attribute "{self.name}" set in {instance:GetFullName()}.`)
+end
+
+local mt = table.freeze({
+	__tostring = function(self: InstanceAttribute<any>)
+		return `InstanceAttribute({self.name})`
+	end,
+	__call = getAttribute,
+})
+
+local function attribute<T>(name: string, check: t.check<T>, defaultValue: T?): InstanceAttribute<T?>
+	return table.freeze(setmetatable({
+		name = name,
+		check = check,
+		defaultValue = defaultValue,
+		get = getAttribute,
+		assert = assertAttribute,
+	}, mt))
 end
 
 return {
-	attribute = attribute :: (<T>(attributeName: string, check: t.check<T>) -> (instance: Instance) -> T?) & (<T>(
-		attributeName: string,
-		check: t.check<T>,
-		defaultValue: T
-	) -> (instance: Instance) -> T),
-	Active = attribute("Active", t.boolean, false),
-	SupportsCharacter = attribute("SupportsCharacter", t.boolean, false),
-	getEnumFromString = getEnumFromString :: <T>(enumLike: string | EnumItem, defaultValue: T & EnumItem) -> T,
+	attribute = (
+			attribute :: any
+		) :: (<T>(attributeName: string, check: t.check<T>) -> InstanceAttribute<T?>) & (<T>(attributeName: string, check: t.check<T>, defaultValue: T) -> InstanceAttribute<T>),
 }

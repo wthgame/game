@@ -29,7 +29,7 @@ local LerpAlpha = utils.attribute("LerpAlpha", utils.t.numberPositive, 1)
 
 local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFrame?
 	if target == "Character" then
-		local root = utils.getLocalHumanoidRootPart()
+		local root = utils.getHumanoidRootPart()
 		if root then
 			return root.CFrame
 		end

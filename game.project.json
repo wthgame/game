@@ -85,6 +85,12 @@
             "$properties": {
                 "GameSettingsAvatar": "R6"
             }
+        },
+        "Players": {
+            "$className": "Players",
+            "$properties": {
+                "CharacterAutoLoads": false
+            }
         }
     }
 }

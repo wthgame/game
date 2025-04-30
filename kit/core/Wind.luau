@@ -64,7 +64,7 @@ function self:run(kit: utils.Kit)
 
 			if isToucherCharacter then
 				-- For consistency, only wind up the humanoid root part.
-				local root = utils.getLocalHumanoidRootPart()
+				local root = utils.getHumanoidRootPart()
 				if windTroves[root] then
 					return
 				end
@@ -118,7 +118,7 @@ function self:run(kit: utils.Kit)
 			if isToucherCharacter then
 				-- For consistency, only the humanoid root part should be winded
 				-- up.
-				local root = utils.getLocalHumanoidRootPart()
+				local root = utils.getHumanoidRootPart()
 				local rootTrove = windTroves[root]
 				if rootTrove then
 					rootTrove:clean()

@@ -9,8 +9,6 @@ export type ActivatedBy = "Touch" | "Prompt" | "Click" | "Control"
 
 local ButtonId = utils.attribute("ButtonId", utils.t.string)
 local ButtonPressed = utils.attribute("ButtonPressed", utils.t.boolean, false)
-local ActivatedBy: (instance: Instance) -> ActivatedBy =
-	utils.attribute("ActivatedBy", utils.t.literal("Touch", "Prompt", "Click", "Control"), "Touch")
 local HoldDuration = utils.attribute("HoldDuration", utils.t.numberPositive, 0)
 local MaxActivationDistance = utils.attribute("MaxActivationDistance", utils.t.numberPositive, math.huge)
 local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
@@ -36,7 +34,6 @@ local PressEasingDirection = utils.attribute(
 return {
 	ButtonId = ButtonId,
 	ButtonPressed = ButtonPressed,
-	ActivatedBy = ActivatedBy,
 	HoldDuration = HoldDuration,
 	MaxActivationDistance = MaxActivationDistance,
 	Cooldown = Cooldown,

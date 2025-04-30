@@ -8,7 +8,12 @@ local SoundService = game:GetService("SoundService")
 local assets = require("./assets")
 local types = require("./types")
 
-local SOUND_ASSETS = assets.sounds
+export type PlaySoundConfig = {
+	speed: number?,
+	volume: number?,
+}
+
+local SOUND_ASSETS = assets.SOUND_ASSETS
 local DELETE_SOUNDS_AFTER_SECONDS = 1
 local DEFAULT_PLAY_SOUND_CONFIG: types.PlaySoundConfig = {
 	volume = 1,
