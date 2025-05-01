@@ -6,6 +6,7 @@ local utils = require(script.lib)
 
 export type Map<K, V> = utils.Map<K, V>
 export type Set<T> = utils.Set<T>
+export type MapSet<K, T> = utils.MapSet<K, T>
 export type Kit = utils.Kit
 export type KitScript<Self = {}> = utils.KitScript<Self>
 export type InstanceTag<I> = utils.InstanceTag<I>

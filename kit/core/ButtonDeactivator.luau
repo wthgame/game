@@ -16,13 +16,11 @@ self.type = "KitScript"
 local function deactivate(_, deactivator: BasePart)
 	local id = ButtonId(deactivator)
 	if id then
-		local buttons = buttonsPressedById[id]
-		if buttons then
-			for btn in buttons do
-				btn:SetAttribute("ButtonPressed", false)
-			end
-			updateId(id)
+		local buttons = buttonsPressedById:get(id)
+		for btn in buttons do
+			btn:SetAttribute("ButtonPressed", false)
 		end
+		updateId(id)
 	end
 end
 

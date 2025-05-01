@@ -19,13 +19,13 @@ local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
 -- 	utils.attribute("BoxBehavior", utils.t.literal("Unanchoring", "Draggable", "Pickupable"), "Unanchoring")
 -- )
 
-local trackedBoxes: utils.InstanceByIds<BasePart, string> = utils.trackInstanceByIds()
+local trackedBoxes: utils.MapSet<string, BasePart> = utils.MapSet()
 local spawnBoxTroves: utils.Map<BasePart, utils.Trove> = {}
 
 local debouncedSpawners: utils.Set<BasePart> = {}
 
 local function spawnBoxesWithId(trove: utils.Trove, id: string)
-	for box in trackedBoxes:getId(id) do
+	for box in trackedBoxes:get(id) do
 		print(box)
 		local clonedBox = trove:clone(box)
 		clonedBox.Parent = workspace
@@ -90,12 +90,11 @@ function self:run(kit: utils.Kit)
 	local Box = kit:tag("Box", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	Box:onLoaded(function(trove, box)
-		local id = BoxId(box)
-		assert(id, `No BoxId attribute for Box ${box:GetFullName()}`)
-		trackedBoxes:add(box, id)
+		local id = BoxId:assert(box) :: string
+		trackedBoxes:add(id, box)
 		box.Parent = nil
 		trove:add(function()
-			trackedBoxes:remove(box, id)
+			trackedBoxes:remove(id, box)
 		end)
 	end)
 

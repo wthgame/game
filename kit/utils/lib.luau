@@ -10,8 +10,8 @@ local attributes = require("./attributes")
 local audio = require("./audio")
 local bindings = require("./bindings")
 local character = require("./character")
+local collections = require("./collections")
 local color = require("./color")
-local id = require("./id")
 local physics = require("./physics")
 local t = require("./packages/t")
 local touch = require("./touch")
@@ -20,6 +20,7 @@ local types = require("./types")
 
 export type Map<K, V> = types.Map<K, V>
 export type Set<T> = types.Set<T>
+export type MapSet<K, T> = collections.MapSet<K, T>
 export type Kit = types.Kit
 export type KitScript<Self = {}> = types.KitScript<Self>
 export type InstanceTag<I> = types.InstanceTag<I>
@@ -69,7 +70,7 @@ local utils = table.freeze({
 	BoxesRequiresMatchingId = touch.BoxesRequiresMatchingId,
 	RequiredBoxId = touch.RequiredBoxId,
 
-	trackInstanceByIds = id.trackInstanceByIds,
+	MapSet = collections.MapSet,
 
 	getMaybeCharacter = character.getMaybeCharacter,
 	waitForCharacter = character.waitForCharacter,
