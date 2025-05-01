@@ -20,15 +20,13 @@ self.type = "KitScript"
 function self:run(kit: utils.Kit)
 	local Damager = kit:tag("Damager", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
-	Damager:onLoaded(function(trove, dam)
-		utils.connectActivation(trove, dam, function()
-			local damage = Damage(dam)
-			if typeof(damage) == "number" then
-				net.damageSelfVariable.fire(damage)
-			else
-				net.damageSelf.fire(damage :: any)
-			end
-		end)
+	Damager:connectActivation(function(_, dam)
+		local damage = Damage(dam)
+		if typeof(damage) == "number" then
+			net.damageSelfVariable.fire(damage)
+		else
+			net.damageSelf.fire(damage :: any)
+		end
 	end)
 end
 

@@ -10,6 +10,10 @@ export type Set<T> = { [T]: true }
 
 export type InstanceTag<I> = {
 	instances: (self: InstanceTag<I>) -> { I },
+	connectActivation: (
+		self: InstanceTag<I>,
+		callback: (trove: trove.Trove, instance: I, activationTrove: trove.Trove) -> ()
+	) -> (),
 	onLoaded: (self: InstanceTag<I>, callback: (trove: trove.Trove, instance: I) -> ()) -> (),
 }
 

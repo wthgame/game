@@ -17,7 +17,6 @@ local seated = false
 local debounced: utils.Set<BasePart> = {}
 
 local function seatPlayer(trove: utils.Trove, seat: BasePart, activationTrove: utils.Trove)
-	print("SEATING PLAYER...")
 	local canBeSeated = utils.Active(seat) and not seated and not debounced[seat] and utils.isCharacterAlive()
 
 	if canBeSeated then
@@ -65,9 +64,7 @@ self.type = "KitScript"
 function self:run(kit: utils.Kit)
 	local Seat = kit:tag("Seat", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
-	Seat:onLoaded(function(trove, instance)
-		utils.connectActivation(trove, instance, seatPlayer)
-	end)
+	Seat:connectActivation(seatPlayer)
 end
 
 return self

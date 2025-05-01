@@ -29,9 +29,7 @@ end
 function self:run(kit: utils.Kit)
 	local ButtonDeactivator = kit:tag("ButtonDeactivator", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
-	ButtonDeactivator:onLoaded(function(trove, deactivator)
-		utils.connectActivation(trove, deactivator, deactivate)
-	end)
+	ButtonDeactivator:connectActivation(deactivate)
 end
 
 return self

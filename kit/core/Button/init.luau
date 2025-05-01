@@ -177,10 +177,9 @@ function self:run(kit: utils.Kit)
 		end)
 	end)
 
-	Button:onLoaded(function(trove, btn)
-		print("LOADED", btn)
-		utils.connectActivation(trove, btn, pressButton)
+	Button:connectActivation(pressButton)
 
+	Button:onLoaded(function(trove, btn)
 		trove:connect(btn:GetAttributeChangedSignal("ButtonPressed"), function()
 			local id = ButtonId(btn)
 

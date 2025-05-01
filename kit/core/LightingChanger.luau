@@ -15,9 +15,7 @@ end
 function self:run(kit: utils.Kit)
 	local LightingChanger = kit:tag("LightingChanger")
 
-	LightingChanger:onLoaded(function(trove, lc)
-		utils.connectActivation(trove, lc, changeLighting)
-	end)
+	LightingChanger:connectActivation(changeLighting)
 end
 
 return self

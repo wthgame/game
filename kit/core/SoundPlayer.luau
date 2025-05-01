@@ -29,9 +29,7 @@ end
 
 function self:run(kit: utils.Kit)
 	local SoundPlayer = kit:tag("SoundPlayer")
-	SoundPlayer:onLoaded(function(trove, player)
-		utils.connectActivation(trove, player, playSound)
-	end)
+	SoundPlayer:connectActivation(playSound)
 end
 
 return self

@@ -124,9 +124,7 @@ function self:run(kit: utils.Kit)
 		}) :: utils.check<VineInstance>
 	)
 
-	Vine:onLoaded(function(trove, vineInstance)
-		utils.connectActivation(trove, vineInstance, doVine)
-	end)
+	Vine:connectActivation(doVine)
 end
 
 return self

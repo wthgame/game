@@ -4,6 +4,7 @@ import ty from "@rbxts/libopen-ty";
 import { ReplicatedStorage, RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
+import { connectActivation } from "core/../../kit/utils";
 import { trace, warn } from "core/shared/log";
 
 export class InstanceTag {
@@ -21,6 +22,13 @@ export class InstanceTag {
 
 	onLoaded(callback: (trove: Trove, instance: Instance) => void): void {
 		this.onLoadedCallbacks.add(ty.Function.CastOrError(callback));
+	}
+
+	connectActivation(onActivated: (trove: Trove, instance: Instance, activationTrove: Trove) => void): void {
+		ty.Function.CastOrError(onActivated);
+		this.onLoadedCallbacks.add((trove, instance) => {
+			connectActivation(trove, instance, onActivated);
+		});
 	}
 }
 
