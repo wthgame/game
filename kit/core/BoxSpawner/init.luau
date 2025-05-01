@@ -98,7 +98,7 @@ function self:run(kit: utils.Kit)
 		end)
 	end)
 
-	BoxSpawner:connectActivation(trySpawn)
+	BoxSpawner:onActivated(trySpawn)
 
 	Box:onLoaded(function(trove, box) end)
 end

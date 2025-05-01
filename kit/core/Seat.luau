@@ -63,8 +63,7 @@ self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
 	local Seat = kit:tag("Seat", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-
-	Seat:connectActivation(seatPlayer)
+	Seat:onActivated(seatPlayer)
 end
 
 return self

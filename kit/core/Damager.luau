@@ -30,7 +30,7 @@ function self:run(kit: utils.Kit)
     ]=]
 	local Damager = kit:tag("Damager", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
-	Damager:connectActivation(function(_, dam)
+	Damager:onActivated(function(_, dam)
 		local damage = Damage(dam)
 		if typeof(damage) == "number" then
 			net.damageSelfVariable.fire(damage)

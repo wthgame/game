@@ -26,7 +26,7 @@ end
 
 function self:run(kit: utils.Kit)
 	local Tripper = kit:tag("Tripper", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-	Tripper:connectActivation(tripPlayer)
+	Tripper:onActivated(tripPlayer)
 end
 
 return self

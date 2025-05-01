@@ -139,7 +139,7 @@ function self:run(kit: utils.Kit)
 		end)
 	end)
 
-	Button:connectActivation(pressButton)
+	Button:onActivated(pressButton)
 
 	Button:onLoaded(function(trove, btn)
 		trove:connect(btn:GetAttributeChangedSignal("ButtonPressed"), function()

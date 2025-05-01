@@ -14,8 +14,7 @@ end
 
 function self:run(kit: utils.Kit)
 	local LightingChanger = kit:tag("LightingChanger")
-
-	LightingChanger:connectActivation(changeLighting)
+	LightingChanger:onActivated(changeLighting)
 end
 
 return self

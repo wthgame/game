@@ -29,7 +29,7 @@ end
 function self:run(kit: utils.Kit)
 	local ButtonDeactivator = kit:tag("ButtonDeactivator", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
-	ButtonDeactivator:connectActivation(deactivate)
+	ButtonDeactivator:onActivated(deactivate)
 end
 
 return self

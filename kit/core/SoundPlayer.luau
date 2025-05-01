@@ -29,7 +29,7 @@ end
 
 function self:run(kit: utils.Kit)
 	local SoundPlayer = kit:tag("SoundPlayer")
-	SoundPlayer:connectActivation(playSound)
+	SoundPlayer:onActivated(playSound)
 end
 
 return self

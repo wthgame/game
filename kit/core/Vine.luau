@@ -123,8 +123,7 @@ function self:run(kit: utils.Kit)
 			Top = utils.isBasePart,
 		}) :: utils.check<VineInstance>
 	)
-
-	Vine:connectActivation(doVine)
+	Vine:onActivated(doVine)
 end
 
 return self

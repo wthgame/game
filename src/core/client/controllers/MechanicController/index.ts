@@ -24,7 +24,7 @@ export class InstanceTag {
 		this.onLoadedCallbacks.add(ty.Function.CastOrError(callback));
 	}
 
-	connectActivation(onActivated: (trove: Trove, instance: Instance, activationTrove: Trove) => void): void {
+	onActivated(onActivated: (trove: Trove, instance: Instance, activationTrove: Trove) => void): void {
 		ty.Function.CastOrError(onActivated);
 		this.onLoadedCallbacks.add((trove, instance) => {
 			connectActivation(trove, instance, onActivated);
