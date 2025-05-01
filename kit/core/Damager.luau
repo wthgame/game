@@ -18,6 +18,16 @@ local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
+	--[=[
+        @class Damager
+        @tag Mechanic
+
+        Damagers are a Mechanic that damages the player while they're touching
+        it. It is most alike to EToH's Killbricks.
+
+        To encourage damagers to be used as an actual hazard, damagers deal
+        *consistent* damage every 0.5 seconds.
+    ]=]
 	local Damager = kit:tag("Damager", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
 
 	Damager:connectActivation(function(_, dam)

@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+
+site_name: My Docs
+site_url: https://welcome-to-hell.game/technical-kit-reference
+
+theme:
+    name: material
+    font:
+        text: Ubuntu
+        code: Fira Code
+    palette:
+        - media: "(prefers-color-scheme: dark)"
+          scheme: wth-dark
+          toggle:
+              icon: fontawesome/solid/sun
+              title: Switch to light theme
+        - media: "(prefers-color-scheme: light)"
+          scheme: wth-light
+          toggle:
+              icon: fontawesome/solid/moon
+              title: Switch to dark theme
+
+extra_css:
+    - theme/wthdoc.css
