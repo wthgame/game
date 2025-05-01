@@ -19,16 +19,16 @@ local PressEasingDirection = ButtonAttributes.PressEasingDirection
 local glowButton = require(script:WaitForChild("glowButton"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
-local buttonActivatedsById: utils.MapSet<string, Instance> = utils.MapSet()
-local buttonsPressedById: utils.MapSet<string, BasePart> = utils.MapSet()
+local idToButtonActivateds: utils.MapSet<string, Instance> = utils.MapSet()
+local idToButtonsPressed: utils.MapSet<string, BasePart> = utils.MapSet()
 
 local function updateId(id: string)
-	local buttonActivateds = buttonActivatedsById[id]
+	local buttonActivateds = idToButtonActivateds:get(id)
 	if not buttonActivateds then
 		return
 	end
 
-	local isPressed = next(buttonsPressedById:get(id)) ~= nil
+	local isPressed = next(idToButtonsPressed:get(id)) ~= nil
 
 	for ba in buttonActivateds do
 		-- updateButtonActivated(ba, isPressed)
@@ -47,7 +47,7 @@ local function pressButton(trove: utils.Trove, btn: BasePart, activationTrove: u
 	utils.playSound(utils.SOUND_ASSETS.button)
 
 	btn:SetAttribute("ButtonPressed", true)
-	buttonsPressedById:add(id, btn)
+	idToButtonsPressed:add(id, btn)
 
 	local originalCFrame = btn.CFrame
 	local pressOffset = PressOffset(btn)
@@ -104,16 +104,12 @@ local function tryUpdateIdOfButton(btn: Instance)
 end
 
 local self = {} :: utils.KitScript<typeof(ButtonAttributes) & typeof(ButtonActivatedAttributes) & {
-	buttonsPressedById: utils.MapSet<string, BasePart>,
-	trackButtonActivatedById: (id: string, buttonActivated: Instance) -> (),
-	trackButtonPressedById: (id: string, button: BasePart) -> (),
-	untrackButtonPressedById: (id: string, button: BasePart) -> (),
-	getButtonsPressedById: (id: string) -> utils.Set<BasePart>,
+	idToButtonsPressed: utils.MapSet<string, BasePart>,
 	glowButton: (trove: utils.Trove, btn: BasePart, flash: boolean?) -> (),
 	updateId: (id: string) -> (),
 }>
 self.type = "KitScript"
-self.buttonsPressedById = buttonsPressedById
+self.idToButtonsPressed = idToButtonsPressed
 self.glowButton = glowButton
 self.updateId = updateId
 
@@ -132,13 +128,13 @@ function self:run(kit: utils.Kit)
 	ButtonActivated:onLoaded(function(trove, ba)
 		local id = ButtonId(ba)
 		if id then
-			buttonActivatedsById:add(id, ba)
+			idToButtonActivateds:add(id, ba)
 		end
 
 		trove:connect(ba:GetAttributeChangedSignal("ButtonId"), function()
 			local id = ButtonId(ba)
 			if id then
-				buttonActivatedsById:add(id, ba)
+				idToButtonActivateds:add(id, ba)
 			end
 		end)
 	end)
@@ -151,7 +147,7 @@ function self:run(kit: utils.Kit)
 
 			if not ButtonPressed(btn) then
 				if id then
-					buttonsPressedById:remove(id, btn)
+					idToButtonsPressed:remove(id, btn)
 				end
 			end
 
