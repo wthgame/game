@@ -89,7 +89,7 @@ end
 ]=]
 local function inferAndPlaySound(
 	instance: Instance,
-	defaultSound: string,
+	defaultSound: string?,
 	searchFor: string?,
 	config: types.PlaySoundConfig?,
 	spatial: boolean?
@@ -129,7 +129,9 @@ local function inferAndPlaySound(
 		return
 	end
 
-	playSound(defaultSound, spatial and instance or nil, config)
+	if defaultSound then
+		playSound(defaultSound, spatial and instance or nil, config)
+	end
 end
 
 for key, asset in pairs(SOUND_ASSETS) do
