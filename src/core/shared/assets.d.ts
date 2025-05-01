@@ -3,7 +3,6 @@ declare const assets: {
 		conEnter: string
 		conExit: string
 		doubleJump: string
-		jump: string
 		timeCannotBeStopped: string
 		victory: string
 	}
@@ -11,6 +10,7 @@ declare const assets: {
 		button: string
 		dash: string
 		heartbeat: string
+		jump: string
 		speed: string
 		teleport: string
 		tick: string

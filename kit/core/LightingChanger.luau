@@ -8,12 +8,12 @@ local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 local self = {} :: utils.KitScript
 self.type = "KitScript"
 
-local function changeLighting(changer: Instance)
+local function changeLighting(_: utils.Trove, changer: Instance)
 	-- TODO
 end
 
 function self:run(kit: utils.Kit)
-	local LightingChanger = kit:tag("LightingChanger", utils.isBasePart)
+	local LightingChanger = kit:tag("LightingChanger")
 
 	LightingChanger:onLoaded(function(trove, lc)
 		utils.connectActivation(trove, lc, changeLighting)
