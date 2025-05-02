@@ -7,9 +7,7 @@ local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
 local Button = require(script.Parent:WaitForChild("Button"))
 local PressOffset = Button.PressOffset
-local PressTime = Button.PressTime
-local PressEasingStyle = Button.PressEasingStyle
-local PressEasingDirection = Button.PressEasingDirection
+local PlaySound = Button.PlaySound
 
 export type BoxBehavior = "Unanchoring" | "Draggable" | "Pickupable"
 
@@ -46,25 +44,17 @@ local function trySpawn(trove: utils.Trove, spawner: BasePart, activationTrove: 
 	end
 
 	activationTrove:clean()
-	utils.inferAndPlaySound(spawner, utils.SOUND_ASSETS.button)
+
+	if PlaySound(spawner) then
+		utils.inferAndPlaySound(spawner, utils.SOUND_ASSETS.button, "Press")
+	end
 
 	if spawner.Anchored then
-		local pressOffset = PressOffset(spawner)
-		local finalPressOffset = CFrame.new(Vector3.yAxis * -0.75)
-		if typeof(pressOffset) == "number" then
-			finalPressOffset = CFrame.new(Vector3.yAxis * -pressOffset)
-		elseif typeof(pressOffset) == "Vector3" then
-			finalPressOffset = CFrame.new(pressOffset)
-		elseif typeof(pressOffset) == "CFrame" then
-			finalPressOffset = pressOffset
-		end
-
-		utils.tweenMaybeInstant(spawner, { CFrame = spawner.CFrame * finalPressOffset }, {
-			time = PressTime(spawner),
-			easingStyle = PressEasingStyle(spawner),
-			easingDirection = PressEasingDirection(spawner),
-			reverse = true,
-		})
+		utils.tweenMaybeInstant(
+			spawner,
+			{ CFrame = spawner.CFrame * utils.intoCFrameOffset(PressOffset(spawner)) },
+			utils.tweenConfigFromAttributes(spawner, "Press")
+		)
 	end
 
 	local id = BoxId(spawner)

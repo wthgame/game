@@ -12,10 +12,8 @@ export type ActivatedBy = ButtonAttributes.ActivatedBy
 local ButtonId = ButtonAttributes.ButtonId
 local ButtonPressed = ButtonAttributes.ButtonPressed
 local Duration = ButtonAttributes.Duration
+local PlaySound = ButtonAttributes.PlaySound
 local PressOffset = ButtonAttributes.PressOffset
-local PressTime = ButtonAttributes.PressTime
-local PressEasingStyle = ButtonAttributes.PressEasingStyle
-local PressEasingDirection = ButtonAttributes.PressEasingDirection
 local glowButton = require(script:WaitForChild("glowButton"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
@@ -44,39 +42,29 @@ local function pressButton(trove: utils.Trove, btn: BasePart, activationTrove: u
 	end
 
 	activationTrove:clean()
-	utils.playSound(utils.SOUND_ASSETS.button)
 
 	btn:SetAttribute("ButtonPressed", true)
 	idToButtonsPressed:add(id, btn)
 
-	local originalCFrame = btn.CFrame
-	local pressOffset = PressOffset(btn)
-	local finalPressOffset = CFrame.new(Vector3.yAxis * -0.75)
-	if typeof(pressOffset) == "number" then
-		finalPressOffset = CFrame.new(Vector3.yAxis * -pressOffset)
-	elseif typeof(pressOffset) == "Vector3" then
-		finalPressOffset = CFrame.new(pressOffset)
-	elseif typeof(pressOffset) == "CFrame" then
-		finalPressOffset = pressOffset
+	if PlaySound(btn) then
+		utils.inferAndPlaySound(btn, utils.SOUND_ASSETS.button, "Press")
 	end
 
+	local originalCFrame = btn.CFrame
+	local pressOffset = utils.intoCFrameOffset(PressOffset(btn))
+
 	if btn.Anchored then
-		utils.tweenMaybeInstant(btn, { CFrame = originalCFrame * finalPressOffset }, {
-			time = PressTime(btn),
-			easingStyle = PressEasingStyle(btn),
-			easingDirection = PressEasingDirection(btn),
-		})
+		utils.tweenMaybeInstant(
+			btn,
+			{ CFrame = originalCFrame * pressOffset },
+			utils.tweenConfigFromAttributes(btn, "Press")
+		)
 	end
 
 	local deactivateTrove = trove:extend()
 	deactivateTrove:add(function()
 		btn:SetAttribute("ButtonPressed", false)
-		utils.tweenMaybeInstant(btn, { CFrame = originalCFrame }, {
-			time = PressTime(btn),
-			easingStyle = PressEasingStyle(btn),
-			easingDirection = PressEasingDirection(btn),
-		})
-
+		utils.tweenMaybeInstant(btn, { CFrame = originalCFrame }, utils.tweenConfigFromAttributes(btn, "Press"))
 		utils.connectActivation(trove, btn, pressButton)
 	end)
 

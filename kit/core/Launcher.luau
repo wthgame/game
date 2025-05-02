@@ -14,7 +14,6 @@ local Power = utils.attribute("Power", utils.t.numberPositive, 0)
 local MaxForce = utils.attribute("MaxForce", utils.t.numberPositive, math.huge)
 local Vector = utils.attribute("Vector", utils.t.literal("Up", "Right", "Look", "Z"), "Up")
 local PlaySound = utils.attribute("PlaySound", utils.t.boolean, true)
-local Sound = utils.attribute("Sound", utils.t.string, utils.SOUND_ASSETS.dash)
 
 local function launch(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
@@ -90,7 +89,7 @@ function self:run(kit: utils.Kit)
 			launch(velocityTrove, root, Power(instance), maxAxesForce, faceVector)
 
 			if PlaySound(instance) then
-				utils.playSound(Sound(instance), instance)
+				utils.inferAndPlaySound(instance, utils.SOUND_ASSETS.dash, "LaunchSound")
 			end
 
 			if EmitLauncherParticle(instance) then

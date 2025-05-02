@@ -41,11 +41,9 @@ local function tweenConfigFromAttributes(instance: Instance, attributePrefix: st
 	local realEasingDirection = attributes[easingDirectionAttribute]
 
 	return {
-		time = if t.numberPositive(realTime) then realTime :: number else 1,
-		easingStyle = if isEasingStyle(realEasingStyle) then realEasingStyle :: any else Enum.EasingStyle.Linear,
-		easingDirection = if isEasingDirection(realEasingDirection)
-			then realEasingDirection :: any
-			else Enum.EasingDirection.Out,
+		time = if t.numberPositive(realTime) then realTime :: number else nil,
+		easingStyle = if isEasingStyle(realEasingStyle) then realEasingStyle :: any else nil,
+		easingDirection = if isEasingDirection(realEasingDirection) then realEasingDirection :: any else nil,
 	}
 end
 

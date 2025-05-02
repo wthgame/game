@@ -38,7 +38,19 @@ local function populateConstraintAttachments(constraint: Constraint): (Attachmen
 	return attachment0, attachment1
 end
 
+local function intoCFrameOffset(offset: number | Vector3 | CFrame): CFrame
+	if typeof(offset) == "number" then
+		return CFrame.new(Vector3.yAxis * -offset)
+	elseif typeof(offset) == "Vector3" then
+		return CFrame.new(offset)
+	elseif typeof(offset) == "CFrame" then
+		return offset
+	end
+	error("exhausted")
+end
+
 return {
 	weld = weld,
 	populateConstraintAttachments = populateConstraintAttachments,
+	intoCFrameOffset = intoCFrameOffset,
 }

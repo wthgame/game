@@ -5,11 +5,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
-local ButtonAttributes = require("./ButtonAttributes")
-local PressTime = ButtonAttributes.PressTime
-local PressEasingStyle = ButtonAttributes.PressEasingStyle
-local PressEasingDirection = ButtonAttributes.PressEasingDirection
-
 local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean?)
 	local trove = outerTrove:extend()
 	local instanceTrove = utils.Trove.new()
@@ -46,12 +41,14 @@ local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean
 	alignOrientation.Parent = glow
 	glow.Parent = btn
 
+	local config = utils.tweenConfigFromAttributes(btn, "Press")
+
 	if flash then
-		local time = PressTime(btn)
+		local time = config.time or 1
 		utils.tweenMaybeInstant(glow, { Transparency = 0.5 }, {
 			time = time / 2,
-			easingStyle = PressEasingStyle(btn),
-			easingDirection = PressEasingDirection(btn),
+			easingStyle = config.easingStyle,
+			easingDirection = config.easingDirection,
 			reverse = true,
 		})
 		task.delay(time, function()
@@ -60,7 +57,7 @@ local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean
 	else
 		utils.tweenMaybeInstant(glow, { Transparency = 0.5 }, utils.tweenConfigFromAttributes(btn, "Press"))
 		trove:add(function()
-			local time = PressTime(btn)
+			local time = config.time or 1
 			utils.tweenMaybeInstant(glow, { Transparency = 1 }, utils.tweenConfigFromAttributes(btn, "Press"))
 			task.delay(time, function()
 				instanceTrove:clean()

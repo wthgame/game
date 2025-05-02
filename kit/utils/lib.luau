@@ -4,6 +4,7 @@
 
 local CullThrottle = require("./packages/cull-throttle")
 local LemonSignal = require("./packages/lemon-signal")
+local Sift = require("./packages/sift")
 local activation = require("./activation")
 local animation = require("./animation")
 local assets = require("./assets")
@@ -22,6 +23,7 @@ local types = require("./types")
 export type Map<K, V> = types.Map<K, V>
 export type Set<T> = types.Set<T>
 export type MapSet<K, T> = collections.MapSet<K, T>
+export type MapArray<K, T> = collections.MapArray<K, T>
 export type Kit = types.Kit
 export type KitScript<Self = {}> = types.KitScript<Self>
 export type InstanceTag<I> = types.InstanceTag<I>
@@ -74,6 +76,7 @@ local utils = table.freeze({
 	RequiredBoxId = touch.RequiredBoxId,
 
 	MapSet = collections.MapSet,
+	MapArray = collections.MapArray,
 
 	getMaybeCharacter = character.getMaybeCharacter,
 	waitForCharacter = character.waitForCharacter,
@@ -102,14 +105,19 @@ local utils = table.freeze({
 
 	weld = physics.weld,
 	populateConstraintAttachments = physics.populateConstraintAttachments,
+	intoCFrameOffset = physics.intoCFrameOffset,
 
 	roundColor = color.roundColor,
 
 	t = t,
 	isBasePart = t.instanceIsA("BasePart") :: check<BasePart>,
+	isString = t.string,
+	isBoolean = t.boolean,
+	isPositiveNumber = t.numberPositive,
 
 	Trove = trove.Trove,
 	CullThrottle = CullThrottle,
+	Sift = Sift,
 
 	isSignal = LemonSignal.Signal.is,
 	newSignal = LemonSignal.Signal.new,
