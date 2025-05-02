@@ -38,10 +38,10 @@ export const TEXT_STYLE_PALLETE = table.freeze({
 } satisfies Record<TextStyle, keyof Palette>);
 
 export const TEXT_STYLE_SIZES = table.freeze({
-	[TextStyle.Title]: 24,
-	[TextStyle.Subtitle]: 18,
-	[TextStyle.Text]: 16,
-	[TextStyle.Label]: 12,
+	[TextStyle.Title]: 3,
+	[TextStyle.Subtitle]: 16,
+	[TextStyle.Text]: 24,
+	[TextStyle.Label]: 14,
 	[TextStyle.ButtonPrimaryLabel]: 16,
 	[TextStyle.ButtonSecondaryLabel]: 16,
 } satisfies Record<TextStyle, number>);

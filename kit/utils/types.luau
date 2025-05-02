@@ -24,6 +24,7 @@ export type Kit = {
 	onRender: (self: Kit, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
 	onPhysics: (self: Kit, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
 	onTick: (self: Kit, callback: (trove: trove.Trove, dt: number) -> ()) -> (),
+	mechanics: Instance,
 }
 
 export type KitScript<Self> = Self & {

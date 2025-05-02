@@ -58,19 +58,10 @@ local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean
 			instanceTrove:clean()
 		end)
 	else
-		utils.tweenMaybeInstant(glow, { Transparency = 0.5 }, {
-			time = PressTime(btn),
-			easingStyle = PressEasingStyle(btn),
-			easingDirection = PressEasingDirection(btn),
-		})
-
+		utils.tweenMaybeInstant(glow, { Transparency = 0.5 }, utils.tweenConfigFromAttributes(btn, "Press"))
 		trove:add(function()
 			local time = PressTime(btn)
-			utils.tweenMaybeInstant(glow, { Transparency = 1 }, {
-				time = time,
-				easingStyle = PressEasingStyle(btn),
-				easingDirection = PressEasingDirection(btn),
-			})
+			utils.tweenMaybeInstant(glow, { Transparency = 1 }, utils.tweenConfigFromAttributes(btn, "Press"))
 			task.delay(time, function()
 				instanceTrove:clean()
 			end)

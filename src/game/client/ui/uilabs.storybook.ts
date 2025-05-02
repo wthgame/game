@@ -1,4 +1,6 @@
+import { ReplicatedStorage } from "@rbxts/services";
+
 export = {
 	name: "Welcome to Hell",
-	storyRoots: [script.Parent],
+	storyRoots: [ReplicatedStorage.WaitForChild("WTHClientCore"), ReplicatedStorage.WaitForChild("WTHClientGame")],
 };

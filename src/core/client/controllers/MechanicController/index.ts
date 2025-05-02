@@ -34,6 +34,7 @@ export class InstanceTag {
 
 export interface Kit {
 	trove: Trove;
+	mechanics: Instance;
 	tag(tagName: string, check?: t.check<Instance>): InstanceTag;
 	onRender(callback: (trove: Trove, dt: number) => void): void;
 	onPhysics(callback: (trove: Trove, dt: number) => void): void;
@@ -98,6 +99,7 @@ export class MechanicController implements OnInit {
 
 		const kit = table.freeze<Kit>({
 			trove,
+			mechanics: parent,
 			tag(tagName: string, check: t.check<Instance> = t.Instance): InstanceTag {
 				const instanceTag = new InstanceTag(ty.String.CastOrError(tagName), optionalCheck.CastOrError(check));
 				tags.add(instanceTag);

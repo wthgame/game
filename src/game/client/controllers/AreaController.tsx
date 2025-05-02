@@ -6,13 +6,13 @@ import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
 import { LightingController, LightingPriority } from "core/client/controllers/LightingController";
 import { MechanicController } from "core/client/controllers/MechanicController";
+import { ButtonStyle } from "core/client/ui/components/Button";
+import { Text, TextStyle } from "core/client/ui/components/Text";
+import { TriangularButton } from "core/client/ui/components/TriangularButton";
+import { palette } from "core/client/ui/palette";
+import { px } from "core/client/ui/px";
 import { trace } from "core/shared/log";
 import { areas } from "game/client/net";
-import { ButtonStyle } from "game/client/ui/components/Button";
-import { Text, TextStyle } from "game/client/ui/components/Text";
-import { TriangularButton } from "game/client/ui/components/TriangularButton";
-import { palette } from "game/client/ui/palette";
-import { px } from "game/client/ui/px";
 import { AreaInfo, AREAS } from "game/shared/areas";
 
 export interface AreaViewProps {

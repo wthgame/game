@@ -19,5 +19,7 @@ export type TweenConfig = utils.TweenConfig
 
 export type check<T> = utils.check<T>
 export type Trove = utils.Trove
+export type Connection<U...> = utils.Connection<U...>
+export type Signal<T...> = utils.Signal<T...>
 
 return utils

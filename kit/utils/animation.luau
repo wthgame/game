@@ -3,6 +3,7 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 local TweenService = game:GetService("TweenService")
+local t = require("./packages/t")
 local types = require("./types")
 
 export type TweenConfig = {
@@ -14,10 +15,11 @@ export type TweenConfig = {
 	delayTime: number?,
 }
 
-local function tween(instance: Instance, propertyTable: { [string]: unknown }, config: types.TweenConfig?)
-	local config: types.TweenConfig = config or {}
+local isEasingStyle = t.enum(Enum.EasingStyle)
+local isEasingDirection = t.enum(Enum.EasingDirection)
 
-	local tweenInfo = TweenInfo.new(
+local function tweenInfoFromTweenConfig(config: types.TweenConfig)
+	return TweenInfo.new(
 		config.time or 1,
 		config.easingStyle or Enum.EasingStyle.Linear,
 		config.easingDirection or Enum.EasingDirection.Out,
@@ -25,6 +27,30 @@ local function tween(instance: Instance, propertyTable: { [string]: unknown }, c
 		config.reverse or false,
 		config.delayTime or 0
 	)
+end
+
+local function tweenConfigFromAttributes(instance: Instance, attributePrefix: string): TweenConfig
+	local timeAttribute = attributePrefix .. "Time"
+	local easingStyleAttribute = attributePrefix .. "EasingStyle"
+	local easingDirectionAttribute = attributePrefix .. "EasingDirection"
+
+	local attributes = instance:GetAttributes()
+
+	local realTime = attributes[timeAttribute]
+	local realEasingStyle = attributes[easingStyleAttribute]
+	local realEasingDirection = attributes[easingDirectionAttribute]
+
+	return {
+		time = if t.numberPositive(realTime) then realTime :: number else 1,
+		easingStyle = if isEasingStyle(realEasingStyle) then realEasingStyle :: any else Enum.EasingStyle.Linear,
+		easingDirection = if isEasingDirection(realEasingDirection)
+			then realEasingDirection :: any
+			else Enum.EasingDirection.Out,
+	}
+end
+
+local function tween(instance: Instance, propertyTable: { [string]: unknown }, config: types.TweenConfig?)
+	local tweenInfo = tweenInfoFromTweenConfig(config or {})
 
 	local tween = TweenService:Create(instance, tweenInfo, propertyTable)
 	tween.Completed:Once(function()
@@ -36,19 +62,9 @@ local function tween(instance: Instance, propertyTable: { [string]: unknown }, c
 end
 
 local function tweenMaybeInstant(instance: Instance, propertyTable: { [string]: unknown }, config: types.TweenConfig?)
-	local config: types.TweenConfig = config or {}
-	local time = config.time or 1
+	local tweenInfo = tweenInfoFromTweenConfig(config or {})
 
-	if time > 0 then
-		local tweenInfo = TweenInfo.new(
-			time,
-			config.easingStyle or Enum.EasingStyle.Linear,
-			config.easingDirection or Enum.EasingDirection.Out,
-			config.repeatCount or 0,
-			config.reverse or false,
-			config.delayTime or 0
-		)
-
+	if tweenInfo.Time > 0 then
 		local tween = TweenService:Create(instance, tweenInfo, propertyTable)
 		tween.Completed:Once(function()
 			tween:Destroy()
@@ -63,6 +79,8 @@ local function tweenMaybeInstant(instance: Instance, propertyTable: { [string]: 
 end
 
 return {
+	tweenInfoFromTweenConfig = tweenInfoFromTweenConfig,
+	tweenConfigFromAttributes = tweenConfigFromAttributes,
 	tween = tween,
 	tweenMaybeInstant = tweenMaybeInstant,
 }

@@ -3,6 +3,7 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 local CullThrottle = require("./packages/cull-throttle")
+local LemonSignal = require("./packages/lemon-signal")
 local activation = require("./activation")
 local animation = require("./animation")
 local assets = require("./assets")
@@ -33,6 +34,8 @@ export type TweenConfig = animation.TweenConfig
 
 export type check<T> = t.check<T>
 export type Trove = trove.Trove
+export type Connection<U...> = LemonSignal.Connection<U...>
+export type Signal<T...> = LemonSignal.Signal<T...>
 
 --[=[
     @class KitUtils
@@ -85,6 +88,8 @@ local utils = table.freeze({
 	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
 	isCharacterAlive = character.isCharacterAlive,
 
+	tweenInfoFromTweenConfig = animation.tweenInfoFromTweenConfig,
+	tweenConfigFromAttributes = animation.tweenConfigFromAttributes,
 	tween = animation.tween,
 	tweenMaybeInstant = animation.tweenMaybeInstant,
 
@@ -105,6 +110,10 @@ local utils = table.freeze({
 
 	Trove = trove.Trove,
 	CullThrottle = CullThrottle,
+
+	isSignal = LemonSignal.Signal.is,
+	newSignal = LemonSignal.Signal.new,
+	wrapSignal = LemonSignal.Signal.wrap,
 
 	_ = {
 		addMechanicBinding = bindings.addMechanicBinding,
