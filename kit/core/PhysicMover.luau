@@ -1,89 +1,98 @@
--- --!strict
+--!strict
 
--- -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
+-- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
--- local ReplicatedStorage = game:GetService("ReplicatedStorage")
--- local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
--- type PhysicMoverInstance = Instance & {
--- 	Positions: Instance,
--- 	Mover: BasePart & {
--- 		AlignPosition: AlignPosition,
--- 		AlignOrientation: AlignOrientation,
--- 	},
--- }
+export type PhysicMoverInstance = BasePart & {
+	Positions: Instance,
+	AlignPosition: AlignPosition,
+	AlignOrientation: AlignOrientation,
+}
 
--- local function init(wth: utils.WTH)
--- 	-- local PhysicMover = wth:tag(
--- 	-- 	"PhysicMover",
--- 	-- 	utils.t.children({
--- 	-- 		Positions = utils.t.Instance,
--- 	-- 		Mover = utils.t.instanceIsA("BasePart", {
--- 	-- 			AlignPosition = utils.t.instanceOf("AlignPosition"),
--- 	-- 			AlignOrientation = utils.t.instanceOf("AlignOrientation"),
--- 	-- 		}),
--- 	-- 	}) :: utils.check<PhysicMoverInstance>
--- 	-- )
+local PhysicMoverId = utils.attribute("PhysicMoverId", utils.isString)
+local PhysicMoverIndex = utils.attribute("PhysicMoverIndex", utils.t.integer)
+local Interval = utils.attribute("Interval", utils.isPositiveNumber)
 
--- 	-- local PhysicMoverPosition = wth:tag("PhysicMoverPosition", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+local idToDestination: utils.MapSet<string, BasePart> = utils.MapSet()
 
--- 	-- local PhysicMoverId = utils.attribute("PhysicMoverId", utils.t.string)
+local self = {} :: utils.KitScript
+self.type = "KitScript"
 
--- 	-- local SetPositionsInvisible = utils.attribute("SetPositionsInvisible", utils.t.boolean, true)
--- 	-- local Interval = utils.attribute("Interval", utils.t.numberPositive, 1)
+local function destinationsOfId(id: string)
+	local destinations = idToDestination:get(id)
+	local sorted = {}
+	for d in destinations do
+		-- print(d)
+		local index = PhysicMoverIndex(d) or tonumber(d.Name)
+		assert(index, `Unexpected PhysicMoverPosition {d:GetFullName()}`)
+		sorted[index] = d
+	end
+	return sorted
+end
 
--- 	-- local lastReset: utils.Map<string, number> = {}
+function self:run(kit: utils.Kit)
+	local PhysicMover = kit:tag(
+		"PhysicMover",
+		utils.t.instanceIsA("BasePart", {
+			AlignPosition = utils.t.instanceIsA("AlignPosition"),
+			AlignOrientation = utils.t.instanceIsA("AlignOrientation"),
+		}) :: utils.check<PhysicMoverInstance>
+	)
+	local PhysicMoverDestination = kit:tag("PhysicMoverDestination", utils.isBasePart)
+	PhysicMover:onLoaded(function(trove, mover)
+		mover.AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
+		mover.Anchored = false
 
--- 	-- -- TODO: perf this
--- 	-- local function getPositionsWithId(id: string)
--- 	-- 	local possiblePositions = {}
--- 	-- 	for _, pos in PhysicMoverPosition:instances() do
--- 	-- 		if PhysicMoverId(pos) == id then
--- 	-- 			table.insert(possiblePositions, pos)
--- 	-- 		end
--- 	-- 	end
--- 	-- 	local sortedPositions = {}
--- 	-- 	for index = 1, #possiblePositions do
--- 	-- 		local got = false
--- 	-- 		for _, pos in possiblePositions do
--- 	-- 			if pos.Name == tostring(index) then
--- 	-- 				table.insert(sortedPositions, pos)
--- 	-- 				got = true
--- 	-- 				break
--- 	-- 			end
--- 	-- 			if not got then
--- 	-- 				error("not sequential")
--- 	-- 			end
--- 	-- 		end
--- 	-- 	end
--- 	-- 	return sortedPositions
--- 	-- end
+		local currentIndex = 1
+		local stop = false
+		trove:add(function()
+			stop = true
+		end)
 
--- 	-- PhysicMover:onLoaded(function(trove, mover)
--- 	-- 	local id = PhysicMoverId(mover)
--- 	-- 	if not id then
--- 	-- 		return
--- 	-- 	end
+		while true do
+			if stop then
+				return
+			end
 
--- 	-- 	local setPositionsInvisible = SetPositionsInvisible(mover)
--- 	-- end)
+			local interval = Interval(mover)
 
--- 	-- wth:onPhysics(function(trove)
--- 	-- 	local now = os.clock()
--- 	-- 	for _, mover in PhysicMover:instances() do
--- 	-- 		local id = PhysicMoverId(mover)
--- 	-- 		if not id then
--- 	-- 			continue
--- 	-- 		end
+			-- TODO: check for nonsequential keys
+			local id = PhysicMoverId(mover)
+			if id then
+				local positions = destinationsOfId(id)
+				print(positions)
+				currentIndex += 1
+				if currentIndex > #positions then
+					currentIndex = 1
+				end
+				local currentPosition = positions[currentIndex]
+				if currentPosition then
+					mover.AlignPosition.Position = currentPosition.CFrame.Position
+					mover.AlignOrientation.CFrame = currentPosition.CFrame.Rotation
+					local nextPosition = positions[currentIndex + 1] or positions[1]
+					local nextInterval = Interval(nextPosition)
+					if nextInterval then
+						interval = nextInterval
+					end
+				end
+			end
+			if interval then
+				task.wait(interval)
+			else
+				RunService.PostSimulation:Wait()
+			end
+		end
+	end)
+	PhysicMoverDestination:onLoaded(function(trove, destination)
+		-- print(destination)
+		local id = PhysicMoverId(destination)
+		if id then
+			idToDestination:add(id, destination)
+		end
+	end)
+end
 
--- 	-- 		local positions = getPositionsWithId(id)
--- 	-- 		local interval = Interval(mover)
--- 	-- 		local moverLastReset = lastReset[id] or now
--- 	-- 		local intervals = (now - moverLastReset) % interval
-
--- 	-- 		print(intervals)
--- 	-- 	end
--- 	-- end)
--- end
-
--- return init
+return self
