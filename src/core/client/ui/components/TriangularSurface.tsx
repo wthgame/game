@@ -5,12 +5,10 @@ import { BaseProps, LayoutProps } from "../types";
 export const TRIANGULAR_SURFACE_IMAGE = assets.ui.triangularSurface;
 export const TRIANGULAR_SURFACE_SLICE_CENTER = new Rect(new Vector2(100, 100), new Vector2(412, 412));
 
-export const TRIANGULAR_SURFACE_CORNER_SIZE_PX = 100;
-
 export interface TriangularSurfaceProps extends BaseProps, LayoutProps, PropsWithChildren {
 	color?: Derivable<Color3>;
 	visibility?: Derivable<number>;
-	radiusPx?: Derivable<number>;
+	radius?: Derivable<number>;
 	onClick?: () => void;
 	onHover?: () => void;
 	onHoverEnd?: () => void;
@@ -32,7 +30,7 @@ export function TriangularSurface({
 
 	color,
 	visibility = 0,
-	radiusPx = 0,
+	radius = 1,
 	onClick,
 	onHover,
 	onHoverEnd,
@@ -57,7 +55,7 @@ export function TriangularSurface({
 			Visible={() => read(visibility) < 0.995}
 			ScaleType={Enum.ScaleType.Slice}
 			SliceCenter={TRIANGULAR_SURFACE_SLICE_CENTER}
-			SliceScale={() => read(radiusPx) / TRIANGULAR_SURFACE_CORNER_SIZE_PX}
+			SliceScale={() => read(radius)}
 		>
 			{children}
 		</imagelabel>
@@ -78,7 +76,7 @@ export function TriangularSurface({
 			Visible={() => read(visibility) < 0.995}
 			ScaleType={Enum.ScaleType.Slice}
 			SliceCenter={TRIANGULAR_SURFACE_SLICE_CENTER}
-			SliceScale={() => read(radiusPx) / TRIANGULAR_SURFACE_CORNER_SIZE_PX}
+			SliceScale={() => read(radius)}
 			Activated={onClick}
 			MouseEnter={onHover}
 			MouseLeave={onHoverEnd}

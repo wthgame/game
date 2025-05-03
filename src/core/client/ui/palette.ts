@@ -1,33 +1,35 @@
-import Vide, { context, Derivable, read, source, untrack } from "@rbxts/vide";
+import { context, Derivable, read, source, untrack } from "@rbxts/vide";
+
+/// A set of colours that can be used to theme UI components.
+export interface Primary {
+	fill: {
+		light: Color3;
+		mid: Color3;
+		dark: Color3;
+	};
+	stroke: {
+		light: Color3;
+		mid: Color3;
+		dark: Color3;
+	};
+	text: Color3;
+}
 
 export interface Palette {
 	name: string;
 
-	border: Color3;
-	borderLight: Color3;
-	borderLighter: Color3;
-	borderLightest: Color3;
-
-	bg: Color3;
-	bgLight: Color3;
-	bgLighter: Color3;
-	bgLightest: Color3;
-	bgDark: Color3;
-	bgDarker: Color3;
-	bgDarkest: Color3;
-
-	fg: Color3;
-	fgLight: Color3;
-	fgLighter: Color3;
-	fgLightest: Color3;
-	fgDark: Color3;
-	fgDarker: Color3;
-	fgDarkest: Color3;
-
-	primary: Color3;
-	primaryLight: Color3;
-	primaryLighter: Color3;
-	primaryLightest: Color3;
+	text: Color3;
+	subtext1: Color3;
+	subtext0: Color3;
+	overlay2: Color3;
+	overlay1: Color3;
+	overlay0: Color3;
+	surface2: Color3;
+	surface1: Color3;
+	surface0: Color3;
+	base: Color3;
+	mantle: Color3;
+	crust: Color3;
 }
 
 export const WTH_GRAY_HUE = 200 / 360;
@@ -39,56 +41,34 @@ export const PALLETES = {
 	dark: {
 		name: "Dark",
 
-		border: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15 - 0.025),
-		borderLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25 - 0.025),
-		borderLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35 - 0.025),
-		borderLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.45 - 0.025),
-		bg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15),
-		bgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25),
-		bgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35),
-		bgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.45),
-		bgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.1),
-		bgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.05),
-		bgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.025),
-		fg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.8),
-		fgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.875),
-		fgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.95),
-		fgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 1),
-		fgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.65),
-		fgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.6),
-		fgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.55),
-
-		primary: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.8),
-		primaryLight: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.85),
-		primaryLighter: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.9),
-		primaryLightest: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.95),
+		text: Color3.fromRGB(214, 214, 214),
+		subtext1: Color3.fromRGB(194, 194, 194),
+		subtext0: Color3.fromRGB(173, 173, 173),
+		overlay2: Color3.fromRGB(153, 153, 153),
+		overlay1: Color3.fromRGB(132, 132, 132),
+		overlay0: Color3.fromRGB(112, 112, 112),
+		surface2: Color3.fromRGB(91, 91, 91),
+		surface1: Color3.fromRGB(71, 71, 71),
+		surface0: Color3.fromRGB(50, 50, 50),
+		base: Color3.fromRGB(30, 30, 30),
+		mantle: Color3.fromRGB(24, 24, 24),
+		crust: Color3.fromRGB(17, 17, 17),
 	},
 	light: {
 		name: "Light",
 
-		border: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.8 - 0.025),
-		borderLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.875 - 0.025),
-		borderLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.95 - 0.025),
-		borderLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 1 - 0.025),
-		bg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.8),
-		bgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.875),
-		bgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.95),
-		bgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 1),
-		bgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.1),
-		bgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.05),
-		bgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.025),
-		fg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15),
-		fgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25),
-		fgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35),
-		fgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.45),
-		fgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15 - 0.025),
-		fgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25 - 0.025),
-		fgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35 - 0.025),
-
-		primary: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.8),
-		primaryLight: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.85),
-		primaryLighter: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.9),
-		primaryLightest: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.95),
+		text: Color3.fromRGB(205, 214, 244),
+		subtext1: Color3.fromRGB(186, 194, 222),
+		subtext0: Color3.fromRGB(166, 173, 200),
+		overlay2: Color3.fromRGB(147, 153, 178),
+		overlay1: Color3.fromRGB(127, 132, 156),
+		overlay0: Color3.fromRGB(108, 112, 134),
+		surface2: Color3.fromRGB(88, 91, 112),
+		surface1: Color3.fromRGB(69, 71, 90),
+		surface0: Color3.fromRGB(49, 50, 68),
+		base: Color3.fromRGB(30, 30, 46),
+		mantle: Color3.fromRGB(24, 24, 37),
+		crust: Color3.fromRGB(17, 17, 27),
 	},
 } satisfies Record<string, Palette>;
 

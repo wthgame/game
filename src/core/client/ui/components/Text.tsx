@@ -1,7 +1,5 @@
-import Vide, { Derivable, read, Source } from "@rbxts/vide";
+import Vide, { Derivable, read } from "@rbxts/vide";
 import { Padding, PaddingProps } from "core/client/ui/components/Padding";
-import { sans } from "core/client/ui/fonts";
-import { Palette, palette } from "core/client/ui/palette";
 import { BaseProps, LayoutProps } from "core/client/ui/types";
 
 export enum TextStyle {
@@ -18,42 +16,17 @@ export type TextAlignY = "top" | "center" | "bottom";
 
 export interface TextProps extends LayoutProps, BaseProps, PaddingProps {
 	text: Derivable<string>;
-	textStyle: Derivable<TextStyle>;
+	textColor?: Derivable<Color3>;
+	textSize?: Derivable<number>;
+	font?: Derivable<Font>;
 	textWrapped?: Derivable<boolean>;
 	textAlignX?: Derivable<TextAlignX>;
 	textAlignY?: Derivable<TextAlignY>;
 	rich?: Derivable<boolean>;
+	visibility?: Derivable<number>;
 	// TODO: reimplement
-	outTextBounds?: Source<Vector2>;
+	// outTextBounds?: Source<Vector2>;
 }
-
-// TODO: move these values to palette
-export const TEXT_STYLE_PALLETE = table.freeze({
-	[TextStyle.Title]: "fgLight",
-	[TextStyle.Subtitle]: "fgDark",
-	[TextStyle.Text]: "fg",
-	[TextStyle.Label]: "fgDarker",
-	[TextStyle.ButtonPrimaryLabel]: "fgDarkest",
-	[TextStyle.ButtonSecondaryLabel]: "fgLight",
-} satisfies Record<TextStyle, keyof Palette>);
-
-export const TEXT_STYLE_SIZES = table.freeze({
-	[TextStyle.Title]: 3,
-	[TextStyle.Subtitle]: 16,
-	[TextStyle.Text]: 24,
-	[TextStyle.Label]: 14,
-	[TextStyle.ButtonPrimaryLabel]: 16,
-	[TextStyle.ButtonSecondaryLabel]: 16,
-} satisfies Record<TextStyle, number>);
-
-export const TEXT_STYLE_FONTS = table.freeze({
-	[TextStyle.Title]: sans(Enum.FontWeight.Bold),
-	[TextStyle.Subtitle]: sans(Enum.FontWeight.SemiBold),
-	[TextStyle.Text]: sans(),
-	[TextStyle.Label]: sans(Enum.FontWeight.Regular, Enum.FontStyle.Italic),
-	[TextStyle.ButtonPrimaryLabel]: sans(Enum.FontWeight.Bold),
-	[TextStyle.ButtonSecondaryLabel]: sans(Enum.FontWeight.Bold),
-} satisfies Record<TextStyle, Font>);
 
 export function Text({
 	position,
@@ -74,12 +47,15 @@ export function Text({
 	paddingBottom,
 
 	text,
-	textStyle,
+	textColor,
+	textSize,
+	font,
 	textWrapped = true,
 	textAlignX = "left",
 	textAlignY = "top",
 	rich = true,
-	outTextBounds,
+	visibility = 0,
+	// outTextBounds,
 }: TextProps) {
 	const hasPadding =
 		(padding ?? paddingX ?? paddingY ?? paddingLeft ?? paddingRight ?? paddingTop ?? paddingBottom) !== undefined;
@@ -93,11 +69,12 @@ export function Text({
 			ZIndex={zIndex}
 			LayoutOrder={layoutOrder}
 			BackgroundTransparency={1}
-			FontFace={() => TEXT_STYLE_FONTS[read(textStyle)]}
+			FontFace={font}
 			Text={text}
-			TextColor3={() => palette(TEXT_STYLE_PALLETE[read(textStyle)])}
-			TextSize={() => TEXT_STYLE_SIZES[read(textStyle)]}
+			TextColor3={textColor}
+			TextSize={textSize}
 			TextWrapped={textWrapped}
+			TextTransparency={visibility}
 			TextXAlignment={() => {
 				switch (read(textAlignX)) {
 					case "left":
@@ -123,7 +100,6 @@ export function Text({
 				}
 			}}
 			RichText={rich}
-			// Out:TextBounds={outTextBounds}
 		>
 			{hasPadding ? (
 				<Padding

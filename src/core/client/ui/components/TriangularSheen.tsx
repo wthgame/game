@@ -5,11 +5,9 @@ import { BaseProps, LayoutProps } from "../types";
 export const TRIANGULAR_SHEEN_IMAGE = assets.ui.triangularBorderSheen;
 export const TRIANGULAR_SHEEN_SLICE_CENTER = new Rect(new Vector2(100, 100), new Vector2(412, 412));
 
-export const TRIANGULAR_SHEEN_CORNER_SIZE_PX = 100;
-
 export interface TriangularSheenProps extends BaseProps, LayoutProps, PropsWithChildren {
 	visibility?: Derivable<number>;
-	radiusPx?: Derivable<number>;
+	radius?: Derivable<number>;
 	onClick?: () => void;
 	onHover?: () => void;
 	onHoverEnd?: () => void;
@@ -29,7 +27,7 @@ export function TriangularSheen({
 	children,
 
 	visibility = 0.5,
-	radiusPx = TRIANGULAR_SHEEN_CORNER_SIZE_PX,
+	radius = 1,
 	onClick,
 	onHover,
 	onHoverEnd,
@@ -51,7 +49,7 @@ export function TriangularSheen({
 			Visible={() => read(visibility) < 0.995}
 			ScaleType={Enum.ScaleType.Slice}
 			SliceCenter={TRIANGULAR_SHEEN_SLICE_CENTER}
-			SliceScale={() => read(radiusPx) / TRIANGULAR_SHEEN_CORNER_SIZE_PX}
+			SliceScale={() => read(radius)}
 		>
 			{children}
 		</imagelabel>
@@ -70,7 +68,7 @@ export function TriangularSheen({
 			Visible={() => read(visibility) < 0.995}
 			ScaleType={Enum.ScaleType.Slice}
 			SliceCenter={TRIANGULAR_SHEEN_SLICE_CENTER}
-			SliceScale={() => read(radiusPx) / TRIANGULAR_SHEEN_CORNER_SIZE_PX}
+			SliceScale={() => read(radius)}
 			Activated={onClick}
 			MouseEnter={onHover}
 			MouseLeave={onHoverEnd}

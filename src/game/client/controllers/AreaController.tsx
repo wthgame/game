@@ -6,11 +6,14 @@ import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
 import { LightingController, LightingPriority } from "core/client/controllers/LightingController";
 import { MechanicController } from "core/client/controllers/MechanicController";
-import { ButtonStyle } from "core/client/ui/components/Button";
-import { Text, TextStyle } from "core/client/ui/components/Text";
-import { TriangularButton } from "core/client/ui/components/TriangularButton";
+// import { ButtonStyle } from "core/client/_ui/components/Button";
+// import { Text, TextStyle } from "core/client/_ui/components/Text";
+// import { TriangularButton } from "core/client/_ui/components/TriangularButton";
+import { PrimaryTriangularButton } from "core/client/ui/components/PrimaryTriangularButton";
+import { Text } from "core/client/ui/components/Text";
 import { palette } from "core/client/ui/palette";
-import { px } from "core/client/ui/px";
+import { rem } from "core/client/ui/rem";
+import { fonts } from "core/client/ui/styles";
 import { trace } from "core/shared/log";
 import { areas } from "game/client/net";
 import { AreaInfo, AREAS } from "game/shared/areas";
@@ -23,23 +26,30 @@ export interface AreaViewProps {
 export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
 	let layoutOrder = 1;
 	return (
-		<frame BackgroundColor3={() => palette("bg")} Size={UDim2.fromScale(1, 1)} Name="AreaView">
+		<frame BackgroundColor3={() => palette("crust")} Size={UDim2.fromScale(1, 1)} Name="AreaView">
 			<uilistlayout
 				VerticalAlignment="Center"
 				HorizontalAlignment="Center"
 				SortOrder="LayoutOrder"
-				Padding={() => new UDim(0, px(4))}
+				Padding={() => new UDim(0, rem(1))}
 			/>
-			<Text text="Select an area to load:" textStyle={TextStyle.Text} layoutOrder={layoutOrder++} />
+			<Text
+				text="Select an area to load:"
+				font={fonts.serif.regular}
+				textColor={new Color3(1, 1, 1)}
+				textSize={() => rem(2)}
+				layoutOrder={layoutOrder++}
+			/>
 			<Text
 				text="Later this will be replaced with a proper title screen."
-				textStyle={TextStyle.Label}
+				font={fonts.serif.regular}
+				textColor={new Color3(1, 1, 1)}
+				textSize={() => rem(2)}
 				layoutOrder={layoutOrder++}
 			/>
 			{() =>
 				read(areas).map((a) => (
-					<TriangularButton
-						buttonStyle={ButtonStyle.Primary}
+					<PrimaryTriangularButton
 						buttonLabel={a.title}
 						onClick={() => onAreaSelected(a)}
 						layoutOrder={layoutOrder++}

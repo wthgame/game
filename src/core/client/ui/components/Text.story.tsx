@@ -1,20 +1,12 @@
 // import Fusion, { peek } from "@rbxts/fusion";
 // import { choose, fusionStory } from "client/ui/uilabs";
-import { Text, TextStyle } from "core/client/ui/components/Text";
+import { Text } from "core/client/ui/components/Text";
 // import { debug, setWTHAsDefaultLogger } from "shared/log";
-import { Choose, CreateVideStory } from "@rbxts/ui-labs";
-import Vide, { read } from "@rbxts/vide";
+import { Choose, CreateVideStory, RGBA, Slider } from "@rbxts/ui-labs";
+import Vide from "@rbxts/vide";
 import { setWTHAsDefaultLogger } from "core/shared/log";
-
-const STORY_TEXT_STYLES: Array<[label: string, value: TextStyle]> = [
-	["Title", TextStyle.Title],
-	["Subtitle", TextStyle.Subtitle],
-	["Text", TextStyle.Text],
-	["Label", TextStyle.Label],
-	["ButtonPrimaryLabel", TextStyle.ButtonPrimaryLabel],
-];
-
-const MAP_STORY_TEXT_STYLES = new Map(STORY_TEXT_STYLES);
+import { sans } from "../fonts";
+import { rem, useRem } from "../rem";
 
 const TOCAV_WIKI_PAGE =
 	"Tower of Complexity and Volatility (ToCaV) is a Terrifying difficulty, ascension-based " +
@@ -27,20 +19,22 @@ export = CreateVideStory(
 		vide: Vide,
 		controls: {
 			text: TOCAV_WIKI_PAGE,
-			textStyle: Choose(
-				STORY_TEXT_STYLES.map(([v]) => v),
-				3,
-			),
+			textRgba: RGBA(new Color3(1, 1, 1), 0),
+			textSizeRem: Slider(1, 0.5, 3, 0.5),
 			textAlignX: Choose(["left", "center", "right"], 1),
 			textAlignY: Choose(["top", "center", "bottom"], 1),
 		},
 	},
 	({ controls }) => {
 		setWTHAsDefaultLogger();
+		useRem();
 		return (
 			<Text
 				text={controls.text}
-				textStyle={() => MAP_STORY_TEXT_STYLES.get(read(controls.textStyle))!}
+				textColor={() => controls.textRgba().Color}
+				visibility={() => controls.textRgba().Transparency}
+				textSize={() => rem(controls.textSizeRem())}
+				font={sans()}
 				textAlignX={controls.textAlignX as never}
 				textAlignY={controls.textAlignY as never}
 				anchorPoint={new Vector2(0.5, 0.5)}

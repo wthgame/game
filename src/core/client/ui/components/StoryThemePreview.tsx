@@ -1,5 +1,5 @@
-import Vide, { PropsWithChildren, Provider } from "@rbxts/vide";
-import { currentPalette, palette, paletteValue, PALLETES } from "../palette";
+import Vide, { Provider } from "@rbxts/vide";
+import { currentPalette, palette, PALLETES } from "../palette";
 
 export interface StoryThemePreviewProps {
 	render: () => Vide.Node;
@@ -8,7 +8,11 @@ export interface StoryThemePreviewProps {
 export function StoryThemePreview({ render }: StoryThemePreviewProps) {
 	function renderThemePreview() {
 		return (
-			<frame Name={() => palette("name")} Size={UDim2.fromScale(0.5, 1)} BackgroundColor3={() => palette("bg")}>
+			<frame
+				Name={() => palette("name")}
+				Size={UDim2.fromScale(0.5, 1)}
+				BackgroundColor3={() => palette("crust")}
+			>
 				{render()}
 			</frame>
 		);
