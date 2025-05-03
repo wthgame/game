@@ -1,4 +1,4 @@
-import Vide, { Derivable, read } from "@rbxts/vide";
+import Vide, { Derivable, read, Source } from "@rbxts/vide";
 import { Padding, PaddingProps } from "core/client/ui/components/Padding";
 import { BaseProps, LayoutProps } from "core/client/ui/types";
 
@@ -24,8 +24,7 @@ export interface TextProps extends LayoutProps, BaseProps, PaddingProps {
 	textAlignY?: Derivable<TextAlignY>;
 	rich?: Derivable<boolean>;
 	visibility?: Derivable<number>;
-	// TODO: reimplement
-	// outTextBounds?: Source<Vector2>;
+	outTextBounds?: Source<Vector2>;
 }
 
 export function Text({
@@ -55,7 +54,7 @@ export function Text({
 	textAlignY = "top",
 	rich = true,
 	visibility = 0,
-	// outTextBounds,
+	outTextBounds,
 }: TextProps) {
 	const hasPadding =
 		(padding ?? paddingX ?? paddingY ?? paddingLeft ?? paddingRight ?? paddingTop ?? paddingBottom) !== undefined;
@@ -100,6 +99,7 @@ export function Text({
 				}
 			}}
 			RichText={rich}
+			TextBoundsChanged={(bounds) => outTextBounds?.(bounds)}
 		>
 			{hasPadding ? (
 				<Padding

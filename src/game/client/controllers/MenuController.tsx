@@ -1,6 +1,6 @@
 import { Controller, OnStart } from "@flamework/core";
 import { Players } from "@rbxts/services";
-import Vide, { effect, mount, Show, Source, source } from "@rbxts/vide";
+import Vide, { effect, mount, Source, source } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
 import { debug } from "core/shared/log";
 // import { TowerRunView } from "../ui/views/TowerRunView";
@@ -27,12 +27,7 @@ export class MenuController implements OnStart {
 				<>
 					<screengui Name="Menu"></screengui>
 					<screengui Name="RunInfo" IgnoreGuiInset>
-						<Show
-							when={() => currentTower() !== undefined}
-							children={() => {
-								return <RunInfo elaspedTime={elapsedTime} towerInfo={currentTower as never} />;
-							}}
-						/>
+						<RunInfo elaspedTime={elapsedTime} towerInfo={currentTower as never} />
 					</screengui>
 				</>
 			);

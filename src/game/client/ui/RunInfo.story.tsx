@@ -6,7 +6,8 @@ import { InferVideProps, Slider } from "ui-labs";
 import { RunInfo } from "./RunInfo";
 
 const CONTROLS = {
-	elapsedTime: Slider(3600 + 60 * 30, 0, 3600 * 3),
+	elapsedTime: Slider(3600 + 60 * 30, 0, 3600 * 24),
+	previewTower: true,
 } as const;
 
 export = {
@@ -15,6 +16,11 @@ export = {
 	story: ({ controls }: InferVideProps<typeof CONTROLS>) => {
 		setWTHAsDefaultLogger();
 		useRem();
-		return <RunInfo elaspedTime={controls.elapsedTime} towerInfo={AREAS[0]!.towers![1]!} />;
+		return (
+			<RunInfo
+				elaspedTime={controls.elapsedTime}
+				towerInfo={() => (controls.previewTower() ? AREAS[0]!.towers![1]! : undefined)}
+			/>
+		);
 	},
 };

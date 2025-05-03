@@ -57,7 +57,7 @@ export function NumberSpinner({
 	const digits = [];
 	for (const digitPosition of $range(1, numDigits)) {
 		// why is an exponent a ** in typescript :sob:
-		const fauxRotation = spring(() => math.floor(read(value) / 10 ** (digitPosition - 1)));
+		const fauxRotation = spring(() => math.floor(read(value) / 10 ** (digitPosition - 1)), 0.5);
 		digits.push(
 			<frame
 				Name={`Digit${digitPosition}`}
