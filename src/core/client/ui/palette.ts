@@ -1,45 +1,73 @@
+import ty from "@rbxts/libopen-ty";
 import { context, Derivable, read, source, untrack } from "@rbxts/vide";
 
-/// A set of colours that can be used to theme UI components.
-export interface Primary {
-	fill: {
-		light: Color3;
-		mid: Color3;
-		dark: Color3;
-	};
-	stroke: {
-		light: Color3;
-		mid: Color3;
-		dark: Color3;
-	};
-	text: Color3;
+const tyColor3 = ty.Typeof("Color3");
+const Palette = ty
+	.Struct(
+		{ exhaustive: true },
+		{
+			name: ty.String,
+
+			text: tyColor3,
+			subtext1: tyColor3,
+			subtext0: tyColor3,
+			overlay2: tyColor3,
+			overlay1: tyColor3,
+			overlay0: tyColor3,
+			surface2: tyColor3,
+			surface1: tyColor3,
+			surface0: tyColor3,
+			base: tyColor3,
+			mantle: tyColor3,
+			crust: tyColor3,
+
+			platinumText: tyColor3,
+			platinumHover: tyColor3,
+			platinumBase: tyColor3,
+		},
+	)
+	.Nicknamed("Palette");
+
+export interface Palette extends ty.Static<typeof Palette> {}
+
+function createPalette(palette: { [K in keyof Palette]: Palette[K] | keyof Palette }): Readonly<Palette> {
+	palette = table.clone(palette);
+	for (const [key, value] of pairs(palette)) {
+		const referenced = palette[value as never];
+		if (referenced) palette[key] = referenced;
+	}
+	return table.freeze(Palette.CastOrError(palette));
 }
 
-export interface Palette {
-	name: string;
+const WTH_BASE_HUE = 30 / 360;
+const WTH_BASE_CHROMA = 1;
 
-	text: Color3;
-	subtext1: Color3;
-	subtext0: Color3;
-	overlay2: Color3;
-	overlay1: Color3;
-	overlay0: Color3;
-	surface2: Color3;
-	surface1: Color3;
-	surface0: Color3;
-	base: Color3;
-	mantle: Color3;
-	crust: Color3;
-}
+const WTH_PLATINUM_HUE = 30 / 360;
+const WTH_PLATINUM_CHROMA = 1 / 6;
 
-export const WTH_GRAY_HUE = 200 / 360;
-export const WTH_GRAY_SATURATION = 0.05;
-export const WTH_PRIMARY_HUE = 40 / 360;
-export const WTH_PRIMARY_SATURATION = 0.75;
-
-export const PALLETES = {
-	dark: {
+export const PALLETES = table.freeze({
+	dark: createPalette({
 		name: "Dark",
+
+		text: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.9),
+		subtext1: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.85),
+		subtext0: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.8),
+		overlay2: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.65),
+		overlay1: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.55),
+		overlay0: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.5),
+		surface2: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.35),
+		surface1: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.3),
+		surface0: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.25),
+		base: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.15),
+		mantle: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.1),
+		crust: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.05),
+
+		platinumBase: Color3.fromHSV(WTH_PLATINUM_HUE, WTH_PLATINUM_CHROMA, 0.75),
+		platinumHover: Color3.fromHSV(WTH_PLATINUM_HUE, WTH_PLATINUM_CHROMA, 0.8),
+		platinumText: Color3.fromHSV(WTH_PLATINUM_HUE, WTH_PLATINUM_CHROMA, 0.3),
+	}),
+	light: createPalette({
+		name: "Light",
 
 		text: Color3.fromRGB(214, 214, 214),
 		subtext1: Color3.fromRGB(194, 194, 194),
@@ -53,24 +81,12 @@ export const PALLETES = {
 		base: Color3.fromRGB(30, 30, 30),
 		mantle: Color3.fromRGB(24, 24, 24),
 		crust: Color3.fromRGB(17, 17, 17),
-	},
-	light: {
-		name: "Light",
 
-		text: Color3.fromRGB(205, 214, 244),
-		subtext1: Color3.fromRGB(186, 194, 222),
-		subtext0: Color3.fromRGB(166, 173, 200),
-		overlay2: Color3.fromRGB(147, 153, 178),
-		overlay1: Color3.fromRGB(127, 132, 156),
-		overlay0: Color3.fromRGB(108, 112, 134),
-		surface2: Color3.fromRGB(88, 91, 112),
-		surface1: Color3.fromRGB(69, 71, 90),
-		surface0: Color3.fromRGB(49, 50, 68),
-		base: Color3.fromRGB(30, 30, 46),
-		mantle: Color3.fromRGB(24, 24, 37),
-		crust: Color3.fromRGB(17, 17, 27),
-	},
-} satisfies Record<string, Palette>;
+		platinumBase: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.75),
+		platinumHover: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.8),
+		platinumText: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.9),
+	}),
+} satisfies Record<string, Readonly<Palette>>);
 
 export const paletteValue = source(PALLETES.dark);
 export const currentPalette = context<Derivable<Palette>>(untrack(paletteValue));

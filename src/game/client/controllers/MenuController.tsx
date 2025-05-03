@@ -5,6 +5,7 @@ import { useAtom } from "@rbxts/vide-charm";
 import { debug } from "core/shared/log";
 // import { TowerRunView } from "../ui/views/TowerRunView";
 import { useRem } from "core/client/ui/rem";
+import { MenuButton } from "../ui/MenuButton";
 import { RunInfo } from "../ui/RunInfo";
 import { TowerRunController } from "./TowerRunController";
 
@@ -25,9 +26,12 @@ export class MenuController implements OnStart {
 			effect(() => debug(`Menu ${this.isMenuOpen() ? "is" : "is not"} open`));
 			return (
 				<>
-					<screengui Name="Menu"></screengui>
+					<screengui Name="Menu" DisplayOrder={2}></screengui>
 					<screengui Name="RunInfo" IgnoreGuiInset>
 						<RunInfo elaspedTime={elapsedTime} towerInfo={currentTower as never} />
+					</screengui>
+					<screengui Name="MenuButton" IgnoreGuiInset>
+						<MenuButton />
 					</screengui>
 				</>
 			);

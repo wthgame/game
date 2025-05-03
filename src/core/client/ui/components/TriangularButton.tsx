@@ -1,6 +1,8 @@
 import { useLifetime, useMotion } from "@rbxts/pretty-vide-utils";
 import Vide, { effect, read, Show, source, untrack } from "@rbxts/vide";
+import { palette, Palette } from "../palette";
 import { rem } from "../rem";
+import { fonts, TextSize } from "../styles";
 import { ButtonProps } from "./Button";
 import { Padding } from "./Padding";
 import { Text } from "./Text";
@@ -9,7 +11,7 @@ import { TriangularSurface } from "./TriangularSurface";
 
 const RIPPLE_DURATION_SECONDS = 0.5;
 
-export interface BaseTriangularButtonProps extends ButtonProps {}
+export interface TriangularButtonProps extends ButtonProps {}
 
 interface TriangularRipple {
 	when: number;
@@ -17,7 +19,7 @@ interface TriangularRipple {
 
 // TODO: Disabling buttons
 /// A button with sharp triangle corners.
-export function BaseTriangularButton({
+export function TriangularButton({
 	name = "TriangularButton",
 	zIndex,
 	layoutOrder,
@@ -28,7 +30,7 @@ export function BaseTriangularButton({
 	automaticSize = Enum.AutomaticSize.XY,
 
 	padding,
-	paddingX = () => new UDim(0, rem(1.5)),
+	paddingX = () => new UDim(0, rem(2)),
 	paddingY = () => new UDim(0, rem(0.5)),
 	paddingTop,
 	paddingLeft,
@@ -41,13 +43,13 @@ export function BaseTriangularButton({
 	bgHoverColor = new Color3(1, 1, 1),
 	rippleColor = new Color3(1, 1, 1),
 	labelColor = new Color3(0, 0, 0),
-	labelSize,
-	labelFont,
+	labelSize = TextSize.Medium,
+	labelFont = fonts.serif.bold,
 	buttonLabel,
 	buttonIcon,
 	onClick,
 	visibility = 0,
-}: BaseTriangularButtonProps) {
+}: TriangularButtonProps) {
 	const lifetime = useLifetime();
 	const isHovering = source(false);
 
@@ -140,3 +142,21 @@ export function BaseTriangularButton({
 		</TriangularSurface>
 	);
 }
+
+export interface ThemedTriangularButtonProps
+	extends Omit<TriangularButtonProps, "bgColor" | "bgHoverColor" | "labelColor"> {}
+
+function createTriangularButtonWrapper(bg: keyof Palette, hover: keyof Palette, text: keyof Palette) {
+	return (props: ThemedTriangularButtonProps) => (
+		<TriangularButton
+			bgColor={() => palette(bg) as Color3}
+			bgHoverColor={() => palette(hover) as Color3}
+			labelColor={() => palette(text) as Color3}
+			{...props}
+		>
+			{props.children}
+		</TriangularButton>
+	);
+}
+
+export const PlatinumTriangularButton = createTriangularButtonWrapper("platinumBase", "platinumHover", "platinumText");

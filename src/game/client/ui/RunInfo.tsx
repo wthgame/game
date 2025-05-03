@@ -4,6 +4,7 @@ import { Padding } from "core/client/ui/components/Padding";
 import { Text } from "core/client/ui/components/Text";
 import { TriangularSheen } from "core/client/ui/components/TriangularSheen";
 import { TriangularSurface } from "core/client/ui/components/TriangularSurface";
+import { palette } from "core/client/ui/palette";
 import { rem } from "core/client/ui/rem";
 import { fonts } from "core/client/ui/styles";
 import { TowerInfo } from "game/shared/areas";
@@ -36,13 +37,14 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 			automaticSize={Enum.AutomaticSize.X}
 			anchorPoint={() => new Vector2(0.5, 0)}
 			position={() => new UDim2(0.5, 0, 0, invisibility() * rem(0.5))}
-			color={new Color3()}
+			color={palette("crust")}
 			size={() => new UDim2(0, rem(18), 0, rem(4))}
-			visibility={() => math.map(visibility(), 0, 1, 0.5, 1)}
+			visibility={() => math.map(visibility(), 0, 1, 1 / 3, 1)}
 			onHover={() => isHovering(true)}
 			onHoverEnd={() => isHovering(false)}
 		>
 			<TriangularSheen
+				color={palette("text")}
 				size={UDim2.fromScale(1, 1)}
 				zIndex={2}
 				visibility={() => math.map(visibility(), 0, 1, 0.8, 1)}
@@ -61,7 +63,7 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 						value={hours}
 						numDigits={2}
 						font={fonts.serif.bold}
-						textColor={new Color3(1, 1, 1)}
+						textColor={palette("text")}
 						size={timerTextSize}
 						layoutOrder={timeLayoutOrder++}
 						visibility={visibility}
@@ -70,7 +72,7 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 						name="Divider"
 						text=":"
 						font={fonts.serif.regular}
-						textColor={new Color3(1, 1, 1)}
+						textColor={palette("text")}
 						textSize={() => rem(1)}
 						layoutOrder={timeLayoutOrder++}
 						visibility={visibility}
@@ -80,7 +82,7 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 						value={minutes}
 						numDigits={2}
 						font={fonts.serif.bold}
-						textColor={new Color3(1, 1, 1)}
+						textColor={palette("text")}
 						size={timerTextSize}
 						layoutOrder={timeLayoutOrder++}
 						visibility={visibility}
@@ -89,7 +91,7 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 						name="Divider"
 						text=":"
 						font={fonts.serif.regular}
-						textColor={new Color3(1, 1, 1)}
+						textColor={palette("text")}
 						textSize={() => rem(1)}
 						layoutOrder={timeLayoutOrder++}
 						visibility={visibility}
@@ -99,7 +101,7 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 						value={seconds}
 						numDigits={2}
 						font={fonts.serif.bold}
-						textColor={new Color3(1, 1, 1)}
+						textColor={palette("text")}
 						size={timerTextSize}
 						layoutOrder={timeLayoutOrder++}
 						visibility={visibility}
@@ -115,7 +117,7 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 						size={() => new UDim2(0, rem(1.25), 0.75, 0)}
 						textAlignY="bottom"
 						font={fonts.serif.bold}
-						textColor={new Color3(1, 1, 1)}
+						textColor={palette("text")}
 						textSize={() => rem(1)}
 						layoutOrder={timeLayoutOrder++}
 						textWrapped={false}
@@ -127,13 +129,14 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 					{() => (
 						<Text
 							name="TowerLabel"
-							text={() => {
-								const { name, title } = read(towerInfo)!;
-								return isHovering() ? title : name;
-							}}
+							// text={() => {
+							// 	const { name, title } = read(towerInfo)!;
+							// 	return isHovering() ? title : name;
+							// }}
+							text={() => read(towerInfo)!.name}
 							font={fonts.serif.regular}
 							textColor={() => getFlooredColorOfDifficulty(read(towerInfo)!.difficulty)}
-							textSize={() => rem(1)}
+							textSize={() => rem(0.8)}
 							visibility={visibility}
 						/>
 					)}

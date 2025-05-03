@@ -9,10 +9,10 @@ import { MechanicController } from "core/client/controllers/MechanicController";
 // import { ButtonStyle } from "core/client/_ui/components/Button";
 // import { Text, TextStyle } from "core/client/_ui/components/Text";
 // import { TriangularButton } from "core/client/_ui/components/TriangularButton";
-import { PrimaryTriangularButton } from "core/client/ui/components/PrimaryTriangularButton";
 import { Text } from "core/client/ui/components/Text";
+import { PlatinumTriangularButton } from "core/client/ui/components/TriangularButton";
 import { palette } from "core/client/ui/palette";
-import { rem } from "core/client/ui/rem";
+import { rem, useRem } from "core/client/ui/rem";
 import { fonts } from "core/client/ui/styles";
 import { trace } from "core/shared/log";
 import { areas } from "game/client/net";
@@ -49,7 +49,7 @@ export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
 			/>
 			{() =>
 				read(areas).map((a) => (
-					<PrimaryTriangularButton
+					<PlatinumTriangularButton
 						buttonLabel={a.title}
 						onClick={() => onAreaSelected(a)}
 						layoutOrder={layoutOrder++}
@@ -72,6 +72,7 @@ export class AreaController implements OnStart {
 
 	onStart(): void {
 		mount(() => {
+			useRem();
 			const isLoaded = useAtom(this.isLoaded);
 
 			return (
