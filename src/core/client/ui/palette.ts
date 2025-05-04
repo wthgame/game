@@ -42,14 +42,14 @@ function createPalette(palette: { [K in keyof Palette]: Palette[K] | keyof Palet
 const WTH_BASE_HUE = 30 / 360;
 const WTH_BASE_CHROMA = 1;
 
-const WTH_PLATINUM_HUE = 30 / 360;
-const WTH_PLATINUM_CHROMA = 1 / 6;
+const WTH_PLATINUM_HUE = 330 / 360;
+const WTH_PLATINUM_CHROMA = 1 / 12;
 
 export const PALLETES = table.freeze({
 	dark: createPalette({
 		name: "Dark",
 
-		text: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.9),
+		text: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 1),
 		subtext1: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.85),
 		subtext0: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.8),
 		overlay2: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.65),

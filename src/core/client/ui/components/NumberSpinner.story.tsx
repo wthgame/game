@@ -5,7 +5,7 @@ import { fonts } from "../styles";
 import { NumberSpinner } from "./NumberSpinner";
 
 const CONTROLS = {
-	value: Slider(123, 0, 999, 1),
+	value: Slider(777, 0, 999, 1),
 } as const;
 
 export = {

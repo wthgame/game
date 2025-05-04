@@ -10,7 +10,7 @@ import { MechanicController } from "core/client/controllers/MechanicController";
 // import { Text, TextStyle } from "core/client/_ui/components/Text";
 // import { TriangularButton } from "core/client/_ui/components/TriangularButton";
 import { Text } from "core/client/ui/components/Text";
-import { PlatinumTriangularButton } from "core/client/ui/components/TriangularButton";
+import { PrimaryTriangularButton } from "core/client/ui/components/TriangularButton";
 import { palette } from "core/client/ui/palette";
 import { rem, useRem } from "core/client/ui/rem";
 import { fonts } from "core/client/ui/styles";
@@ -37,20 +37,21 @@ export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
 				text="Select an area to load:"
 				font={fonts.serif.regular}
 				textColor={new Color3(1, 1, 1)}
-				textSize={() => rem(2)}
+				textSize={() => rem(1)}
 				layoutOrder={layoutOrder++}
 			/>
 			<Text
 				text="Later this will be replaced with a proper title screen."
 				font={fonts.serif.regular}
 				textColor={new Color3(1, 1, 1)}
-				textSize={() => rem(2)}
+				textSize={() => rem(1)}
 				layoutOrder={layoutOrder++}
 			/>
 			{() =>
 				read(areas).map((a) => (
-					<PlatinumTriangularButton
+					<PrimaryTriangularButton
 						buttonLabel={a.title}
+						labelSize={() => rem(1)}
 						onClick={() => onAreaSelected(a)}
 						layoutOrder={layoutOrder++}
 					/>

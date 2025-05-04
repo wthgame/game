@@ -151,6 +151,7 @@ function createTriangularButtonWrapper(bg: keyof Palette, hover: keyof Palette, 
 		<TriangularButton
 			bgColor={() => palette(bg) as Color3}
 			bgHoverColor={() => palette(hover) as Color3}
+			rippleColor={() => palette(text) as Color3}
 			labelColor={() => palette(text) as Color3}
 			{...props}
 		>
@@ -158,5 +159,7 @@ function createTriangularButtonWrapper(bg: keyof Palette, hover: keyof Palette, 
 		</TriangularButton>
 	);
 }
+
+export const PrimaryTriangularButton = createTriangularButtonWrapper("text", "subtext1", "base");
 
 export const PlatinumTriangularButton = createTriangularButtonWrapper("platinumBase", "platinumHover", "platinumText");
