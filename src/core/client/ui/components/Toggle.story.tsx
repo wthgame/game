@@ -1,31 +1,34 @@
-// import { effect } from "@rbxts/charm";
-// import Vide, { source } from "@rbxts/vide";
-// import { trace } from "core/shared/log";
-// import { InferVideProps } from "ui-labs";
-// import { Toggle } from "./Toggle";
+import { effect } from "@rbxts/charm";
+import Vide, { source } from "@rbxts/vide";
+import { trace } from "core/shared/log";
+import { InferVideProps } from "ui-labs";
+import { useRem } from "../rem";
+import { Toggle } from "./Toggle";
 
-// const CONTROLS = {
-// 	toggled: true,
-// };
+const CONTROLS = {
+	toggled: true,
+};
 
-// export = {
-// 	vide: Vide,
-// 	controls: CONTROLS,
-// 	story: ({ controls }: InferVideProps<typeof CONTROLS>) => {
-// 		const toggled = source(controls.toggled());
-// 		effect(() => {
-// 			toggled(controls.toggled());
-// 		});
+export = {
+	vide: Vide,
+	controls: CONTROLS,
+	story: ({ controls }: InferVideProps<typeof CONTROLS>) => {
+		useRem();
 
-// 		effect(() => trace("Toggled:", toggled()));
+		const toggled = source(controls.toggled());
+		effect(() => {
+			toggled(controls.toggled());
+		});
 
-// 		return (
-// 			<Toggle
-// 				anchorPoint={new Vector2(0.5, 0.5)}
-// 				position={UDim2.fromScale(0.5, 0.5)}
-// 				toggled={toggled}
-// 				onToggle={() => toggled(!toggled())}
-// 			/>
-// 		);
-// 	},
-// };
+		effect(() => trace("Toggled:", toggled()));
+
+		return (
+			<Toggle
+				anchorPoint={new Vector2(0.5, 0.5)}
+				position={UDim2.fromScale(0.5, 0.5)}
+				toggled={toggled}
+				onToggle={() => toggled(!toggled())}
+			/>
+		);
+	},
+};

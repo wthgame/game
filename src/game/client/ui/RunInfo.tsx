@@ -129,11 +129,11 @@ export function RunInfo({ elaspedTime, towerInfo }: RunInfoProps) {
 					{() => (
 						<Text
 							name="TowerLabel"
-							// text={() => {
-							// 	const { name, title } = read(towerInfo)!;
-							// 	return isHovering() ? title : name;
-							// }}
-							text={() => read(towerInfo)!.name}
+							text={() => {
+								const { name, title } = read(towerInfo)!;
+								return isHovering() ? title : name;
+							}}
+							// text={() => read(towerInfo)!.name}
 							font={fonts.serif.regular}
 							textColor={() => getFlooredColorOfDifficulty(read(towerInfo)!.difficulty)}
 							textSize={() => rem(0.8)}
