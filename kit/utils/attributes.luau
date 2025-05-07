@@ -11,7 +11,7 @@ export type InstanceAttribute<T> = typeof(setmetatable(
 		check: t.check<T>?,
 		defaultValue: T?,
 		get: (self: InstanceAttribute<T>, instance: Instance) -> T,
-		assert: (self: InstanceAttribute<T>, instance: Instance) -> typeof(assert((nil :: any) :: T)),
+		assert: (self: InstanceAttribute<T>, instance: Instance) -> typeof(assert((nil :: any) :: T, "Luau")),
 	},
 	{} :: {
 		__tostring: (self: InstanceAttribute<T>) -> string,

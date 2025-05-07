@@ -17,7 +17,7 @@
         "typeRoots": [
             "node_modules/@rbxts",
             "node_modules/@flamework",
-            "./types"
+            "src/types"
         ],
         "strict": true,
         "noFallthroughCasesInSwitch": true,

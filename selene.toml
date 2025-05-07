@@ -1,18 +1,23 @@
-std = "roblox"
 exclude = [
-    # blink
-    "src/client/net.luau",
-    "src/server/net.luau",
-    "src/shared/net.luau",
-    # asphalt
-    "src/shared/assets.luau",
-    # libs
-    "src/shared/libs/*.luau",
-    # rbxts
+    # Ignore Blink network files
+    "src/core/client/net.luau",
+    "src/core/server/net.luau",
+    "src/game/client/net.luau",
+    "src/game/server/net.luau",
+    "src/kit/client/net.luau",
+    "src/kit/server/net.luau",
+    # Ignore Asphalt asset files
+    "src/core/shared/assets.luau",
+    # Ignore roblox-ts junk
     "include/**",
     "node_modules/**",
     "out/**",
 ]
+std = "selene-std"
 
 [config]
 global_usage = { ignore_pattern = "^__" }
+
+[rules]
+shadowing = "allow"
+unused_variable = "allow"
