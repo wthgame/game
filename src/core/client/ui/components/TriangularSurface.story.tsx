@@ -4,7 +4,7 @@ import { TriangularSurface } from "./TriangularSurface";
 
 const CONTROLS = {
 	rgba: RGBA(new Color3(1, 1, 1), 0),
-	radiusPx: Slider(12, 4, 32),
+	radius: Slider(0.5, 0, 1),
 } as const;
 
 export = {
@@ -17,7 +17,7 @@ export = {
 			size={UDim2.fromScale(0.5, 0.5)}
 			position={UDim2.fromScale(0.5, 0.5)}
 			anchorPoint={new Vector2(0.5, 0.5)}
-			radiusPx={controls.radiusPx}
+			radius={controls.radius}
 		/>
 	),
 };

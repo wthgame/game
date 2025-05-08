@@ -1,36 +1,10 @@
+import { TowerDifficulty, TowerDifficultyIncrement } from "./constants/difficulties";
 import { UserId } from "./constants/userids";
 
 export enum TowerType {
 	Monument,
 	Tower,
 	Reflection,
-}
-
-export enum TowerDifficulty {
-	Easy = 1,
-	Medium = 2,
-	Hard = 3,
-	Difficult = 4,
-	Challenging = 5,
-	Intense = 6,
-	Remorseless = 7,
-	Insane = 8,
-	Extreme = 9,
-	Terrifying = 10,
-	Catastrophic = 11,
-	Horrific = 12,
-}
-
-export enum TowerDifficultyIncrement {
-	Bottom = 0,
-	Baseline = 0.1,
-	Low = 0.25,
-	LowMid = 0.375,
-	Mid = 0.5,
-	MidHigh = 0.625,
-	High = 0.75,
-	Peak = 0.9,
-	Skyline = 0.95,
 }
 
 export interface TowerInfo {
@@ -145,81 +119,81 @@ export const AREAS: AreaInfo[] = [
 			},
 		],
 	},
-	{
-		name: "A2BloodyHands",
-		actNumber: 2,
-		title: "Bloody Hands",
-		towers: [],
-	},
-	{
-		name: "A3FeveredEyes",
-		actNumber: 3,
-		title: "Fevered Eyes",
-		towers: [
-			{
-				name: "MoDHIaSRG",
-				title: "Monument of Dear Hell, It's a Serious Roblox Game",
-				type: TowerType.Monument,
-				hidden: true,
-				difficulty: TowerDifficulty.Challenging + TowerDifficultyIncrement.Low,
-				creatorUserIds: [UserId.ImNotFireMan123],
-			},
-		],
-	},
-	{
-		name: "A4BrokenDreams",
-		actNumber: 4,
-		title: "Broken Dreams",
-		towers: [],
-	},
-	{
-		name: "A5RunningInSpirals",
-		actNumber: 5,
-		title: "Running in Spirals",
-		towers: [],
-	},
-	{
-		name: "A6WhereTheHeavensWeptFire",
-		actNumber: 6,
-		title: "Where the Heavens Wept Fire",
-		towers: [
-			{
-				name: "MoFLS",
-				title: "Monument of Forever Luv Sic",
-				type: TowerType.Monument,
-				hidden: true,
-				difficulty: TowerDifficulty.Intense + TowerDifficultyIncrement.Low,
-				creatorUserIds: [UserId.ImNotFireMan123],
-			},
-		],
-	},
-	{
-		name: "A7NoReturn",
-		actNumber: 7,
-		title: "No Return",
-		towers: [],
-	},
-	{
-		name: "A8YouBastard",
-		actNumber: 8,
-		title: "You Bastard",
-		towers: [],
-	},
-	{
-		name: "A9BreakingPoint",
-		actNumber: 9,
-		title: "Breaking Point",
-		towers: [
-			{
-				name: "MoTP",
-				title: "Monument of Take Pilot",
-				type: TowerType.Monument,
-				hidden: true,
-				difficulty: TowerDifficulty.Remorseless + TowerDifficultyIncrement.Low,
-				creatorUserIds: [UserId.ImNotFireMan123],
-			},
-		],
-	},
+	// {
+	// 	name: "A2BloodyHands",
+	// 	actNumber: 2,
+	// 	title: "Bloody Hands",
+	// 	towers: [],
+	// },
+	// {
+	// 	name: "A3FeveredEyes",
+	// 	actNumber: 3,
+	// 	title: "Fevered Eyes",
+	// 	towers: [
+	// 		{
+	// 			name: "MoDHIaSRG",
+	// 			title: "Monument of Dear Hell, It's a Serious Roblox Game",
+	// 			type: TowerType.Monument,
+	// 			hidden: true,
+	// 			difficulty: TowerDifficulty.Challenging + TowerDifficultyIncrement.Low,
+	// 			creatorUserIds: [UserId.ImNotFireMan123],
+	// 		},
+	// 	],
+	// },
+	// {
+	// 	name: "A4BrokenDreams",
+	// 	actNumber: 4,
+	// 	title: "Broken Dreams",
+	// 	towers: [],
+	// },
+	// {
+	// 	name: "A5RunningInSpirals",
+	// 	actNumber: 5,
+	// 	title: "Running in Spirals",
+	// 	towers: [],
+	// },
+	// {
+	// 	name: "A6WhereTheHeavensWeptFire",
+	// 	actNumber: 6,
+	// 	title: "Where the Heavens Wept Fire",
+	// 	towers: [
+	// 		{
+	// 			name: "MoFLS",
+	// 			title: "Monument of Forever Luv Sic",
+	// 			type: TowerType.Monument,
+	// 			hidden: true,
+	// 			difficulty: TowerDifficulty.Intense + TowerDifficultyIncrement.Low,
+	// 			creatorUserIds: [UserId.ImNotFireMan123],
+	// 		},
+	// 	],
+	// },
+	// {
+	// 	name: "A7NoReturn",
+	// 	actNumber: 7,
+	// 	title: "No Return",
+	// 	towers: [],
+	// },
+	// {
+	// 	name: "A8YouBastard",
+	// 	actNumber: 8,
+	// 	title: "You Bastard",
+	// 	towers: [],
+	// },
+	// {
+	// 	name: "A9BreakingPoint",
+	// 	actNumber: 9,
+	// 	title: "Breaking Point",
+	// 	towers: [
+	// 		{
+	// 			name: "MoTP",
+	// 			title: "Monument of Take Pilot",
+	// 			type: TowerType.Monument,
+	// 			hidden: true,
+	// 			difficulty: TowerDifficulty.Remorseless + TowerDifficultyIncrement.Low,
+	// 			creatorUserIds: [UserId.ImNotFireMan123],
+	// 		},
+	// 	],
+	// },
 ];
 
 export const TOWERS = new Set<TowerInfo>();

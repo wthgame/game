@@ -2,6 +2,7 @@ import { effect } from "@rbxts/charm";
 import Vide, { source } from "@rbxts/vide";
 import { trace } from "core/shared/log";
 import { InferVideProps } from "ui-labs";
+import { useRem } from "../rem";
 import { Toggle } from "./Toggle";
 
 const CONTROLS = {
@@ -12,6 +13,8 @@ export = {
 	vide: Vide,
 	controls: CONTROLS,
 	story: ({ controls }: InferVideProps<typeof CONTROLS>) => {
+		useRem();
+
 		const toggled = source(controls.toggled());
 		effect(() => {
 			toggled(controls.toggled());

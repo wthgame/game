@@ -1,0 +1,7 @@
+base: roblox
+name: selene-std
+globals:
+    # allow require-by-string
+    require:
+        args:
+            - type: any

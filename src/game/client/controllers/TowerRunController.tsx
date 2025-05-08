@@ -43,9 +43,9 @@ export class TowerRunController implements OnInit {
 		if (tower) {
 			tower.instance.Parent = Workspace;
 			const trove = new Trove();
-			trace("LOADING MECHANICS");
+			trace("Loading mechanics");
 			this.mechanicController.loadMechanicsFromParent(trove, tower.mechanics);
-			trace("DONE LOADING MECHANICS");
+			trace("Finished loading mechanics");
 			this.isLoaded(true);
 			this.currentTower(info);
 		}

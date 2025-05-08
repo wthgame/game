@@ -1,27 +1,19 @@
-import Vide, { Derivable, effect, For, Node, PropsWithChildren, read, Show, source, untrack } from "@rbxts/vide";
-import { BaseProps, LayoutProps } from "../types";
-import { Padding, PaddingProps } from "./Padding";
-import { px } from "../px";
-import { TRIANGULAR_SURFACE_CORNER_SIZE_PX, TriangularSurface } from "./TriangularSurface";
-import { Text, TextStyle } from "./Text";
-import {
-	BUTTON_STYLE_BG_HOVER_PALLETE,
-	BUTTON_STYLE_BG_PALLETE,
-	BUTTON_STYLE_BORDER_PALLETE,
-	BUTTON_STYLE_RIPPLE_PALLETE,
-	BUTTON_STYLE_TEXT_STYLE,
-	ButtonProps,
-	ButtonStyle,
-} from "./Button";
-import { Palette, palette, PALLETES } from "../palette";
 import { useLifetime, useMotion } from "@rbxts/pretty-vide-utils";
+import Vide, { effect, read, Show, source, untrack } from "@rbxts/vide";
+import { palette, Palette } from "../palette";
+import { rem } from "../rem";
+import { fonts, TextSize } from "../styles";
+import { ButtonProps } from "./Button";
+import { Padding } from "./Padding";
+import { Text } from "./Text";
 import { TriangularSheen } from "./TriangularSheen";
+import { TriangularSurface } from "./TriangularSurface";
 
-const TRIANGULAR_BUTTON_RIPPLE_DURATION_SECONDS = 0.5;
+const RIPPLE_DURATION_SECONDS = 0.5;
 
 export interface TriangularButtonProps extends ButtonProps {}
 
-interface TriangularButtonRipple {
+interface TriangularRipple {
 	when: number;
 }
 
@@ -38,8 +30,8 @@ export function TriangularButton({
 	automaticSize = Enum.AutomaticSize.XY,
 
 	padding,
-	paddingX = () => new UDim(0, px(16)),
-	paddingY = () => new UDim(0, px(4)),
+	paddingX = () => new UDim(0, rem(2)),
+	paddingY = () => new UDim(0, rem(0.5)),
 	paddingTop,
 	paddingLeft,
 	paddingRight,
@@ -47,7 +39,12 @@ export function TriangularButton({
 
 	children,
 
-	buttonStyle,
+	bgColor = new Color3(0, 0, 0),
+	bgHoverColor = new Color3(1, 1, 1),
+	rippleColor = new Color3(1, 1, 1),
+	labelColor = new Color3(0, 0, 0),
+	labelSize = TextSize.Medium,
+	labelFont = fonts.serif.bold,
 	buttonLabel,
 	buttonIcon,
 	onClick,
@@ -56,21 +53,17 @@ export function TriangularButton({
 	const lifetime = useLifetime();
 	const isHovering = source(false);
 
-	const [bg, bgMotion] = useMotion(palette(BUTTON_STYLE_BG_HOVER_PALLETE[read(buttonStyle)]));
-	effect(() =>
-		bgMotion.spring(
-			palette((isHovering() ? BUTTON_STYLE_BG_HOVER_PALLETE : BUTTON_STYLE_BG_PALLETE)[read(buttonStyle)]),
-		),
-	);
+	const [bg, bgMotion] = useMotion(read(bgColor));
+	effect(() => bgMotion.spring(isHovering() ? read(bgHoverColor) : read(bgColor)));
 
-	const ripples = source(new Set<TriangularButtonRipple>());
+	const ripples = source(new Set<TriangularRipple>());
 	function createRipple() {
-		const r: TriangularButtonRipple = { when: untrack(lifetime) };
+		const r: TriangularRipple = { when: untrack(lifetime) };
 		const newRipples = ripples();
 		newRipples.add(r);
 		ripples(newRipples);
 		task.delay(
-			TRIANGULAR_BUTTON_RIPPLE_DURATION_SECONDS,
+			RIPPLE_DURATION_SECONDS,
 			(toRemove) => {
 				const updatedRipples = ripples();
 				updatedRipples.delete(toRemove);
@@ -97,7 +90,7 @@ export function TriangularButton({
 			}}
 			visibility={visibility}
 			color={bg}
-			radiusPx={TRIANGULAR_SURFACE_CORNER_SIZE_PX}
+			radius={1}
 			onHover={() => isHovering(true)}
 			onHoverEnd={() => isHovering(false)}
 		>
@@ -121,7 +114,7 @@ export function TriangularButton({
 				<Show
 					when={() => read(buttonLabel)}
 					children={() => (
-						<Text text={buttonLabel!} textStyle={() => BUTTON_STYLE_TEXT_STYLE[read(buttonStyle)]} />
+						<Text text={buttonLabel!} textColor={labelColor} font={labelFont} textSize={labelSize} />
 					)}
 				/>
 				{children}
@@ -131,7 +124,7 @@ export function TriangularButton({
 				const instances = [];
 				for (const { when } of ripples()) {
 					const rippleLifetime = () => lifetime() - when;
-					const rippleProgress = () => rippleLifetime() / TRIANGULAR_BUTTON_RIPPLE_DURATION_SECONDS;
+					const rippleProgress = () => rippleLifetime() / RIPPLE_DURATION_SECONDS;
 					instances.push(
 						<TriangularSurface
 							name="Ripple"
@@ -139,8 +132,8 @@ export function TriangularButton({
 							anchorPoint={new Vector2(0.5, 0.5)}
 							position={UDim2.fromScale(0.5, 0.5)}
 							visibility={() => 1 - math.abs(rippleProgress() - 1) * 0.1}
-							radiusPx={TRIANGULAR_SURFACE_CORNER_SIZE_PX}
-							color={() => palette(BUTTON_STYLE_RIPPLE_PALLETE[read(buttonStyle)])}
+							radius={1}
+							color={rippleColor}
 						/>,
 					);
 				}
@@ -149,3 +142,24 @@ export function TriangularButton({
 		</TriangularSurface>
 	);
 }
+
+export interface ThemedTriangularButtonProps
+	extends Omit<TriangularButtonProps, "bgColor" | "bgHoverColor" | "labelColor"> {}
+
+function createTriangularButtonWrapper(bg: keyof Palette, hover: keyof Palette, text: keyof Palette) {
+	return (props: ThemedTriangularButtonProps) => (
+		<TriangularButton
+			bgColor={() => palette(bg) as Color3}
+			bgHoverColor={() => palette(hover) as Color3}
+			rippleColor={() => palette(text) as Color3}
+			labelColor={() => palette(text) as Color3}
+			{...props}
+		>
+			{props.children}
+		</TriangularButton>
+	);
+}
+
+export const PrimaryTriangularButton = createTriangularButtonWrapper("text", "subtext1", "base");
+
+export const PlatinumTriangularButton = createTriangularButtonWrapper("platinumBase", "platinumHover", "platinumText");

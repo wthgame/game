@@ -15,7 +15,8 @@ local trove = require("./packages/trove")
 export type ActivationMode = "Touch" | "Prompt" | "Click" | "KeyCode"
 
 -- TODO: split Active to Enabled, for controlling if a mechanic can be activated
--- and Active, for if the mechanic should do something
+-- and Active, for if the mechanic should do something. Most likely will do
+-- after initial alpha
 local Active = attributes.attribute("Active", t.boolean, false)
 local ActivationMode: attributes.InstanceAttribute<ActivationMode> = (
 	attributes.attribute("ActivationMode", t.literal("Touch", "Prompt", "Click", "Control"))
@@ -123,19 +124,19 @@ local function connectActivationOnce<T>(
 					end
 				end)
 			end
-		elseif mode == "KeyCode" then
-			-- local inputTrove = trove:extend()
-			-- inputTrove:connect(connectTo:GetAttributeChangedSignal("ActivationKeyCode"), function()
-			-- 	local keycode = ActivationKeyCode(connectTo)
-			-- 	if keycode then
-			-- 		return connectToKeycodeInput(inputTrove, connectTo, onActivated)
-			-- 	end
-			-- 	inputTrove:clean()
-			-- end)
-			-- local keycode = ActivationKeyCode(connectTo)
-			-- if keycode then
-			-- 	connectToKeycodeInput(inputTrove, connectTo, onActivated)
-			-- end
+			-- elseif mode == "KeyCode" then
+			-- 	local inputTrove = activationTrove:extend()
+			-- 	inputTrove:connect(connectTo:GetAttributeChangedSignal("ActivationKeyCode"), function()
+			-- 		-- local keycode = ActivationKeyCode(connectTo)
+			-- 		-- if keycode then
+			-- 		-- 	-- return connectToKeycodeInput(inputTrove, connectTo, onActivated)
+			-- 		-- end
+			-- 		inputTrove:clean()
+			-- 	end)
+			-- 	-- local keycode = ActivationKeyCode(connectTo)
+			-- 	-- if keycode then
+			-- 	-- 	-- connectToKeycodeInput(inputTrove, connectTo, onActivated)
+			-- 	-- end
 		end
 	end
 end

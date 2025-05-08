@@ -1,96 +1,92 @@
-import Vide, { context, Derivable, read, source, untrack } from "@rbxts/vide";
+import ty from "@rbxts/libopen-ty";
+import { context, Derivable, read, source, untrack } from "@rbxts/vide";
 
-export interface Palette {
-	name: string;
+const tyColor3 = ty.Typeof("Color3");
+const Palette = ty
+	.Struct(
+		{ exhaustive: true },
+		{
+			name: ty.String,
 
-	border: Color3;
-	borderLight: Color3;
-	borderLighter: Color3;
-	borderLightest: Color3;
+			text: tyColor3,
+			subtext1: tyColor3,
+			subtext0: tyColor3,
+			overlay2: tyColor3,
+			overlay1: tyColor3,
+			overlay0: tyColor3,
+			surface2: tyColor3,
+			surface1: tyColor3,
+			surface0: tyColor3,
+			base: tyColor3,
+			mantle: tyColor3,
+			crust: tyColor3,
 
-	bg: Color3;
-	bgLight: Color3;
-	bgLighter: Color3;
-	bgLightest: Color3;
-	bgDark: Color3;
-	bgDarker: Color3;
-	bgDarkest: Color3;
+			platinumText: tyColor3,
+			platinumHover: tyColor3,
+			platinumBase: tyColor3,
+		},
+	)
+	.Nicknamed("Palette");
 
-	fg: Color3;
-	fgLight: Color3;
-	fgLighter: Color3;
-	fgLightest: Color3;
-	fgDark: Color3;
-	fgDarker: Color3;
-	fgDarkest: Color3;
+export interface Palette extends ty.Static<typeof Palette> {}
 
-	primary: Color3;
-	primaryLight: Color3;
-	primaryLighter: Color3;
-	primaryLightest: Color3;
+function createPalette(palette: { [K in keyof Palette]: Palette[K] | keyof Palette }): Readonly<Palette> {
+	palette = table.clone(palette);
+	for (const [key, value] of pairs(palette)) {
+		const referenced = palette[value as never];
+		if (referenced) palette[key] = referenced;
+	}
+	return table.freeze(Palette.CastOrError(palette));
 }
 
-export const WTH_GRAY_HUE = 200 / 360;
-export const WTH_GRAY_SATURATION = 0.05;
-export const WTH_PRIMARY_HUE = 40 / 360;
-export const WTH_PRIMARY_SATURATION = 0.75;
+const WTH_BASE_HUE = 30 / 360;
+const WTH_BASE_CHROMA = 1;
 
-export const PALLETES = {
-	dark: {
+const WTH_PLATINUM_HUE = 330 / 360;
+const WTH_PLATINUM_CHROMA = 1 / 12;
+
+export const PALLETES = table.freeze({
+	dark: createPalette({
 		name: "Dark",
 
-		border: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15 - 0.025),
-		borderLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25 - 0.025),
-		borderLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35 - 0.025),
-		borderLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.45 - 0.025),
-		bg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15),
-		bgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25),
-		bgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35),
-		bgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.45),
-		bgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.1),
-		bgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.05),
-		bgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.025),
-		fg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.8),
-		fgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.875),
-		fgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.95),
-		fgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 1),
-		fgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.65),
-		fgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.6),
-		fgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.55),
+		text: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 1),
+		subtext1: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.85),
+		subtext0: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA / 2, 0.8),
+		overlay2: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.65),
+		overlay1: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.55),
+		overlay0: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.5),
+		surface2: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.35),
+		surface1: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.3),
+		surface0: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.25),
+		base: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.15),
+		mantle: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.1),
+		crust: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.05),
 
-		primary: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.8),
-		primaryLight: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.85),
-		primaryLighter: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.9),
-		primaryLightest: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.95),
-	},
-	light: {
+		platinumBase: Color3.fromHSV(WTH_PLATINUM_HUE, WTH_PLATINUM_CHROMA, 0.75),
+		platinumHover: Color3.fromHSV(WTH_PLATINUM_HUE, WTH_PLATINUM_CHROMA, 0.8),
+		platinumText: Color3.fromHSV(WTH_PLATINUM_HUE, WTH_PLATINUM_CHROMA, 0.3),
+	}),
+	light: createPalette({
 		name: "Light",
 
-		border: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.8 - 0.025),
-		borderLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.875 - 0.025),
-		borderLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.95 - 0.025),
-		borderLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 1 - 0.025),
-		bg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.8),
-		bgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.875),
-		bgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.95),
-		bgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 1),
-		bgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.1),
-		bgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.05),
-		bgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.025),
-		fg: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15),
-		fgLight: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25),
-		fgLighter: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35),
-		fgLightest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.45),
-		fgDark: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.15 - 0.025),
-		fgDarker: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.25 - 0.025),
-		fgDarkest: Color3.fromHSV(WTH_GRAY_HUE, WTH_GRAY_SATURATION, 0.35 - 0.025),
+		text: Color3.fromRGB(214, 214, 214),
+		subtext1: Color3.fromRGB(194, 194, 194),
+		subtext0: Color3.fromRGB(173, 173, 173),
+		overlay2: Color3.fromRGB(153, 153, 153),
+		overlay1: Color3.fromRGB(132, 132, 132),
+		overlay0: Color3.fromRGB(112, 112, 112),
+		surface2: Color3.fromRGB(91, 91, 91),
+		surface1: Color3.fromRGB(71, 71, 71),
+		surface0: Color3.fromRGB(50, 50, 50),
+		base: Color3.fromRGB(30, 30, 30),
+		mantle: Color3.fromRGB(24, 24, 24),
+		crust: Color3.fromRGB(17, 17, 17),
 
-		primary: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.8),
-		primaryLight: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.85),
-		primaryLighter: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.9),
-		primaryLightest: Color3.fromHSV(WTH_PRIMARY_HUE, WTH_PRIMARY_SATURATION, 0.95),
-	},
-} satisfies Record<string, Palette>;
+		platinumBase: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.75),
+		platinumHover: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.8),
+		platinumText: Color3.fromHSV(WTH_BASE_HUE, WTH_BASE_CHROMA, 0.9),
+	}),
+} satisfies Record<string, Readonly<Palette>>);
 
 export const paletteValue = source(PALLETES.dark);
 export const currentPalette = context<Derivable<Palette>>(untrack(paletteValue));
