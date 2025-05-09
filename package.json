@@ -39,6 +39,7 @@
         "@rbxts/object-utils": "^1.0.4",
         "@rbxts/pretty-vide-utils": "^0.0.5",
         "@rbxts/ripple": "^0.9.3",
+        "@rbxts/rust-classes": "^0.13.0",
         "@rbxts/semver": "^1.0.0",
         "@rbxts/services": "^1.5.5",
         "@rbxts/sift": "^0.0.9",

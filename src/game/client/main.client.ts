@@ -8,8 +8,9 @@ import { info, setWTHAsDefaultLogger } from "core/shared/log";
 
 try {
 	setWTHAsDefaultLogger();
-	Flamework.addPaths("src/game/client/controllers");
 	Flamework.addPaths("src/core/client/controllers");
+	Flamework.addPaths("src/core/client/hook-managers");
+	Flamework.addPaths("src/game/client/controllers");
 	Flamework.ignite();
 	flameworkIgnited();
 

@@ -21,6 +21,7 @@
         "@rbxts/object-utils": "^1.0.4",
         "@rbxts/pretty-vide-utils": "^0.0.5",
         "@rbxts/ripple": "^0.9.3",
+        "@rbxts/rust-classes": "^0.13.0",
         "@rbxts/semver": "^1.0.0",
         "@rbxts/services": "^1.5.5",
         "@rbxts/sift": "^0.0.9",
@@ -121,6 +122,8 @@
     "@rbxts/pretty-vide-utils": ["@rbxts/pretty-vide-utils@0.0.5", "", { "dependencies": { "@rbxts/ripple": "^0.9.0", "@rbxts/services": "^1.5.1", "@rbxts/set-timeout": "^1.1.2", "@rbxts/vide": "^0.5.0" } }, "sha512-zPfuL7Qt5wEox9zh8XNjXnhb7SuqHtaLpPvBYPw/a8RnpIymCDhLY2J/mJUKAwTqVJxH+7opZIhw4C4MWa13bg=="],
 
     "@rbxts/ripple": ["@rbxts/ripple@0.9.3", "", {}, "sha512-GmwjQl7a8pvGPGQYLmaAcf2RBPpneOL5P1+U8CzTHt9tBhCdk0TEJ/MQoTv9JnHD62RMBE1jogQBvuGgl9VXAg=="],
+
+    "@rbxts/rust-classes": ["@rbxts/rust-classes@0.13.0", "", {}, "sha512-xbszbjccrRzwGMSIPoES3GlSg4XKCsTGb/J6B3UNo89+SBMFrWT/hZWf2zf3K1g2FJetOQg3W6xGMLfybJB1IA=="],
 
     "@rbxts/semver": ["@rbxts/semver@1.0.0", "", {}, "sha512-5BRIHf0gp2sZ0HAkDdN0e0JiODdjLeORyIs7yvEpOA4UaqVoYLqfQUG9TjG2dJK+tKfcZSRO3GsNeCr1Vz3ocQ=="],
 

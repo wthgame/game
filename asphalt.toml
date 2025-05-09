@@ -15,3 +15,8 @@ strip_extensions = true
 [inputs.assets]
 path = "assets/**/*"
 output_path = "src/core/shared"
+
+# temp until maau is stablized
+[inputs.audios]
+path = "audios/**/*"
+output_path = "src/core/shared"
