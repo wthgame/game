@@ -47,7 +47,7 @@ local function pressButton(trove: utils.Trove, btn: BasePart, activationTrove: u
 	idToButtonsPressed:add(id, btn)
 
 	if PlaySound(btn) then
-		utils.inferAndPlaySound(btn, utils.SOUND_ASSETS.button, "Press")
+		utils.inferAndPlaySound(btn, utils.AUDIO_ASSETS["core/towerSfx/button"], "Press")
 	end
 
 	local originalCFrame = btn.CFrame

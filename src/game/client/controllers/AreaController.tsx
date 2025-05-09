@@ -4,6 +4,7 @@ import { Players, Workspace } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
 import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
+import { BackgroundMusicController } from "core/client/controllers/BackgroundMusicController";
 import { LightingController, LightingPriority } from "core/client/controllers/LightingController";
 import { MechanicController } from "core/client/controllers/MechanicController";
 // import { ButtonStyle } from "core/client/_ui/components/Button";
@@ -16,7 +17,7 @@ import { rem, useRem } from "core/client/ui/rem";
 import { fonts } from "core/client/ui/styles";
 import { trace } from "core/shared/log";
 import { areas } from "game/client/net";
-import { AreaInfo, AREAS } from "game/shared/areas";
+import { AreaInfo, AreaInstance, AREAS } from "game/shared/areas";
 
 export interface AreaViewProps {
 	areas: Derivable<AreaInfo[]>;
@@ -69,6 +70,7 @@ export class AreaController implements OnStart {
 	constructor(
 		private mechanicController: MechanicController,
 		private lightingController: LightingController,
+		private backgroundMusicController: BackgroundMusicController,
 	) {}
 
 	onStart(): void {
@@ -107,7 +109,7 @@ export class AreaController implements OnStart {
 
 		trace(`Requesting to load area ${area.name}`);
 
-		const areaInstance = areas.loadArea.invoke(area.name).expect();
+		const areaInstance = areas.loadArea.invoke(area.name).expect() as AreaInstance;
 
 		trace("Got area");
 		const clone = areaInstance.Clone();
@@ -117,12 +119,16 @@ export class AreaController implements OnStart {
 		areas.confirmAreaLoaded.fire();
 
 		const trove = new Trove();
+		trove.add(clone);
 
 		const lighting = clone.FindFirstChild("Lighting");
 		if (lighting) {
 			trace("Setting area lighting");
 			this.lightingController.setLightingAtPriority(lighting.GetAttributes() as never, LightingPriority.Area);
 		}
+
+		trace("Setting default background music");
+		this.backgroundMusicController.defaultSound(clone.DefaultBackgroundMusic);
 
 		trace("Loading mechanics");
 		await this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));

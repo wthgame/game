@@ -6,7 +6,7 @@
 local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
 
-local assets = require("./assets")
+local audios = require(game:GetService("ReplicatedStorage"):WaitForChild("WTHSharedCore"):WaitForChild("audios"))
 local types = require("./types")
 
 export type PlaySoundConfig = {
@@ -14,7 +14,7 @@ export type PlaySoundConfig = {
 	volume: number?,
 }
 
-local SOUND_ASSETS = assets.SOUND_ASSETS
+local AUDIO_ASSETS = table.freeze(table.clone(audios))
 local DELETE_SOUNDS_AFTER_SECONDS = 1
 local DEFAULT_PLAY_SOUND_CONFIG: types.PlaySoundConfig = {
 	volume = 1,
@@ -56,7 +56,7 @@ end
 --- Plays a sound from the game's assets module. See the sounds table in the
 --- Replicated.WTHShared.assets module for what sounds can be played.
 local function playSoundFromGameAssets(key: string, from: Instance?, config: types.PlaySoundConfig?)
-	local asset = assert(SOUND_ASSETS[key], `No sound exists in game assets called "{key}"`)
+	local asset = assert(AUDIO_ASSETS[key], `No sound exists in game assets called "{key}"`)
 	local speed = if config and config.speed then config.speed else DEFAULT_PLAY_SOUND_CONFIG.speed :: number
 
 	local sound = Instance.new("Sound")
@@ -100,7 +100,7 @@ local function inferAndPlaySound(
 	local realSoundAttribute = instance:GetAttribute(searchFor)
 
 	if realSoundAttribute and typeof(realSoundAttribute) == "string" then
-		playSound(SOUND_ASSETS[realSoundAttribute] or realSoundAttribute, spatial and instance or nil, config)
+		playSound(AUDIO_ASSETS[realSoundAttribute] or realSoundAttribute, spatial and instance or nil, config)
 		return
 	end
 
@@ -135,7 +135,7 @@ local function inferAndPlaySound(
 	end
 end
 
-for key, asset in pairs(SOUND_ASSETS) do
+for key, asset in pairs(AUDIO_ASSETS) do
 	task.spawn(function(key, asset)
 		local preloadSound = Instance.new("Sound")
 		preloadSound.Name = `Mechanics_preloadSound_${key}`
@@ -152,7 +152,7 @@ for key, asset in pairs(SOUND_ASSETS) do
 end
 
 return {
-	SOUND_ASSETS = SOUND_ASSETS,
+	AUDIO_ASSETS = AUDIO_ASSETS,
 	inferAndPlaySound = inferAndPlaySound,
 	playSound = playSound,
 	playSoundFromGameAssets = playSoundFromGameAssets,

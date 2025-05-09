@@ -89,7 +89,7 @@ function self:run(kit: utils.Kit)
 			launch(velocityTrove, root, Power(instance), maxAxesForce, faceVector)
 
 			if PlaySound(instance) then
-				utils.inferAndPlaySound(instance, utils.SOUND_ASSETS.dash, "LaunchSound")
+				utils.inferAndPlaySound(instance, utils.AUDIO_ASSETS["core/towerSfx/button"], "LaunchSound")
 			end
 
 			if EmitLauncherParticle(instance) then

@@ -2,7 +2,9 @@ import { Service } from "@flamework/core";
 import { Lazy } from "@rbxts/lazy";
 import Maybe from "@rbxts/libopen-maybe";
 import Make from "@rbxts/make";
+import audios from "core/shared/audios";
 import { trace, warn } from "core/shared/log";
+import { BackgroundMusicZoneInstance } from "core/shared/types";
 import { NAME_TO_TOWER, TowerInfo, TowerInstance } from "game/shared/areas";
 
 export interface Tower {
@@ -21,7 +23,8 @@ const TOWER_MECHANICS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "To
 
 // TODO: remove link if not in studio
 const NO_ETOH =
-	"EToH kits with client objects aren't supported in Welcome To Hell, see section 1.1 'WTH for EToH' in The Tower Building Book:" +
+	"EToH kits with standard client objects aren't supported in Welcome To Hell. " +
+	"See section 1.1 'WTH for EToH' in The Tower Building Book:" +
 	"\nhttps://welcome-to-hell.com/go/ttbb-1.1";
 
 function castToTowerInstance(instance: Instance): Maybe.Maybe<TowerInstance> {
@@ -29,6 +32,7 @@ function castToTowerInstance(instance: Instance): Maybe.Maybe<TowerInstance> {
 	const decoration = instance.FindFirstChild("Decoration");
 	const obby = instance.FindFirstChild("Obby");
 	const spawn = instance.FindFirstChild("Spawn");
+	const bgmZones = instance.FindFirstChild("BackgroundMusicZones");
 
 	if (!mechanics) {
 		const clientSidedObjects = instance.FindFirstChild("ClientSidedObjects");
@@ -40,6 +44,7 @@ function castToTowerInstance(instance: Instance): Maybe.Maybe<TowerInstance> {
 	if (!obby) return Maybe.None("No Obby folder found");
 	if (!spawn) return Maybe.None("No Spawn found");
 	if (!spawn.IsA("BasePart")) return Maybe.None(`Expected Spawn to be a BasePart, got ${spawn.ClassName}`);
+	if (!bgmZones) return Maybe.None("No BackgroundMusicZones found");
 
 	return Maybe.Some(instance as TowerInstance);
 }
@@ -86,6 +91,17 @@ export class TowerService {
 		towerInstance.Decoration.Parent = TOWER_DECORATION_SERVER_STORAGE.getValue();
 		towerInstance.Mechanics.Parent = TOWER_MECHANICS_SERVER_STORAGE.getValue();
 		// towerInstance.Parent = TOWERS_SERVER_STORAGE.getValue();
+
+		for (const zone of towerInstance.BackgroundMusicZones.GetDescendants()) {
+			if (BackgroundMusicZoneInstance(zone)) {
+				zone.Sound.SetAttribute("OriginalVolume", zone.Sound.Volume);
+				const assetToUse = audios[zone.Sound.GetAttribute("UseAudioAsset") as never] as string;
+				if (assetToUse) {
+					trace("Using audio asset", assetToUse, "for", instance.GetFullName());
+					zone.Sound.SoundId = assetToUse;
+				}
+			}
+		}
 
 		this.towers.add(tower);
 		this.infoToTower.set(info, tower);

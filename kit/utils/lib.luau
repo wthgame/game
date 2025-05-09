@@ -91,17 +91,17 @@ local utils = table.freeze({
 	isLocalPlayerCharacter = character.isLocalPlayerCharacter,
 	isCharacterAlive = character.isCharacterAlive,
 
+	AUDIO_ASSETS = audio.AUDIO_ASSETS,
+	inferAndPlaySound = audio.inferAndPlaySound,
+	playSound = audio.playSound,
+	playSoundFromGameAssets = audio.playSoundFromGameAssets,
+
 	tweenInfoFromTweenConfig = animation.tweenInfoFromTweenConfig,
 	tweenConfigFromAttributes = animation.tweenConfigFromAttributes,
 	tween = animation.tween,
 	tweenMaybeInstant = animation.tweenMaybeInstant,
 
-	UI_ASSETS = assets.UI_ASSETS,
-	SOUND_ASSETS = assets.SOUND_ASSETS,
-
-	inferAndPlaySound = audio.inferAndPlaySound,
-	playSound = audio.playSound,
-	playSoundFromGameAssets = audio.playSoundFromGameAssets,
+	UI_ASSETS = assets.IMAGE_ASSETS,
 
 	weld = physics.weld,
 	populateConstraintAttachments = physics.populateConstraintAttachments,

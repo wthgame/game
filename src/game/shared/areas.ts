@@ -23,6 +23,7 @@ export interface TowerInstance extends Instance {
 	Decoration: Instance;
 	Frame: Instance;
 	Spawn: BasePart;
+	BackgroundMusicZones: Instance;
 }
 
 export interface AreaInfo {
@@ -40,6 +41,8 @@ export interface AreaInstance extends Instance {
 	Towers?: Instance;
 	Lobby: Instance;
 	Spawn: BasePart;
+	Lighting?: Configuration;
+	DefaultBackgroundMusic: Sound;
 }
 
 // ---

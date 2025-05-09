@@ -2,7 +2,7 @@ import Vide, { Derivable, PropsWithChildren, read } from "@rbxts/vide";
 import assets from "core/shared/assets";
 import { BaseProps, LayoutProps } from "../types";
 
-export const TRIANGULAR_SHEEN_IMAGE = assets.ui.triangularBorderSheen;
+export const TRIANGULAR_SHEEN_IMAGE = assets["ui/triangularBorderSheen"];
 export const TRIANGULAR_SHEEN_SLICE_CENTER = new Rect(new Vector2(100, 100), new Vector2(412, 412));
 
 export interface TriangularSheenProps extends BaseProps, LayoutProps, PropsWithChildren {

@@ -46,7 +46,7 @@ local function trySpawn(trove: utils.Trove, spawner: BasePart, activationTrove: 
 	activationTrove:clean()
 
 	if PlaySound(spawner) then
-		utils.inferAndPlaySound(spawner, utils.SOUND_ASSETS.button, "Press")
+		utils.inferAndPlaySound(spawner, utils.AUDIO_ASSETS["core/towerSfx/button"], "Press")
 	end
 
 	if spawner.Anchored then

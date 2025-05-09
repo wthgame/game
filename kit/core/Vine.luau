@@ -85,7 +85,7 @@ local function doVine(trove: utils.Trove, vineInstance: VineInstance, activation
 	end
 
 	if PlayGrabSound(vineInstance) then
-		utils.inferAndPlaySound(vineInstance, utils.SOUND_ASSETS.vineGrab, "GrabSound")
+		utils.inferAndPlaySound(vineInstance, utils.AUDIO_ASSETS["core/towerSfx/button"], "GrabSound")
 	end
 
 	local function dismount()
@@ -97,7 +97,7 @@ local function doVine(trove: utils.Trove, vineInstance: VineInstance, activation
 		end
 
 		if PlayJumpSound(vineInstance) then
-			utils.inferAndPlaySound(vineInstance, utils.SOUND_ASSETS.jump, "JumpSound")
+			utils.inferAndPlaySound(vineInstance, utils.AUDIO_ASSETS["core/towerSfx/jump"], "JumpSound")
 		end
 
 		task.delay(Cooldown(vineInstance), function(vineInstance)

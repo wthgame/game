@@ -3,6 +3,7 @@ import { Lazy } from "@rbxts/lazy";
 import Make from "@rbxts/make";
 import { Workspace } from "@rbxts/services";
 import { t } from "@rbxts/t";
+import audios from "core/shared/audios";
 import { Blink } from "core/shared/decorators";
 import { trace, warn } from "core/shared/log";
 import { areas } from "game/server/net";
@@ -28,7 +29,9 @@ const isAreaInstance = t.children({
 	Towers: t.optional(t.Instance),
 	Lobby: t.Instance,
 	Spawn: t.instanceIsA("BasePart"),
-}) as t.check<AreaInstance>;
+	Lighting: t.optional(t.instanceIsA("Configuration")),
+	DefaultBackgroundMusic: t.instanceIsA("Sound"),
+}) satisfies t.check<AreaInstance>;
 
 const CONFIRM_AREA_LOADED_TIMEOUT = 5;
 const AREAS_WORKSPACE = new Lazy(() => Workspace.WaitForChild("Areas"));
@@ -73,6 +76,13 @@ export class AreaService implements OnInit {
 			mechanics: instance.Mechanics,
 			spawn: instance.Spawn,
 		};
+
+		const assetToUse = audios[instance.DefaultBackgroundMusic.GetAttribute("UseAudioAsset") as never] as string;
+		if (assetToUse) {
+			trace("Using audio asset", assetToUse, "for", instance.GetFullName());
+			instance.DefaultBackgroundMusic.SoundId = assetToUse;
+		}
+		instance.DefaultBackgroundMusic.SetAttribute("OriginalVolume", instance.DefaultBackgroundMusic.Volume);
 
 		const towers = instance.Towers;
 		if (towers) {

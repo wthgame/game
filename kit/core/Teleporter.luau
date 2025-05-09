@@ -55,7 +55,7 @@ local function teleport(trove: utils.Trove, teleporter: BasePart)
 	local targetCFrame = targetDestination:GetPivot() * utils.intoCFrameOffset(TeleporterOffset(targetDestination))
 
 	if PlaySound(teleporter) then
-		utils.inferAndPlaySound(teleporter, utils.SOUND_ASSETS.teleport, "TeleportSound")
+		utils.inferAndPlaySound(teleporter, utils.AUDIO_ASSETS["core/towerSfx/teleport"], "TeleportSound")
 	end
 
 	local config = utils.tweenConfigFromAttributes(teleporter, "Transition")

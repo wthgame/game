@@ -1,19 +1,15 @@
 import { Controller, OnStart } from "@flamework/core";
-import { atom, computed } from "@rbxts/charm";
+import { atom, computed, effect } from "@rbxts/charm";
 import ty from "@rbxts/libopen-ty";
 import { Option } from "@rbxts/rust-classes";
 import { CollectionService, MarketplaceService } from "@rbxts/services";
-import { t } from "@rbxts/t";
+import { trace } from "core/shared/log";
+import { BackgroundMusicZoneInstance } from "core/shared/types";
 import { OnPreRender } from "../hook-managers/RenderHookManager";
 import { CharacterController } from "./CharacterController";
 import { addMechanicBinding } from "./MechanicController/bindings";
 
-const BackgroundMusicZoneInstance = t.children({
-	Part: t.instanceIsA("BasePart"),
-	Sound: t.instanceIsA("Sound"),
-});
-
-export interface BackgroundMusicZoneInstance extends t.static<typeof BackgroundMusicZoneInstance> {}
+export const LOADED_ZONE_TAG = "LoadedBackgroundMusicZone";
 
 function isPointInBounds(point: CFrame, boundsCFrame: CFrame, boundsSize: Vector3): boolean {
 	const relativeCFrame = boundsCFrame.ToObjectSpace(point);
@@ -52,7 +48,7 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 			// some audio may not be number ids, ie. audios synced with
 			// maau or asphalt
 			const id = tonumber(nowPlaying.SoundId.gsub("rbxassetid://", "")[0]);
-			if (id) return Option.some(id);
+			if (id !== undefined) return Option.some(id);
 		}
 		return Option.none();
 	});
@@ -100,6 +96,8 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 		// addMechanicBinding("@core/BackgroundMusicController/transitionEasingDirection", (style) =>
 		// 	this.transitionEasingDirection(EasingDirection.CastOrError(style)),
 		// );
+
+		effect(() => trace("Now playing", this.nameOfNowPlaying()));
 	}
 
 	onPreRender(dt: number): void {
@@ -109,21 +107,25 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 		const root = this.characterController.getMaybeRoot();
 		if (!root) return;
 
-		const loadedZones = CollectionService.GetTagged("LoadedBackgroundMusicZone");
+		const loadedZones = CollectionService.GetTagged(LOADED_ZONE_TAG);
+		print(loadedZones);
 
 		let prioritizedZone: Maybe<BackgroundMusicZoneInstance>;
 		for (const zone of loadedZones) {
-			assert(BackgroundMusicZoneInstance(zone));
-			for (const part of zone.GetDescendants()) {
-				const prioritize =
-					this.priorityOf(zone) > (prioritizedZone ? this.priorityOf(prioritizedZone) : math.huge);
-				if (prioritize && part.IsA("BasePart") && isPointInBounds(root.CFrame, part.CFrame, part.Size)) {
-					prioritizedZone = zone;
+			if (BackgroundMusicZoneInstance(zone)) {
+				for (const part of zone.GetDescendants()) {
+					const prioritize =
+						this.priorityOf(zone) > (prioritizedZone ? this.priorityOf(prioritizedZone) : -math.huge);
+					if (prioritize && part.IsA("BasePart") && isPointInBounds(root.CFrame, part.CFrame, part.Size)) {
+						prioritizedZone = zone;
+						break;
+					}
 				}
 			}
 		}
 
 		const prioritizedSound = prioritizedZone ? prioritizedZone.Sound : this.defaultSound();
+		print(prioritizedSound ? prioritizedSound.GetFullName() : "no sound");
 		if (nowPlaying !== prioritizedSound) {
 			this.lastPlaying(nowPlaying);
 			if (nowPlaying) this.toFade.add(nowPlaying);

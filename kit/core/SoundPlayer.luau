@@ -5,7 +5,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
 
-local PlayFromAssets = utils.attribute("PlayFromAssets", utils.t.keyOf(utils.SOUND_ASSETS) :: utils.check<string>)
+local PlayFromAssets = utils.attribute("PlayFromAssets", utils.t.keyOf(utils.AUDIO_ASSETS) :: utils.check<string>)
 local Spatial = utils.attribute("Spatial", utils.t.boolean, false)
 local Volume = utils.attribute("Volume", utils.t.numberPositive)
 local Speed = utils.attribute("Speed", utils.t.numberPositive)

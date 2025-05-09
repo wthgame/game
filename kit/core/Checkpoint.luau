@@ -53,7 +53,7 @@ local function activateCheckpoint(trove: utils.Trove, checkpoint: BasePart, acti
 	updateCheckpoint:Fire()
 	tryEmitCheckpointParticles(checkpoint)
 	if PlaySound(checkpoint) then
-		utils.inferAndPlaySound(checkpoint, utils.SOUND_ASSETS.heartbeat, "Sound")
+		utils.inferAndPlaySound(checkpoint, utils.AUDIO_ASSETS["core/towerSfx/button"], "Sound")
 	end
 end
 
