@@ -13,9 +13,8 @@ export declare namespace areas {
 export declare namespace towers {
 	type TowerRunType = "Standard" | "Practice"
 	type StartTowerRun = { towerType: "Standard" | "Practice", towerName: string }
-	type StartTowerRunResult = { instance: Instance, mechanics: Instance }
 	export const startTowerRun: {
-		invoke: (Value: { towerType: "Standard" | "Practice", towerName: string }) => Promise<{ instance: Instance, mechanics: Instance } | undefined>
+		invoke: (Value: { towerType: "Standard" | "Practice", towerName: string }) => Promise<Instance | undefined>
 	}
 	export const requestDecorationInTower: {
 		invoke: (Value: void) => Promise<Instance>

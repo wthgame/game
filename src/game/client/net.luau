@@ -158,7 +158,6 @@ Events.Unreliable[0] = {}
 Queue.Unreliable[0] = table.create(256)
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
-export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
 local function areas_WriteFUNCTION_DATA_loadArea(Value: string, InvocationIdentifier: number): ()
 	-- Allocate BLOCK: 4 bytes
 	local BLOCK_START = Allocate(4)
@@ -208,24 +207,21 @@ local function towers_WriteFUNCTION_DATA_startTowerRun(Value: { towerType: ("Sta
 	buffer.writestring(SendBuffer, SendOffset, Value.towerName, Length)
 end
 
-local function towers_ReadFUNCTION_RETURN_startTowerRun(): ({ instance: Instance, mechanics: Instance }?)
-	-- Read BLOCK: 2 bytes
-	local BLOCK_START = Read(2)
+local function towers_ReadFUNCTION_RETURN_startTowerRun(): (Instance?)
+	-- Read BLOCK: 1 bytes
+	local BLOCK_START = Read(1)
 	local Success = buffer.readu8(RecieveBuffer, BLOCK_START + 0)
 	if Success ~= 1 then
 		error("Server encountered an error.")
 	end
 	local Value
-	if buffer.readu8(RecieveBuffer, BLOCK_START + 1) == 1 then
-		Value = {} :: any
+	RecieveInstanceCursor += 1
+	if typeof(RecieveInstances[RecieveInstanceCursor]) == "Instance" then
+		RecieveInstanceCursor -= 1
 		RecieveInstanceCursor += 1
-		Value.instance = RecieveInstances[RecieveInstanceCursor]
-		if typeof(Value.instance) ~= "Instance" then error(`Expected an Instance, got {typeof(Value.instance)} instead.`) end
-		if not Value.instance:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.instance.ClassName}" instead.`) end
-		RecieveInstanceCursor += 1
-		Value.mechanics = RecieveInstances[RecieveInstanceCursor]
-		if typeof(Value.mechanics) ~= "Instance" then error(`Expected an Instance, got {typeof(Value.mechanics)} instead.`) end
-		if not Value.mechanics:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.mechanics.ClassName}" instead.`) end
+		Value = RecieveInstances[RecieveInstanceCursor]
+		if typeof(Value) ~= "Instance" then error(`Expected an Instance, got {typeof(Value)} instead.`) end
+		if not Value:IsA("Instance") then error(`Expected an Instance of type "Instance", got "{Value.ClassName}" instead.`) end
 	end
 	return Value
 end
@@ -419,7 +415,7 @@ local Returns = table.freeze({
 					OnCancel(function ()
 						Calls[InvocationIdentifier] = nil
 					end)
-					local Success, ReturnValue: { instance: Instance, mechanics: Instance }? = coroutine.yield()
+					local Success, ReturnValue: Instance? = coroutine.yield()
 					if Success ~= true then
 						Reject("There was an exception while processing \"startTowerRun\".")
 						return 

@@ -2,7 +2,7 @@ import { OnTick, Service } from "@flamework/core";
 import { Blink } from "core/shared/decorators";
 import { trace, warn } from "core/shared/log";
 import { towers } from "game/server/net";
-import { StartTowerRun, StartTowerRunResult } from "game/shared/types";
+import { StartTowerRun } from "game/shared/types";
 import { PlayerService } from "./PlayerService";
 import { TowerService } from "./TowerService";
 
@@ -57,11 +57,6 @@ export class TowerRunService implements OnTick {
 		bgmZones.Parent = towerInstance;
 		towerInstance.Parent = player;
 
-		const result: StartTowerRunResult = {
-			instance: towerInstance,
-			mechanics: mechanics,
-		};
-
 		// Just in case the player is doing some stupid respawning bs
 		player.LoadCharacter();
 		const character = player.Character || player.CharacterAdded.Wait()[0];
@@ -71,6 +66,6 @@ export class TowerRunService implements OnTick {
 
 		this.playerService.setInfo(player, "isLoadingTower", false);
 
-		return result;
+		return towerInstance;
 	}
 }

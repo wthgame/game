@@ -1,5 +1,6 @@
 import { callMethodOnDependency } from "@rbxts/flamework-meta-utils";
 import { onFlameworkIgnited } from "core/shared/flamework";
+import { info } from "./log";
 
 export interface BlinkFunctionProps {
 	ratelimit?: unknown;
@@ -24,5 +25,26 @@ export function Blink<Args extends unknown[] = unknown[], Returns = unknown>(
 		descriptor: TypedPropertyDescriptor<(this: unknown, ...args: Args) => Returns>,
 	) => {
 		onFlameworkIgnited(() => callback.on((...args: Args) => callMethodOnDependency(ctor, descriptor, ...args)));
+	};
+}
+
+export function LogBenchmark<Args extends unknown[] = unknown[]>(
+	formatter?: (methodName: string, msElapsed: number, ...args: Args) => string,
+) {
+	return (
+		ctor: object,
+		propertyKey: string,
+		descriptor: TypedPropertyDescriptor<(this: unknown, ...args: Args) => unknown>,
+	) => {
+		const object = <Record<string, Callback>>ctor;
+		formatter ??= (name, elapsed, ..._) => `Method "${name}" took ${string.format("%.2f", elapsed)} ms to execute.`;
+		object[propertyKey] = function (_: unknown, ...args: Args) {
+			const startTime = os.clock();
+			const result = descriptor.value(_, ...args);
+			const endTime = os.clock();
+			const elapsed = (endTime - startTime) * 1000;
+			info(formatter!(propertyKey, elapsed, ...args));
+			return result;
+		};
 	};
 }

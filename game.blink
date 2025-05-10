@@ -27,15 +27,10 @@ scope towers {
         towerName: string
     }
 
-    struct StartTowerRunResult {
-        instance: Instance,
-        mechanics: Instance,
-    }
-
     function startTowerRun {
         yield: Promise,
         data: StartTowerRun,
-        return: StartTowerRunResult?
+        return: Instance?
     }
 
     function requestDecorationInTower {

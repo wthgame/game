@@ -159,7 +159,6 @@ Queue.Reliable[2] = table.create(256)
 Queue.Reliable[3] = table.create(256)
 export type towers_TowerRunType = ("Standard" | "Practice")
 export type towers_StartTowerRun = { towerType: ("Standard" | "Practice"), towerName: string }
-export type towers_StartTowerRunResult = { instance: Instance, mechanics: Instance }
 local function areas_ReadFUNCTION_DATA_loadArea(): (string)
 	-- Read BLOCK: 2 bytes
 	local BLOCK_START = Read(2)
@@ -199,17 +198,13 @@ local function towers_ReadFUNCTION_DATA_startTowerRun(): ({ towerType: ("Standar
 	return Value
 end
 
-local function towers_WriteFUNCTION_RETURN_startTowerRun(Value: { instance: Instance, mechanics: Instance }?, InvocationIdentifier: number): ()
-	-- Allocate BLOCK: 4 bytes
-	local BLOCK_START = Allocate(4)
+local function towers_WriteFUNCTION_RETURN_startTowerRun(Value: Instance?, InvocationIdentifier: number): ()
+	-- Allocate BLOCK: 3 bytes
+	local BLOCK_START = Allocate(3)
 	buffer.writeu8(SendBuffer, BLOCK_START + 0, 2)
 	buffer.writeu8(SendBuffer, BLOCK_START + 1, InvocationIdentifier)
 	buffer.writeu8(SendBuffer, BLOCK_START + 2, 1)
-	buffer.writeu8(SendBuffer, BLOCK_START + 3, Value ~= nil and 1 or 0)
-	if Value ~= nil then
-		table.insert(SendInstances, Value.instance or Null)
-		table.insert(SendInstances, Value.mechanics or Null)
-	end
+	table.insert(SendInstances, Value or Null)
 end
 
 local function towers_ReadFUNCTION_DATA_requestDecorationInTower(): (nil)
@@ -432,9 +427,9 @@ local Returns = table.freeze({
 	},
 	towers = {
 		startTowerRun = {
-		on = function(Listener: (Player, { towerType: ("Standard" | "Practice"), towerName: string }) -> ({ instance: Instance, mechanics: Instance }?)): ()
+		on = function(Listener: (Player, { towerType: ("Standard" | "Practice"), towerName: string }) -> (Instance?)): ()
 			Events.Reliable[2] = function(Player: Player, Value: { towerType: ("Standard" | "Practice"), towerName: string }, InvocationIdentifier: number): ()
-				local ReturnValue: { instance: Instance, mechanics: Instance }?;
+				local ReturnValue: Instance?;
 				local Success, Error = pcall(function ()
 					ReturnValue = Listener(Player, Value)
 				end)

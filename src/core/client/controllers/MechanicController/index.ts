@@ -5,6 +5,7 @@ import { ReplicatedStorage, RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
 import { connectActivation } from "core/../../kit/utils";
+import { LogBenchmark } from "core/shared/decorators";
 import { trace, warn } from "core/shared/log";
 
 export class InstanceTag {
@@ -91,6 +92,7 @@ export class MechanicController implements OnInit {
 		}
 	}
 
+	@LogBenchmark()
 	async loadMechanicsFromParent(trove: Trove, parent: Instance) {
 		const tags = new Set<InstanceTag>();
 		const onRenderCallbacks = new Array<(trove: Trove, dt: number) => void>();

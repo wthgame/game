@@ -15,6 +15,7 @@ import { PrimaryTriangularButton } from "core/client/ui/components/TriangularBut
 import { palette } from "core/client/ui/palette";
 import { rem, useRem } from "core/client/ui/rem";
 import { fonts } from "core/client/ui/styles";
+import { LogBenchmark } from "core/shared/decorators";
 import { trace } from "core/shared/log";
 import { areas } from "game/client/net";
 import { AreaInfo, AreaInstance, AREAS } from "game/shared/areas";
@@ -86,23 +87,7 @@ export class AreaController implements OnStart {
 		}, Players.LocalPlayer.PlayerGui);
 	}
 
-	private async loadAreaMechanics(trove: Trove, mechanics: Instance) {}
-
-	// private async setAreaServices(trove: Trove, areaInstance: Instance) {
-	// 	trace("Setting area services");
-	// 	const services = areaInstance.FindFirstChild("Services");
-	// 	if (services) {
-	// 		for (const s of services.GetChildren()) {
-	// 			const realService = game.GetService(s.Name as never);
-	// 			for (const [property, value] of pairs(s.GetAttributes())) {
-	// 				(realService as Map<unknown, unknown>).set(property, value);
-	// 			}
-	// 			for (const child of s.GetChildren()) trove.add(child).Parent = realService;
-	// 		}
-	// 	}
-	// 	trace("Finished setting area services");
-	// }
-
+	@LogBenchmark()
 	async loadArea(area: AreaInfo) {
 		if (this.isLoadingArea) return;
 		this.isLoadingArea = true;
