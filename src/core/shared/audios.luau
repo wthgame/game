@@ -14,6 +14,7 @@ local audios = {
 	["core/towerSfx/vineGrab"] = "rbxasset://.asphalt-welcome-to-hell/core/towerSfx/vineGrab.mp3",
 	["game/ost/001Title"] = "rbxasset://.asphalt-welcome-to-hell/game/ost/001Title.wav",
 	["game/ost/003Deathbed"] = "rbxasset://.asphalt-welcome-to-hell/game/ost/003Deathbed.mp3",
+	["game/ost/004DeepDeepBeneathTheCaelum"] = "rbxasset://.asphalt-welcome-to-hell/game/ost/004DeepDeepBeneathTheCaelum.mp3",
 	["game/ost/007MoltenHeart"] = "rbxasset://.asphalt-welcome-to-hell/game/ost/007MoltenHeart.mp3",
 }
 

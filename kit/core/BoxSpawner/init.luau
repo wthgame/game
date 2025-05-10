@@ -24,7 +24,6 @@ local debouncedSpawners: utils.Set<BasePart> = {}
 
 local function spawnBoxesWithId(trove: utils.Trove, id: string)
 	for box in idToBox:get(id) do
-		print(box)
 		local clonedBox = trove:clone(box)
 		clonedBox.Parent = workspace
 	end

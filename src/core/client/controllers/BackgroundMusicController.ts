@@ -108,7 +108,6 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 		if (!root) return;
 
 		const loadedZones = CollectionService.GetTagged(LOADED_ZONE_TAG);
-		print(loadedZones);
 
 		let prioritizedZone: Maybe<BackgroundMusicZoneInstance>;
 		for (const zone of loadedZones) {
@@ -125,7 +124,6 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 		}
 
 		const prioritizedSound = prioritizedZone ? prioritizedZone.Sound : this.defaultSound();
-		print(prioritizedSound ? prioritizedSound.GetFullName() : "no sound");
 		if (nowPlaying !== prioritizedSound) {
 			this.lastPlaying(nowPlaying);
 			if (nowPlaying) this.toFade.add(nowPlaying);

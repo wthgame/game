@@ -25,7 +25,6 @@ local function destinationsOfId(id: string)
 	local destinations = idToDestination:get(id)
 	local sorted = {}
 	for d in destinations do
-		-- print(d)
 		local index = PhysicMoverIndex(d) or tonumber(d.Name)
 		assert(index, `Unexpected PhysicMoverPosition {d:GetFullName()}`)
 		sorted[index] = d
@@ -63,7 +62,6 @@ function self:run(kit: utils.Kit)
 			local id = PhysicMoverId(mover)
 			if id then
 				local positions = destinationsOfId(id)
-				print(positions)
 				currentIndex += 1
 				if currentIndex > #positions then
 					currentIndex = 1
@@ -87,7 +85,6 @@ function self:run(kit: utils.Kit)
 		end
 	end)
 	PhysicMoverDestination:onLoaded(function(trove, destination)
-		-- print(destination)
 		local id = PhysicMoverId(destination)
 		if id then
 			idToDestination:add(id, destination)

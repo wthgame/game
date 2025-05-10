@@ -1,7 +1,7 @@
 import { Controller, OnInit } from "@flamework/core";
 import { atom } from "@rbxts/charm";
 import ty from "@rbxts/libopen-ty";
-import { ContentProvider, Workspace } from "@rbxts/services";
+import { ContentProvider, ReplicatedStorage, Workspace } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
 import { LOADED_ZONE_TAG } from "core/client/controllers/BackgroundMusicController";
 import { Blink } from "core/shared/decorators";
@@ -50,6 +50,9 @@ export class TowerRunController implements OnInit {
 
 		const tower = await towers.startTowerRun.invoke({ towerType: "Standard", towerName });
 		if (tower) {
+			// TODO: seperate into TowerLoaderController.ts to share
+			// functionality with kit too
+
 			const instance = tower.instance as Omit<TowerInstance, "Mechanics">;
 			const mechanics = tower.mechanics as TowerInstance["Mechanics"];
 
@@ -61,15 +64,17 @@ export class TowerRunController implements OnInit {
 			await this.mechanicController.loadMechanicsFromParent(trove, mechanics);
 			trace("Finished loading mechanics");
 
-			for (const zone of instance.BackgroundMusicZones.GetChildren()) {
+			const bgmZones = instance.BackgroundMusicZones;
+			for (const zone of bgmZones.GetChildren()) {
 				if (BackgroundMusicZoneInstance(zone)) zone.AddTag(LOADED_ZONE_TAG);
 			}
 
-			trove.add(instance.BackgroundMusicZones);
-			// instance.BackgroundMusicZones.Parent = undefined;
+			bgmZones.Parent = ReplicatedStorage;
+			bgmZones.Name += `_${towerName}`;
+			trove.add(bgmZones);
 
 			// TODO: proper preload service?
-			task.spawn(preloadAsync, instance.BackgroundMusicZones.GetChildren());
+			task.spawn(preloadAsync, bgmZones.GetChildren());
 
 			this.isLoaded(true);
 			this.currentTower(info);

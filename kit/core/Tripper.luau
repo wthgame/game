@@ -13,7 +13,6 @@ local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 local function tripPlayer(trove: utils.Trove, tripper: BasePart)
-	print("TRIPPING...")
 	if not debounced[tripper] then
 		local humanoid = assert(utils.getMaybeHumanoid(), "can be assumed it exists")
 		humanoid.Sit = true
