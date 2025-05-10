@@ -13,6 +13,7 @@ export interface Tower {
 	obby: TowerInstance["Obby"];
 	decoration: TowerInstance["Decoration"];
 	mechanics: TowerInstance["Mechanics"];
+	bgmZones: TowerInstance["BackgroundMusicZones"];
 	spawn: TowerInstance["Spawn"];
 }
 
@@ -20,6 +21,7 @@ export interface Tower {
 const TOWER_OBBY_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerObby" }));
 const TOWER_DECORATION_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerDecoration" }));
 const TOWER_MECHANICS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerMechanics" }));
+const TOWER_BGM_ZONES_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerBackgroundMusicZones" }));
 
 // TODO: remove link if not in studio
 const NO_ETOH =
@@ -78,20 +80,6 @@ export class TowerService {
 
 		const towerInstance = maybeInstance.value;
 
-		const tower: Tower = {
-			info,
-			instance: towerInstance,
-			obby: towerInstance.Obby,
-			decoration: towerInstance.Decoration,
-			mechanics: towerInstance.Mechanics,
-			spawn: towerInstance.Spawn,
-		};
-
-		towerInstance.Obby.Parent = TOWER_OBBY_SERVER_STORAGE.getValue();
-		towerInstance.Decoration.Parent = TOWER_DECORATION_SERVER_STORAGE.getValue();
-		towerInstance.Mechanics.Parent = TOWER_MECHANICS_SERVER_STORAGE.getValue();
-		// towerInstance.Parent = TOWERS_SERVER_STORAGE.getValue();
-
 		for (const zone of towerInstance.BackgroundMusicZones.GetDescendants()) {
 			if (BackgroundMusicZoneInstance(zone)) {
 				zone.Sound.SetAttribute("OriginalVolume", zone.Sound.Volume);
@@ -102,6 +90,21 @@ export class TowerService {
 				}
 			}
 		}
+
+		const tower: Tower = {
+			info,
+			instance: towerInstance,
+			obby: towerInstance.Obby,
+			decoration: towerInstance.Decoration,
+			mechanics: towerInstance.Mechanics,
+			spawn: towerInstance.Spawn,
+			bgmZones: towerInstance.BackgroundMusicZones,
+		};
+
+		towerInstance.Obby.Parent = TOWER_OBBY_SERVER_STORAGE.getValue();
+		towerInstance.Decoration.Parent = TOWER_DECORATION_SERVER_STORAGE.getValue();
+		towerInstance.Mechanics.Parent = TOWER_MECHANICS_SERVER_STORAGE.getValue();
+		towerInstance.BackgroundMusicZones.Parent = TOWER_BGM_ZONES_SERVER_STORAGE.getValue();
 
 		this.towers.add(tower);
 		this.infoToTower.set(info, tower);

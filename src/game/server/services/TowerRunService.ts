@@ -50,9 +50,11 @@ export class TowerRunService implements OnTick {
 		const mechanics = tower.mechanics.Clone();
 		const obby = tower.obby.Clone();
 		const decoration = tower.decoration.Clone();
+		const bgmZones = tower.bgmZones.Clone();
 		mechanics.Parent = towerInstance;
 		obby.Parent = towerInstance;
 		decoration.Parent = towerInstance;
+		bgmZones.Parent = towerInstance;
 		towerInstance.Parent = player;
 
 		const result: StartTowerRunResult = {
