@@ -43,6 +43,7 @@ export interface AreaInstance extends Instance {
 	Spawn: BasePart;
 	Lighting?: Configuration;
 	DefaultBackgroundMusic: Sound;
+	BackgroundMusicZones: Instance;
 }
 
 // ---

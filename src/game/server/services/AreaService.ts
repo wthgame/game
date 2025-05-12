@@ -13,9 +13,10 @@ import { TowerService } from "./TowerService";
 
 export interface Area {
 	info: AreaInfo;
-	instance: Omit<AreaInstance, "Mechanics">;
+	instance: Omit<AreaInstance, "Mechanics" | "BackgroundMusicZones">;
 	mechanics: AreaInstance["Mechanics"];
 	spawn: AreaInstance["Spawn"];
+	bgmZones: AreaInstance["BackgroundMusicZones"];
 }
 
 interface PlayerAreaLoadingState {
@@ -31,12 +32,14 @@ const isAreaInstance = t.children({
 	Spawn: t.instanceIsA("BasePart"),
 	Lighting: t.optional(t.instanceIsA("Configuration")),
 	DefaultBackgroundMusic: t.instanceIsA("Sound"),
+	BackgroundMusicZones: t.Instance,
 }) satisfies t.check<AreaInstance>;
 
 const CONFIRM_AREA_LOADED_TIMEOUT = 5;
 const AREAS_WORKSPACE = new Lazy(() => Workspace.WaitForChild("Areas"));
 const AREAS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "Areas" }));
 const AREA_MECHANICS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "AreaMechanics" }));
+const AREA_BGM_ZONES_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "AreaBackgroundMusicZones" }));
 
 @Service()
 export class AreaService implements OnInit {
@@ -79,6 +82,7 @@ export class AreaService implements OnInit {
 			instance,
 			mechanics: instance.Mechanics,
 			spawn: instance.Spawn,
+			bgmZones: instance.BackgroundMusicZones,
 		};
 
 		const assetToUse = audios[instance.DefaultBackgroundMusic.GetAttribute("UseAudioAsset") as never] as string;
@@ -98,6 +102,7 @@ export class AreaService implements OnInit {
 
 		instance.Mechanics.Parent = AREA_MECHANICS_SERVER_STORAGE.getValue();
 		instance.Parent = AREAS_SERVER_STORAGE.getValue();
+		instance.BackgroundMusicZones.Parent = AREA_BGM_ZONES_SERVER_STORAGE.getValue();
 
 		this.areas.add(area);
 		this.infoToArea.set(info, area);
@@ -152,6 +157,7 @@ export class AreaService implements OnInit {
 		this.logger.trace("Cloning area");
 		const instance = area.instance.Clone();
 		area.mechanics.Clone().Parent = instance;
+		area.bgmZones.Clone().Parent = instance;
 
 		this.logger.trace("Parenting to player");
 		instance.Parent = player;

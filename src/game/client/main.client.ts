@@ -11,6 +11,7 @@ const logger = createLogger("main");
 try {
 	Flamework.addPaths("src/game/client/controllers");
 	Flamework.addPaths("src/core/client/controllers");
+	Flamework.addPaths("src/core/client/hook-managers");
 	Flamework.ignite();
 	flameworkIgnited();
 	logger.info("Client ignited!");

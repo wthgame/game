@@ -113,6 +113,7 @@ export class AreaController implements OnStart {
 
 		this.logger.trace("Setting default background music");
 		this.backgroundMusicController.defaultSound(clone.DefaultBackgroundMusic);
+		this.backgroundMusicController.consumeMusicZones(trove, clone.BackgroundMusicZones);
 
 		this.logger.trace("Loading mechanics");
 		await this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));

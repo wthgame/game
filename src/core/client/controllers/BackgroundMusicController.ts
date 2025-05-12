@@ -2,7 +2,8 @@ import { Controller, OnStart } from "@flamework/core";
 import { atom, computed, effect } from "@rbxts/charm";
 import ty from "@rbxts/libopen-ty";
 import { Option } from "@rbxts/rust-classes";
-import { CollectionService, MarketplaceService } from "@rbxts/services";
+import { CollectionService, ContentProvider, MarketplaceService } from "@rbxts/services";
+import { Trove } from "@rbxts/trove";
 import { createLogger } from "core/shared/logger";
 import { BackgroundMusicZoneInstance } from "core/shared/types";
 import { OnPreRender } from "../hook-managers/RenderHookManager";
@@ -24,8 +25,17 @@ function getProductInfo(id: number) {
 	return MarketplaceService.GetProductInfo(id);
 }
 
+function preloadAsync(
+	contentIdList: Array<Instance | string>,
+	callback?: (contentId: string, status: Enum.AssetFetchStatus) => void,
+) {
+	ContentProvider.PreloadAsync(contentIdList, callback);
+}
+
 @Controller()
 export class BackgroundMusicController implements OnStart, OnPreRender {
+	private logger = createLogger("BackgroundMusicController");
+
 	readonly nowPlaying = atom<Sound>();
 	private lastPlaying = atom<Sound>();
 	readonly defaultSound = atom<Sound>();
@@ -76,12 +86,19 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 	// 	() => new TweenInfo(this.transitionTime(), this.transitionEasingStyle(), this.transitionEasingDirection()),
 	// );
 
-	private logger = createLogger("BackgroundMusicController");
-
 	constructor(private characterController: CharacterController) {}
 
 	private priorityOf(zone: Instance): number {
 		return zone.GetAttribute("Priority") || 0;
+	}
+
+	consumeMusicZones(trove: Trove, bgmZones: Instance) {
+		for (const zone of bgmZones.GetChildren()) {
+			if (BackgroundMusicZoneInstance(zone)) zone.AddTag(LOADED_ZONE_TAG);
+		}
+		bgmZones.Name += `_${bgmZones.Parent!.Name}`;
+		trove.add(bgmZones);
+		task.spawn(preloadAsync, bgmZones.GetChildren());
 	}
 
 	onStart(): void {
@@ -100,7 +117,7 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 		// );
 
 		effect(() => {
-			this.logger.trace("Now playing", this.nameOfNowPlaying());
+			this.logger.trace("Now playing", this.nameOfNowPlaying().unwrapOr("(no song)"));
 		});
 	}
 
