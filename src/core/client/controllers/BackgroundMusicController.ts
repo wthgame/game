@@ -3,7 +3,7 @@ import { atom, computed, effect } from "@rbxts/charm";
 import ty from "@rbxts/libopen-ty";
 import { Option } from "@rbxts/rust-classes";
 import { CollectionService, MarketplaceService } from "@rbxts/services";
-import { trace } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { BackgroundMusicZoneInstance } from "core/shared/types";
 import { OnPreRender } from "../hook-managers/RenderHookManager";
 import { CharacterController } from "./CharacterController";
@@ -76,6 +76,8 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 	// 	() => new TweenInfo(this.transitionTime(), this.transitionEasingStyle(), this.transitionEasingDirection()),
 	// );
 
+	private logger = createLogger("BackgroundMusicController");
+
 	constructor(private characterController: CharacterController) {}
 
 	private priorityOf(zone: Instance): number {
@@ -97,7 +99,9 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 		// 	this.transitionEasingDirection(EasingDirection.CastOrError(style)),
 		// );
 
-		effect(() => trace("Now playing", this.nameOfNowPlaying()));
+		effect(() => {
+			this.logger.trace("Now playing", this.nameOfNowPlaying());
+		});
 	}
 
 	onPreRender(dt: number): void {

@@ -1,0 +1,19 @@
+# Ignore Blink network files
+src/core/client/net.d.ts
+src/core/server/net.d.ts
+src/game/client/net.d.ts
+src/game/server/net.d.ts
+src/kit/client/net.d.ts
+src/kit/server/net.d.ts
+
+# Ignore Asphalt asset files
+src/core/shared/assets.d.ts
+src/core/shared/audios.d.ts
+
+# Ignore roblox-ts junk
+include/**
+node_modules/**
+out/**
+
+# stylua.toml seemingly doesn't format?
+./stylua.toml

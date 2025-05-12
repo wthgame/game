@@ -8,6 +8,7 @@ src/kit/server/net.luau
 
 # Ignore Asphalt asset files
 src/core/shared/assets.luau
+src/core/shared/audios.luau
 
 # Ignore roblox-ts junk
 include/**

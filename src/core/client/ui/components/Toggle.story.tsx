@@ -1,6 +1,6 @@
 import { effect } from "@rbxts/charm";
 import Vide, { source } from "@rbxts/vide";
-import { trace } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { InferVideProps } from "ui-labs";
 import { useRem } from "../rem";
 import { Toggle } from "./Toggle";
@@ -15,12 +15,15 @@ export = {
 	story: ({ controls }: InferVideProps<typeof CONTROLS>) => {
 		useRem();
 
+		const logger = createLogger("TriangularButton.story");
 		const toggled = source(controls.toggled());
 		effect(() => {
 			toggled(controls.toggled());
 		});
 
-		effect(() => trace("Toggled:", toggled()));
+		effect(() => {
+			logger.trace("Toggled:", toggled());
+		});
 
 		return (
 			<Toggle

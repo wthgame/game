@@ -30,7 +30,7 @@ function self:run(kit: utils.Kit)
 		trove:add(towerPrompt.Triggered:Connect(function(player)
 			-- TODO: is this check needed?
 			if Players.LocalPlayer == player then
-				utils._.callMechanicBinding("TowerRunController.promptToStartNewTowerRun", TowerName(portal))
+				utils._.callMechanicBinding("@game/TowerRunController/promptToLoadTower", TowerName(portal))
 			end
 		end))
 	end)

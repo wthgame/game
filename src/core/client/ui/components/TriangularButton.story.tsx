@@ -1,5 +1,5 @@
 import Vide, { effect, source } from "@rbxts/vide";
-import { debug, setWTHAsDefaultLogger } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { rem, useRem } from "../rem";
 import { fonts, TextSize } from "../styles";
 import { StoryThemePreview } from "./StoryThemePreview";
@@ -8,11 +8,11 @@ import { PlatinumTriangularButton, PrimaryTriangularButton } from "./TriangularB
 export = {
 	vide: Vide,
 	story: () => {
-		setWTHAsDefaultLogger();
 		useRem();
 
+		const logger = createLogger("TriangularButton.story");
 		const clicks = source(0);
-		effect(() => debug(`Clicked ${clicks()} times`));
+		effect(() => logger.debug(`Clicked ${clicks()} times`));
 
 		return (
 			<StoryThemePreview

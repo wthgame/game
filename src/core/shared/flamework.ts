@@ -1,6 +1,8 @@
 import Event from "@rbxts/libopen-event";
 import { Players, RunService } from "@rbxts/services";
-import { err } from "./log";
+import { createLogger } from "./logger";
+
+const logger = createLogger("flamework");
 
 export const [onFlameworkIgnited, flameworkIgnited] = Event<[]>();
 export const [onFlameworkExtinguished, flameworkExtinguish] = Event<[]>();
@@ -14,7 +16,7 @@ export function panic(message: string): never {
 		"\nPlease file a bug report in the community server." +
 		"\nWelcome to Hell will make a best effort recovery.";
 
-	err(`Panicked: ${message}`);
+	logger.error(`Panicked: ${message}`);
 	pcall(flameworkExtinguish);
 
 	if (isClient) {

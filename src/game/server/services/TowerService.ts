@@ -3,7 +3,7 @@ import { Lazy } from "@rbxts/lazy";
 import Maybe from "@rbxts/libopen-maybe";
 import Make from "@rbxts/make";
 import audios from "core/shared/audios";
-import { trace, warn } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { BackgroundMusicZoneInstance } from "core/shared/types";
 import { NAME_TO_TOWER, TowerInfo, TowerInstance } from "game/shared/areas";
 
@@ -53,22 +53,28 @@ function castToTowerInstance(instance: Instance): Maybe.Maybe<TowerInstance> {
 
 @Service()
 export class TowerService {
+	private logger = createLogger("TowerService");
+
 	private towers = new Set<Tower>();
 	private infoToTower = new Map<TowerInfo, Tower>();
 	private nameToTower = new Map<string, Tower>();
 
 	async initTower(instance: Instance) {
-		trace("Initializing tower", instance.GetFullName());
+		this.logger.trace("Initializing tower", instance.GetFullName());
 
 		const info = NAME_TO_TOWER.get(instance.Name);
 		if (!info) {
-			warn("Cannot initialize tower", instance.GetFullName(), "because no matching TowerInfo in shared/areas.ts");
+			this.logger.warn(
+				"Cannot initialize tower",
+				instance.GetFullName(),
+				"because no matching TowerInfo in shared/areas.ts",
+			);
 			return;
 		}
 
 		const maybeInstance = castToTowerInstance(instance);
 		if (!maybeInstance.some) {
-			warn(
+			this.logger.warn(
 				"Cannot initialize tower",
 				instance.GetFullName(),
 				"because invalid instance tree:",
@@ -85,7 +91,7 @@ export class TowerService {
 				zone.Sound.SetAttribute("OriginalVolume", zone.Sound.Volume);
 				const assetToUse = audios[zone.Sound.GetAttribute("UseAudioAsset") as never] as string;
 				if (assetToUse) {
-					trace("Using audio asset", assetToUse, "for", instance.GetFullName());
+					this.logger.trace("Using audio asset", assetToUse, "for", instance.GetFullName());
 					zone.Sound.SoundId = assetToUse;
 				}
 			}

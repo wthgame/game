@@ -6,7 +6,7 @@ import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
 import { connectActivation } from "core/../../kit/utils";
 import { LogBenchmark } from "core/shared/decorators";
-import { trace, warn } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 
 export class InstanceTag {
 	readonly _instances = new Array<Instance>();
@@ -64,6 +64,7 @@ const MECHANIC_MODULES_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("K
 
 @Controller()
 export class MechanicController implements OnInit {
+	private logger = createLogger("MechanicController");
 	private scriptToModule = new Map<KitScript, Instance>();
 
 	onInit(): void {
@@ -78,7 +79,7 @@ export class MechanicController implements OnInit {
 					continue;
 				}
 
-				trace(
+				this.logger.trace(
 					"Ignoring module",
 					module.GetFullName(),
 					"because of bad type:",
@@ -88,7 +89,7 @@ export class MechanicController implements OnInit {
 				continue;
 			}
 
-			warn("Cannot require kit script", module.GetFullName(), "because of:", tostring(requireValue));
+			this.logger.warn("Cannot require kit script", module.GetFullName(), "because of:", tostring(requireValue));
 		}
 	}
 
@@ -120,7 +121,7 @@ export class MechanicController implements OnInit {
 
 		for (const [script, module] of this.scriptToModule) {
 			const [runSuccess, runError] = pcall(script.run, script, kit);
-			if (!runSuccess) warn(`Cannot run kit script ${module.GetFullName()}: ${runError}`);
+			if (!runSuccess) this.logger.warn(`Cannot run kit script ${module.GetFullName()}: ${runError}`);
 		}
 
 		const tagLoadedThreads = new Array<thread>();

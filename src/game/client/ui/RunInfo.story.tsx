@@ -1,6 +1,5 @@
 import Vide from "@rbxts/vide";
 import { useRem } from "core/client/ui/rem";
-import { setWTHAsDefaultLogger } from "core/shared/log";
 import { AREAS } from "game/shared/areas";
 import { InferVideProps, Slider } from "ui-labs";
 import { RunInfo } from "./RunInfo";
@@ -14,7 +13,6 @@ export = {
 	vide: Vide,
 	controls: CONTROLS,
 	story: ({ controls }: InferVideProps<typeof CONTROLS>) => {
-		setWTHAsDefaultLogger();
 		useRem();
 		return (
 			<RunInfo

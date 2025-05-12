@@ -7,16 +7,13 @@ import { useAtom } from "@rbxts/vide-charm";
 import { BackgroundMusicController } from "core/client/controllers/BackgroundMusicController";
 import { LightingController, LightingPriority } from "core/client/controllers/LightingController";
 import { MechanicController } from "core/client/controllers/MechanicController";
-// import { ButtonStyle } from "core/client/_ui/components/Button";
-// import { Text, TextStyle } from "core/client/_ui/components/Text";
-// import { TriangularButton } from "core/client/_ui/components/TriangularButton";
 import { Text } from "core/client/ui/components/Text";
 import { PrimaryTriangularButton } from "core/client/ui/components/TriangularButton";
 import { palette } from "core/client/ui/palette";
 import { rem, useRem } from "core/client/ui/rem";
 import { fonts } from "core/client/ui/styles";
 import { LogBenchmark } from "core/shared/decorators";
-import { trace } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { areas } from "game/client/net";
 import { AreaInfo, AreaInstance, AREAS } from "game/shared/areas";
 
@@ -65,6 +62,8 @@ export function AreaView({ areas, onAreaSelected }: AreaViewProps) {
 
 @Controller()
 export class AreaController implements OnStart {
+	private logger = createLogger("AreaController");
+
 	isLoadingArea = false;
 	isLoaded = atom(false);
 
@@ -92,11 +91,11 @@ export class AreaController implements OnStart {
 		if (this.isLoadingArea) return;
 		this.isLoadingArea = true;
 
-		trace(`Requesting to load area ${area.name}`);
+		this.logger.trace(`Requesting to load area ${area.name}`);
 
 		const areaInstance = areas.loadArea.invoke(area.name).expect() as AreaInstance;
 
-		trace("Got area");
+		this.logger.trace("Got area");
 		const clone = areaInstance.Clone();
 		clone.Parent = Workspace;
 
@@ -108,18 +107,18 @@ export class AreaController implements OnStart {
 
 		const lighting = clone.FindFirstChild("Lighting");
 		if (lighting) {
-			trace("Setting area lighting");
+			this.logger.trace("Setting area lighting");
 			this.lightingController.setLightingAtPriority(lighting.GetAttributes() as never, LightingPriority.Area);
 		}
 
-		trace("Setting default background music");
+		this.logger.trace("Setting default background music");
 		this.backgroundMusicController.defaultSound(clone.DefaultBackgroundMusic);
 
-		trace("Loading mechanics");
+		this.logger.trace("Loading mechanics");
 		await this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
-		trace("Finished loading mechanics");
+		this.logger.trace("Finished loading mechanics");
 
-		trace("Finished loading area");
+		this.logger.trace("Finished loading area");
 
 		this.isLoaded(true);
 		this.isLoadingArea = false;

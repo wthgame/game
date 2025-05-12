@@ -5,7 +5,7 @@ import { Workspace } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import audios from "core/shared/audios";
 import { Blink } from "core/shared/decorators";
-import { trace, warn } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { areas } from "game/server/net";
 import { AreaInfo, AreaInstance, NAME_TO_AREA } from "game/shared/areas";
 import { PlayerService } from "./PlayerService";
@@ -40,6 +40,8 @@ const AREA_MECHANICS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "Are
 
 @Service()
 export class AreaService implements OnInit {
+	private logger = createLogger("AreaService");
+
 	private areas = new Set<Area>();
 	private infoToArea = new Map<AreaInfo, Area>();
 	private nameToArea = new Map<string, Area>();
@@ -57,16 +59,18 @@ export class AreaService implements OnInit {
 	}
 
 	async initArea(instance: Instance) {
-		trace("Initializing area", instance.GetFullName());
+		this.logger.trace("Initializing area", instance.GetFullName());
 
 		if (!isAreaInstance(instance)) {
-			warn(`Cannot initialize area ${instance.GetFullName()} because invalid instance tree`);
+			this.logger.warn(`Cannot initialize area ${instance.GetFullName()} because invalid instance tree`);
 			return;
 		}
 
 		const info = NAME_TO_AREA.get(instance.Name);
 		if (!info) {
-			warn(`Cannot initialize area ${instance.GetFullName()} because no matching AreaInfo in shared/areas.ts`);
+			this.logger.warn(
+				`Cannot initialize area ${instance.GetFullName()} because no matching AreaInfo in shared/areas.ts`,
+			);
 			return;
 		}
 
@@ -79,14 +83,14 @@ export class AreaService implements OnInit {
 
 		const assetToUse = audios[instance.DefaultBackgroundMusic.GetAttribute("UseAudioAsset") as never] as string;
 		if (assetToUse) {
-			trace("Using audio asset", assetToUse, "for", instance.GetFullName());
+			this.logger.trace("Using audio asset", assetToUse, "for", instance.GetFullName());
 			instance.DefaultBackgroundMusic.SoundId = assetToUse;
 		}
 		instance.DefaultBackgroundMusic.SetAttribute("OriginalVolume", instance.DefaultBackgroundMusic.Volume);
 
 		const towers = instance.Towers;
 		if (towers) {
-			trace("Now initializing towers in areas");
+			this.logger.trace("Now initializing towers in areas");
 			const initTowerPromises = new Array<Promise<void>>();
 			for (const tower of towers.GetChildren()) initTowerPromises.push(this.towerService.initTower(tower));
 			await Promise.all(initTowerPromises);
@@ -106,19 +110,19 @@ export class AreaService implements OnInit {
 	// cleanup to avoid leaking memory
 	@Blink(areas.confirmAreaLoaded)
 	confirmAreaLoaded(player: Player): void {
-		trace(`${player.Name} confirmed area loaded client-side`);
+		this.logger.trace(`${player.Name} confirmed area loaded client-side`);
 		const state = this.loadingStates.get(player);
 		if (!state) {
-			trace("...but the player already confirmed");
+			this.logger.trace("...but the player already confirmed");
 			return;
 		}
 
 		const { area, instance, timeoutThread } = state;
 
-		trace("Destroying loaded clone");
+		this.logger.trace("Destroying loaded clone");
 		instance.Destroy();
 
-		trace("Cancelling timeout thread");
+		this.logger.trace("Cancelling timeout thread");
 		pcall(task.cancel, timeoutThread);
 
 		// trace("Pivoting player");
@@ -130,12 +134,12 @@ export class AreaService implements OnInit {
 
 		this.playerService.setInfo(player, "isLoadingArea", false);
 
-		trace("Cleaned up area loading server-side");
+		this.logger.trace("Cleaned up area loading server-side");
 	}
 
 	@Blink(areas.loadArea)
 	loadArea(player: Player, areaName: string): Instance {
-		trace("Loading area", areaName, "for player", player.Name);
+		this.logger.trace("Loading area", areaName, "for player", player.Name);
 		const info = NAME_TO_AREA.get(areaName);
 
 		if (!info) throw `No area named ${areaName}`;
@@ -145,11 +149,11 @@ export class AreaService implements OnInit {
 		this.playerService.setInfo(player, "isLoadingArea", true);
 		this.playerService.setInfo(player, "currentArea", area);
 
-		trace("Cloning area");
+		this.logger.trace("Cloning area");
 		const instance = area.instance.Clone();
 		area.mechanics.Clone().Parent = instance;
 
-		trace("Parenting to player");
+		this.logger.trace("Parenting to player");
 		instance.Parent = player;
 
 		this.loadingStates.set(player, {
@@ -158,14 +162,14 @@ export class AreaService implements OnInit {
 			timeoutThread: task.delay(
 				CONFIRM_AREA_LOADED_TIMEOUT,
 				(player) => {
-					trace(player.Name, "timed-out confirmation that area is loaded");
+					this.logger.trace(player.Name, "timed-out confirmation that area is loaded");
 					this.confirmAreaLoaded(player);
 				},
 				player,
 			),
 		});
 
-		trace("Returning area");
+		this.logger.trace("Returning area");
 		return instance;
 	}
 }

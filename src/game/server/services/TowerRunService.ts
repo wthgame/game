@@ -1,6 +1,6 @@
 import { OnTick, Service } from "@flamework/core";
 import { Blink } from "core/shared/decorators";
-import { trace, warn } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { towers } from "game/server/net";
 import { StartTowerRun } from "game/shared/types";
 import { PlayerService } from "./PlayerService";
@@ -10,6 +10,8 @@ const CONFIRM_TOWER_LOADED_TIMEOUT = 5;
 
 @Service()
 export class TowerRunService implements OnTick {
+	private logger = createLogger("TowerRunService");
+
 	constructor(
 		private towerService: TowerService,
 		private playerService: PlayerService,
@@ -28,17 +30,17 @@ export class TowerRunService implements OnTick {
 		const runStartedTime = os.clock();
 
 		if (this.playerService.getInfo(player).isLoadingTower) {
-			warn("Player", player, "wants to start a tower run, but player is already loading a tower");
+			this.logger.warn("Player", player, "wants to start a tower run, but player is already loading a tower");
 			return;
 		}
 
 		const { towerType, towerName } = StartTowerRun.CastOrError(unknownRunRequest);
-		trace("Player", player, "wants to start a tower run for", towerName);
+		this.logger.trace("Player", player, "wants to start a tower run for", towerName);
 
 		const tower = this.towerService.getTowerFromName(towerName);
 
 		if (!tower) {
-			warn("Cannot start run for player", player, "because tower", towerName, "does not exist");
+			this.logger.warn("Cannot start run for player", player, "because tower", towerName, "does not exist");
 			return;
 		}
 

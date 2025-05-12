@@ -3,14 +3,13 @@ import { atom } from "@rbxts/charm";
 import ty from "@rbxts/libopen-ty";
 import { ContentProvider } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
+import { addMechanicBinding } from "core/client/controllers/MechanicController/bindings";
 import { TowerLoadController } from "core/client/controllers/TowerLoadController";
 import { Blink, LogBenchmark } from "core/shared/decorators";
-import { trace } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 import { TowerInstance } from "core/shared/types";
 import { towers } from "game/client/net";
 import { NAME_TO_TOWER, TowerInfo } from "game/shared/areas";
-import { MechanicController } from "../../../core/client/controllers/MechanicController";
-import { addMechanicBinding } from "../../../core/client/controllers/MechanicController/bindings";
 
 function preloadAsync(
 	contentIdList: Array<Instance | string>,
@@ -25,15 +24,9 @@ export class TowerRunController implements OnInit {
 	readonly elapsedTime = atom(0);
 	readonly currentTower = atom<TowerInfo>();
 
-	constructor(
-		private mechanicController: MechanicController,
-		private towerLoadController: TowerLoadController,
-	) {}
+	private logger = createLogger("TowerRunController");
 
-	// onTick(): void {
-	// 	if (!this.isLoaded()) return;
-	// 	print("TIME:", math.round(this.elapsedTime() * 100) / 100);
-	// }
+	constructor(private towerLoadController: TowerLoadController) {}
 
 	@Blink(towers.syncElapsedTime)
 	syncElapsedTime(elapsedTime: number) {
@@ -41,14 +34,14 @@ export class TowerRunController implements OnInit {
 	}
 
 	onInit(): void {
-		addMechanicBinding("@game/TowerRunController/promptToStartNewTowerRun", (name) => {
+		addMechanicBinding("@game/TowerRunController/promptToLoadTower", (name) => {
 			this.promptToLoadTower(ty.String.CastOrError(name));
 		});
 	}
 
 	@LogBenchmark()
 	async promptToLoadTower(towerName: string): Promise<void> {
-		trace(`Prompted to load tower named ${towerName}`);
+		this.logger.trace(`Prompted to load tower named ${towerName}`);
 		const info = NAME_TO_TOWER.get(towerName);
 		if (!info) return;
 		const tower = await towers.startTowerRun.invoke({ towerType: "Standard", towerName });

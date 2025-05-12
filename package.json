@@ -13,6 +13,7 @@
         "eslint-plugin-prettier": "^5.2.6",
         "eslint-plugin-roblox-ts": "^0.0.36",
         "eslint-plugin-simple-import-sort": "^12.1.1",
+        "jiti": "^2.4.2",
         "prettier": "^3.5.3",
         "rbxts-transform-debug": "github:roblox-aurora/rbxts-transform-debug",
         "rbxts-transformer-flamework": "^1.2.4",
@@ -46,7 +47,8 @@
         "@rbxts/t": "^3.2.1",
         "@rbxts/trove": "^1.3.0",
         "@rbxts/vide": "^0.5.7",
-        "@rbxts/vide-charm": "^0.3.0"
+        "@rbxts/vide-charm": "^0.3.0",
+        "eslint-plugin-roblox-ts-x": "^1.0.1"
     },
     "patchedDependencies": {
         "@rbxts/semver@1.0.0": "patches/@rbxts%2Fsemver@1.0.0.patch"

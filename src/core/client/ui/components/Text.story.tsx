@@ -4,7 +4,6 @@ import { Text } from "core/client/ui/components/Text";
 // import { debug, setWTHAsDefaultLogger } from "shared/log";
 import { Choose, CreateVideStory, RGBA, Slider } from "@rbxts/ui-labs";
 import Vide from "@rbxts/vide";
-import { setWTHAsDefaultLogger } from "core/shared/log";
 import { sans } from "../fonts";
 import { rem, useRem } from "../rem";
 
@@ -26,7 +25,6 @@ export = CreateVideStory(
 		},
 	},
 	({ controls }) => {
-		setWTHAsDefaultLogger();
 		useRem();
 		return (
 			<Text

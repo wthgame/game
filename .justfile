@@ -2,7 +2,7 @@ default:
     just lint-code lint-fmt
 
 lint-code:
-    # bunx eslint ./src
+    bunx eslint -c ./eslint.config.ts ./src/**/*.ts
     selene ./src kit
 
 lint-fmt:

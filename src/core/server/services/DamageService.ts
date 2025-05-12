@@ -1,7 +1,7 @@
 import { Service } from "@flamework/core";
 import { damageSelf, damageSelfVariable } from "core/server/net";
 import { Blink } from "core/shared/decorators";
-import { trace } from "core/shared/log";
+import { createLogger } from "core/shared/logger";
 
 export enum DamageType {
 	Normal = 10,
@@ -14,6 +14,7 @@ const DEBOUNCE_DURATION_SECONDS = 0.5;
 
 @Service()
 export class DamageService {
+	private logger = createLogger("DamageService");
 	private debounce = new Set<Player>();
 
 	@Blink(damageSelf)
@@ -23,7 +24,7 @@ export class DamageService {
 
 		const humanoid = player.Character?.FindFirstChildOfClass("Humanoid");
 		if (humanoid) {
-			trace("Damaging player", player, "by", kind.lower(), "damage");
+			this.logger.trace("Damaging player", player, "by", kind.lower(), "damage");
 			const damage = DamageType[kind as "Normal" | "Heavy" | "Super" | "Lethal"];
 			const difference = humanoid.MaxHealth - humanoid.Health;
 			humanoid.TakeDamage(math.max(-difference, damage));
@@ -39,7 +40,7 @@ export class DamageService {
 
 		const humanoid = player.Character?.FindFirstChildOfClass("Humanoid");
 		if (humanoid) {
-			trace("Damaging player", player, "by", amount, "health");
+			this.logger.trace("Damaging player", player, "by", amount, "health");
 			const difference = humanoid.MaxHealth - humanoid.Health;
 			humanoid.TakeDamage(math.max(-difference, math.abs(amount)));
 			task.wait(DEBOUNCE_DURATION_SECONDS);

@@ -1,6 +1,6 @@
 import { callMethodOnDependency } from "@rbxts/flamework-meta-utils";
 import { onFlameworkIgnited } from "core/shared/flamework";
-import { info } from "./log";
+import { createLogger } from "core/shared/logger";
 
 export interface BlinkFunctionProps {
 	ratelimit?: unknown;
@@ -28,6 +28,7 @@ export function Blink<Args extends unknown[] = unknown[], Returns = unknown>(
 	};
 }
 
+const logger = createLogger("LogBenchmark");
 export function LogBenchmark<Args extends unknown[] = unknown[]>(
 	formatter?: (methodName: string, msElapsed: number, ...args: Args) => string,
 ) {
@@ -43,7 +44,7 @@ export function LogBenchmark<Args extends unknown[] = unknown[]>(
 			const result = descriptor.value(_, ...args);
 			const endTime = os.clock();
 			const elapsed = (endTime - startTime) * 1000;
-			info(formatter!(propertyKey, elapsed, ...args));
+			logger.info(formatter!(propertyKey, elapsed, ...args));
 			return result;
 		};
 	};

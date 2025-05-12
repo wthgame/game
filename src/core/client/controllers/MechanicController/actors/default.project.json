@@ -1,55 +1,55 @@
 {
-    "name": "actors",
-    "emitLegacyScripts": false,
-    "tree": {
-        "$className": "Actor",
-        "1": {
-            "$path": "./actor.client.luau"
-        },
-        "2": {
-            "$path": "./actor.client.luau"
-        },
-        "3": {
-            "$path": "./actor.client.luau"
-        },
-        "4": {
-            "$path": "./actor.client.luau"
-        },
-        "5": {
-            "$path": "./actor.client.luau"
-        },
-        "6": {
-            "$path": "./actor.client.luau"
-        },
-        "7": {
-            "$path": "./actor.client.luau"
-        },
-        "8": {
-            "$path": "./actor.client.luau"
-        },
-        "9": {
-            "$path": "./actor.client.luau"
-        },
-        "10": {
-            "$path": "./actor.client.luau"
-        },
-        "11": {
-            "$path": "./actor.client.luau"
-        },
-        "12": {
-            "$path": "./actor.client.luau"
-        },
-        "13": {
-            "$path": "./actor.client.luau"
-        },
-        "14": {
-            "$path": "./actor.client.luau"
-        },
-        "15": {
-            "$path": "./actor.client.luau"
-        },
-        "16": {
-            "$path": "./actor.client.luau"
-        }
-    }
+	"name": "actors",
+	"emitLegacyScripts": false,
+	"tree": {
+		"$className": "Actor",
+		"1": {
+			"$path": "./actor.client.luau"
+		},
+		"2": {
+			"$path": "./actor.client.luau"
+		},
+		"3": {
+			"$path": "./actor.client.luau"
+		},
+		"4": {
+			"$path": "./actor.client.luau"
+		},
+		"5": {
+			"$path": "./actor.client.luau"
+		},
+		"6": {
+			"$path": "./actor.client.luau"
+		},
+		"7": {
+			"$path": "./actor.client.luau"
+		},
+		"8": {
+			"$path": "./actor.client.luau"
+		},
+		"9": {
+			"$path": "./actor.client.luau"
+		},
+		"10": {
+			"$path": "./actor.client.luau"
+		},
+		"11": {
+			"$path": "./actor.client.luau"
+		},
+		"12": {
+			"$path": "./actor.client.luau"
+		},
+		"13": {
+			"$path": "./actor.client.luau"
+		},
+		"14": {
+			"$path": "./actor.client.luau"
+		},
+		"15": {
+			"$path": "./actor.client.luau"
+		},
+		"16": {
+			"$path": "./actor.client.luau"
+		}
+	}
 }
