@@ -8,7 +8,7 @@ local assets = require(game:GetService("ReplicatedStorage"):WaitForChild("WTHSha
 return {
 	--[=[
         @prop ASSETS typeof(assets)
-        @within KitUtils
+        @within KitStd
 
         Image assets used by Welcome To Hell.
     ]=]

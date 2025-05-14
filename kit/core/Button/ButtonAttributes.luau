@@ -3,8 +3,8 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 export type ActivatedBy = "Touch" | "Prompt" | "Click" | "Control"
 

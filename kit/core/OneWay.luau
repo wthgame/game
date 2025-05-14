@@ -3,15 +3,15 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local OneWayOffset = prelude.attribute("OneWayOffset", prelude.t.CFrame, CFrame.identity)
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local OneWay = kit:tag("OneWay", prelude.isBasePart)
 
 	kit:onPhysics(function()

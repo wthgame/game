@@ -3,8 +3,8 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local Invert = prelude.attribute("Invert", prelude.isBoolean, false)
 local KeepCollision = prelude.attribute("KeepCollision", prelude.isBoolean, false)
@@ -16,12 +16,12 @@ local TransitionTime = prelude.attribute("TransitionTime", prelude.isPositiveNum
 -- NOTE: Enums can be used as attributes, it just needs to be added by a script
 local TransitionEasingStyle = prelude.attribute(
 	"TransitionEasingStyle",
-	prelude.t.enum(Enum.EasingStyle) :: utils.check<Enum.EasingStyle>,
+	prelude.t.enum(Enum.EasingStyle) :: std.check<Enum.EasingStyle>,
 	Enum.EasingStyle.Quad
 )
 local TransitionEasingDirection = prelude.attribute(
 	"TransitionEasingDirection",
-	prelude.t.enum(Enum.EasingDirection) :: utils.check<Enum.EasingDirection>,
+	prelude.t.enum(Enum.EasingDirection) :: std.check<Enum.EasingDirection>,
 	Enum.EasingDirection.Out
 )
 

@@ -3,8 +3,8 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local Button = require(script.Parent:WaitForChild("Button"))
 local PressOffset = Button.PressOffset
@@ -14,23 +14,23 @@ export type BoxBehavior = "Unanchoring" | "Draggable" | "Pickupable"
 
 local BoxId = prelude.attribute("BoxId", prelude.isString)
 local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
--- local BoxBehavior: utils.InstanceAttribute<BoxBehavior> = (
+-- local BoxBehavior: std.InstanceAttribute<BoxBehavior> = (
 -- 	prelude.attribute("BoxBehavior", prelude.t.literal("Unanchoring", "Draggable", "Pickupable"), "Unanchoring")
 -- )
 
-local idToBox: utils.MapSet<string, BasePart> = utils.collections.MapSet()
-local spawnBoxTroves: utils.Map<BasePart, utils.Trove> = {}
+local idToBox: std.MapSet<string, BasePart> = std.collections.MapSet()
+local spawnBoxTroves: std.Map<BasePart, std.Trove> = {}
 
-local debouncedSpawners: utils.Set<BasePart> = {}
+local debouncedSpawners: std.Set<BasePart> = {}
 
-local function spawnBoxesWithId(trove: utils.Trove, id: string)
+local function spawnBoxesWithId(trove: std.Trove, id: string)
 	for box in idToBox:get(id) do
 		local clonedBox = trove:clone(box)
 		clonedBox.Parent = workspace
 	end
 end
 
-local function trySpawn(trove: utils.Trove, spawner: BasePart, activationTrove: utils.Trove)
+local function trySpawn(trove: std.Trove, spawner: BasePart, activationTrove: std.Trove)
 	if debouncedSpawners[spawner] then
 		return
 	end
@@ -52,7 +52,7 @@ local function trySpawn(trove: utils.Trove, spawner: BasePart, activationTrove: 
 	if spawner.Anchored then
 		prelude.tweenMaybeInstant(
 			spawner,
-			{ CFrame = spawner.CFrame * utils.physics.intoCFrameOffset(PressOffset(spawner)) },
+			{ CFrame = spawner.CFrame * std.physics.intoCFrameOffset(PressOffset(spawner)) },
 			prelude.tweenConfigFromAttributes(spawner, "Press")
 		)
 	end
@@ -72,10 +72,10 @@ local function trySpawn(trove: utils.Trove, spawner: BasePart, activationTrove: 
 	task.delay(Cooldown(spawner), reset)
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local BoxSpawner = kit:tag("BoxSpawner", prelude.isBasePart)
 	local Box = kit:tag("Box", prelude.isBasePart)
 

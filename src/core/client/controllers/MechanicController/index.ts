@@ -4,7 +4,7 @@ import ty from "@rbxts/libopen-ty";
 import { ReplicatedStorage, RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
-import { prelude } from "core/../../kit/utils";
+import { prelude } from "core/../../kit/std";
 import { LogBenchmark } from "core/shared/decorators";
 import { createLogger } from "core/shared/logger";
 

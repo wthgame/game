@@ -4,8 +4,8 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 export type VineInstance = BasePart & {
 	Constraint: Constraint?,
@@ -19,7 +19,7 @@ local JumpOnDismount = prelude.attribute("JumpOnDismount", prelude.t.boolean, tr
 local PlayGrabSound = prelude.attribute("PlayGrabSound", prelude.t.boolean, true)
 local PlayJumpSound = prelude.attribute("PlayJumpSound", prelude.t.boolean, true)
 
-local debounced: utils.Set<VineInstance> = {}
+local debounced: std.Set<VineInstance> = {}
 
 local function constraintOf(vineInstance: VineInstance)
 	local constraint = vineInstance.Constraint
@@ -35,7 +35,7 @@ local function constraintOf(vineInstance: VineInstance)
 	return rope
 end
 
-local function createHandle(trove: utils.Trove)
+local function createHandle(trove: std.Trove)
 	local handle = trove:add(Instance.new("Part"))
 	handle.Name = "Handle"
 	handle.CanCollide = false
@@ -46,7 +46,7 @@ local function createHandle(trove: utils.Trove)
 	return handle
 end
 
-local function doVine(trove: utils.Trove, vineInstance: VineInstance, activationTrove: utils.Trove)
+local function doVine(trove: std.Trove, vineInstance: VineInstance, activationTrove: std.Trove)
 	if debounced[vineInstance] then
 		return
 	end
@@ -61,14 +61,14 @@ local function doVine(trove: utils.Trove, vineInstance: VineInstance, activation
 	local attachmentTrove = trove:extend()
 	local constraint = trove:clone(constraintOf(vineInstance))
 	local handle = createHandle(attachmentTrove)
-	local attachment0, attachment1 = utils.physics.populateConstraintAttachments(constraint)
+	local attachment0, attachment1 = std.physics.populateConstraintAttachments(constraint)
 	attachmentTrove:add(attachment0)
 	attachmentTrove:add(attachment1)
 
 	handle.Color = vineInstance.Color
 	handle.CFrame = root.CFrame * CFrame.new(0, 2.6, 0)
 
-	utils.physics.weld(trove, handle, root)
+	std.physics.weld(trove, handle, root)
 	handle.Parent = vineInstance
 
 	constraint.Visible = true
@@ -92,7 +92,7 @@ local function doVine(trove: utils.Trove, vineInstance: VineInstance, activation
 	local function dismount()
 		attachmentTrove:clean()
 
-		local humanoid = utils.character.getMaybeHumanoid()
+		local humanoid = std.character.getMaybeHumanoid()
 		if humanoid and JumpOnDismount(vineInstance) then
 			humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 		end
@@ -113,16 +113,16 @@ local function doVine(trove: utils.Trove, vineInstance: VineInstance, activation
 	end
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Vine = kit:tag(
 		"Vine",
 		prelude.t.instanceIsA("BasePart", {
 			Constraint = prelude.t.optional(prelude.t.instanceIsA("Constraint")),
 			Top = prelude.isBasePart,
-		}) :: utils.check<VineInstance>
+		}) :: std.check<VineInstance>
 	)
 	Vine:onActivated(doVine)
 end

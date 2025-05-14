@@ -4,8 +4,8 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 export type PhysicMoverInstance = BasePart & {
 	Positions: Instance,
@@ -17,9 +17,9 @@ local PhysicMoverId = prelude.attribute("PhysicMoverId", prelude.isString)
 local PhysicMoverIndex = prelude.attribute("PhysicMoverIndex", prelude.t.integer)
 local Interval = prelude.attribute("Interval", prelude.isPositiveNumber)
 
-local idToDestination: utils.MapSet<string, BasePart> = utils.collections.MapSet()
+local idToDestination: std.MapSet<string, BasePart> = std.collections.MapSet()
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
 local function destinationsOfId(id: string)
@@ -33,13 +33,13 @@ local function destinationsOfId(id: string)
 	return sorted
 end
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local PhysicMover = kit:tag(
 		"PhysicMover",
 		prelude.t.instanceIsA("BasePart", {
 			AlignPosition = prelude.t.instanceIsA("AlignPosition"),
 			AlignOrientation = prelude.t.instanceIsA("AlignOrientation"),
-		}) :: utils.check<PhysicMoverInstance>
+		}) :: std.check<PhysicMoverInstance>
 	)
 	local PhysicMoverDestination = kit:tag("PhysicMoverDestination", prelude.isBasePart)
 	PhysicMover:onLoaded(function(trove, mover)

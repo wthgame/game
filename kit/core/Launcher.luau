@@ -4,8 +4,8 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
@@ -16,7 +16,7 @@ local MaxForce = prelude.attribute("MaxForce", prelude.isPositiveNumber, math.hu
 local Vector = prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up")
 local PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
 
-local function launch(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
+local function launch(trove: std.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
 	velocityAttachment.Name = "LauncherAttachment"
 
@@ -33,10 +33,10 @@ local function launch(trove: utils.Trove, parent: BasePart, power: number, maxAx
 	velocityAttachment.Parent = parent
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Launcher = kit:tag("Launcher", prelude.isBasePart)
 
 	Launcher:onLoaded(function(trove, instance)
@@ -52,7 +52,7 @@ function self:run(kit: utils.Kit)
 				return
 			end
 
-			local isCharacterTouched = utils.touch.isToucherCharacter(instance, toucher)
+			local isCharacterTouched = std.touch.isToucherCharacter(instance, toucher)
 			if not isCharacterTouched then
 				return
 			end
@@ -72,7 +72,7 @@ function self:run(kit: utils.Kit)
 			elseif launcherVector == "Z" then
 				faceVector = instance.CFrame.ZVector
 			else
-				utils.never()
+				std.never()
 			end
 
 			-- NOTE: do not do Vector3.yAxis * math.huge

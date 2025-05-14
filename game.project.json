@@ -37,8 +37,8 @@
                     "$path": "kit/TemplateNoComment.luau"
                 }
             },
-            "KitUtils": {
-                "$path": "kit/utils"
+            "KitStd": {
+                "$path": "kit/std"
             },
             "WTHSharedCore": {
                 "$path": "out/core/shared",

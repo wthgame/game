@@ -3,12 +3,12 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 type ShoverDirectionAttributes = {
-	delay: utils.InstanceAttribute<number>,
-	power: utils.InstanceAttribute<number>,
+	delay: std.InstanceAttribute<number>,
+	power: std.InstanceAttribute<number>,
 }
 
 local SHOVER_DIRECTION_ATTRIBUTES = {
@@ -22,7 +22,7 @@ local SHOVER_DIRECTION_ATTRIBUTES = {
 	},
 }
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
 local function shove(direction: "In" | "Out", shover: Instance, ancestor: Instance)
@@ -40,7 +40,7 @@ local function shove(direction: "In" | "Out", shover: Instance, ancestor: Instan
 	end
 end
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Shover = kit:tag("Shover")
 	Shover:onLoaded(function(trove, shover)
 		local stop = false

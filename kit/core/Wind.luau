@@ -3,18 +3,18 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
 local Power = prelude.attribute("Power", prelude.isPositiveNumber, 0)
 local MaxForce = prelude.attribute("MaxForce", prelude.isPositiveNumber, math.huge)
-local Vector: utils.InstanceAttribute<Vector> = (
+local Vector: std.InstanceAttribute<Vector> = (
 	prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up")
 )
 
-local function wind(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
+local function wind(trove: std.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
 	velocityAttachment.Name = "WindAttachment"
 
@@ -32,26 +32,26 @@ local function wind(trove: utils.Trove, parent: BasePart, power: number, maxAxes
 end
 
 local function windUpTrove(
-	outerTrove: utils.Trove,
+	outerTrove: std.Trove,
 	part: BasePart,
 	power: number,
 	maxAxesForce: Vector3,
 	faceVector: Vector3
-): utils.Trove
+): std.Trove
 	local trove = outerTrove:extend()
 	outerTrove:attachToInstance(part)
 	wind(trove, part, power, maxAxesForce, faceVector)
 	return trove
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Wind = kit:tag("Wind", prelude.isBasePart)
 
 	Wind:onLoaded(function(trove, instance)
-		local windTroves: utils.Map<BasePart, utils.Trove> = {}
+		local windTroves: std.Map<BasePart, std.Trove> = {}
 		trove:connect(instance.Touched, function(toucher)
 			if not prelude.Active(instance) then
 				for part, trove in windTroves do
@@ -63,7 +63,7 @@ function self:run(kit: utils.Kit)
 
 			local partToWind: BasePart? = nil
 
-			local isToucherCharacter = utils.touch.isToucherCharacter(instance, toucher)
+			local isToucherCharacter = std.touch.isToucherCharacter(instance, toucher)
 
 			if isToucherCharacter then
 				-- For consistency, only wind up the humanoid root part.
@@ -116,7 +116,7 @@ function self:run(kit: utils.Kit)
 		end)
 
 		trove:connect(instance.TouchEnded, function(toucher)
-			local isToucherCharacter = utils.touch.isToucherCharacter(instance, toucher)
+			local isToucherCharacter = std.touch.isToucherCharacter(instance, toucher)
 
 			if isToucherCharacter then
 				-- For consistency, only the humanoid root part should be winded

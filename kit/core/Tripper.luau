@@ -3,17 +3,17 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
 
-local debounced: utils.Set<BasePart> = {}
+local debounced: std.Set<BasePart> = {}
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-local function tripPlayer(trove: utils.Trove, tripper: BasePart)
+local function tripPlayer(trove: std.Trove, tripper: BasePart)
 	if not debounced[tripper] then
 		local humanoid = assert(prelude.getMaybeHumanoid(), "can be assumed it exists")
 		humanoid.Sit = true
@@ -24,7 +24,7 @@ local function tripPlayer(trove: utils.Trove, tripper: BasePart)
 	end
 end
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Tripper = kit:tag("Tripper", prelude.isBasePart)
 	Tripper:onActivated(tripPlayer)
 end

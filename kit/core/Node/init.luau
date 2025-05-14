@@ -4,20 +4,20 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 local NodeTypes = require(script:WaitForChild("NodeTypes"))
 local NodeUtils = require(script:WaitForChild("NodeUtils"))
 
-local NodeType: utils.InstanceAttribute<string> = prelude.attribute("NodeType", prelude.t.keyOf(NodeTypes)) :: any
+local NodeType: std.InstanceAttribute<string> = prelude.attribute("NodeType", prelude.t.keyOf(NodeTypes)) :: any
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Node = kit:tag("Node")
 
-	local nodeVariables: utils.Map<string, unknown> = {}
+	local nodeVariables: std.Map<string, unknown> = {}
 
 	Node:onLoaded(function(trove, node) end)
 end

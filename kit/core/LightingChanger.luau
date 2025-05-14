@@ -3,16 +3,16 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-local function changeLighting(_: utils.Trove, changer: Instance)
+local function changeLighting(_: std.Trove, changer: Instance)
 	-- TODO
 end
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local LightingChanger = kit:tag("LightingChanger")
 	LightingChanger:onActivated(changeLighting)
 end

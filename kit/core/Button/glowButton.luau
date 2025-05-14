@@ -3,12 +3,12 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
-local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean?)
+local function glowButton(outerTrove: std.Trove, btn: BasePart, flash: boolean?)
 	local trove = outerTrove:extend()
-	local instanceTrove = utils.packages.createTrove()
+	local instanceTrove = std.packages.createTrove()
 
 	-- don't add to trove yet, we will when we finish animations
 	local glow = instanceTrove:clone(btn)
@@ -30,11 +30,11 @@ local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean
 	alignOrientation.MaxTorque = math.huge
 	alignOrientation.Responsiveness = 200
 
-	local attachment0, attachment1 = utils.physics.populateConstraintAttachments(alignPosition)
+	local attachment0, attachment1 = std.physics.populateConstraintAttachments(alignPosition)
 	alignOrientation.Attachment0 = instanceTrove:add(attachment0)
 	alignOrientation.Attachment1 = instanceTrove:add(attachment1)
 
-	-- utils.weld(trove, btn, glow)
+	-- std.weld(trove, btn, glow)
 
 	attachment0.Parent = glow
 	attachment1.Parent = btn

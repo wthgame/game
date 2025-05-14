@@ -5,8 +5,8 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local DEFAULT_RESPAWN_SOUND = "rbxassetid://12222140"
 
@@ -20,10 +20,10 @@ local TeleportOffset = prelude.attribute(
 	Vector3.new(0, 3, 0)
 )
 
-local _NoCheckpointBehavior: utils.InstanceAttribute<NoCheckpointBehavior> = (
+local _NoCheckpointBehavior: std.InstanceAttribute<NoCheckpointBehavior> = (
 	prelude.attribute("NoCheckpointBehavior", prelude.t.literal("ReturnToSpawn", "None"), "ReturnToSpawn")
 )
-local TransitionMode: utils.InstanceAttribute<TransitionMode> = (
+local TransitionMode: std.InstanceAttribute<TransitionMode> = (
 	prelude.attribute("TransitionMode", prelude.t.literal("FadeScreen", "PivotCharacter", "Instant"), "Instant")
 )
 local FadeScreenColor = prelude.attribute("FadeScreenColor", prelude.t.Color3, Color3.new(0, 0, 0))
@@ -33,7 +33,7 @@ local ActivatedColor = prelude.attribute("ActivatedColor", prelude.t.Color3, Col
 local DefaultColor = prelude.attribute("DefaultColor", prelude.t.Color3, Color3.new(0, 0, 0))
 
 local currentCheckpoint: BasePart? = nil
-local updateCheckpoint = utils.packages.createLemonSignal()
+local updateCheckpoint = std.packages.createLemonSignal()
 local debounce = false
 
 local function tryEmitCheckpointParticles(checkpoint: Instance)
@@ -46,7 +46,7 @@ local function tryEmitCheckpointParticles(checkpoint: Instance)
 	end
 end
 
-local function activateCheckpoint(trove: utils.Trove, checkpoint: BasePart, activationTrove: utils.Trove)
+local function activateCheckpoint(trove: std.Trove, checkpoint: BasePart, activationTrove: std.Trove)
 	if currentCheckpoint == checkpoint then
 		return
 	end
@@ -58,7 +58,7 @@ local function activateCheckpoint(trove: utils.Trove, checkpoint: BasePart, acti
 	end
 end
 
-local function fadeScreenForReturner(outerTrove: utils.Trove, returner: BasePart, root: BasePart, destination: CFrame)
+local function fadeScreenForReturner(outerTrove: std.Trove, returner: BasePart, root: BasePart, destination: CFrame)
 	local trove = outerTrove:extend()
 
 	-- NOTE: anchor the root so it doesnt, say, activate a checkpoint resetter
@@ -91,7 +91,7 @@ local function fadeScreenForReturner(outerTrove: utils.Trove, returner: BasePart
 	task.delay(config.time, trove.clean, trove)
 end
 
-local function returnToCheckpoint(trove: utils.Trove, returner: BasePart)
+local function returnToCheckpoint(trove: std.Trove, returner: BasePart)
 	local root = prelude.getMaybeHumanoidRootPart()
 	if root and currentCheckpoint and currentCheckpoint:IsDescendantOf(Workspace) then
 		if debounce then
@@ -143,10 +143,10 @@ local function symbolColorOf(target: Instance, checkpoint: Instance)
 	return if checkpoint == currentCheckpoint then ActivatedColor(target) else DefaultColor(target)
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Checkpoint = kit:tag("Checkpoint", prelude.isBasePart)
 	local CheckpointReturner = kit:tag("CheckpointReturner", prelude.isBasePart)
 	local CheckpointResetter = kit:tag("CheckpointResetter", prelude.isBasePart)

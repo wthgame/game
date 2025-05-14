@@ -4,16 +4,16 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local MinimumDistance = prelude.attribute("MinimumDistance", prelude.isPositiveNumber, 100)
 local MaximumDistance = prelude.attribute("MaximumDistance", prelude.isPositiveNumber, math.huge)
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local DistanceAnchoring = kit:tag("DistanceAnchoring")
 
 	local localPlayer = Players.LocalPlayer

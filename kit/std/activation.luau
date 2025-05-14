@@ -142,7 +142,7 @@ local function connectActivationOnce<T>(
 end
 
 --[=[
-    @within KitUtils
+    @within KitStd
 
     Calls the callback when the connected instance is activated based on it's
     `ActivationMode` attribute:

@@ -3,7 +3,7 @@
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
 --[=[
-    @within KitUtils
+    @within KitStd
     @tag Color
 ]=]
 local function roundColor(color: Color3): Color3

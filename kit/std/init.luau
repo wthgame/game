@@ -47,9 +47,9 @@ export type LemonSignal<T...> = lemonSignal.Signal<T...>
 ---
 --- ```luau
 --- local ReplicatedStorage = game:GetService("ReplicatedStorage")
---- local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+--- local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 --- ```
-local utils = table.freeze({
+local std = table.freeze({
 	version = "1.0.0-dev",
 
 	animation = animation,
@@ -76,8 +76,8 @@ local utils = table.freeze({
 		---
 		--- ```luau
 		--- local ReplicatedStorage = game:GetService("ReplicatedStorage")
-		--- local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-		--- local prelude = utils.prelude
+		--- local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+		--- local prelude = std.prelude
 		--- ```
 		---
 		--- When Luau table destructuring is implemented, the prelude can be
@@ -85,9 +85,9 @@ local utils = table.freeze({
 		---
 		--- ```luau
 		--- local ReplicatedStorage = game:GetService("ReplicatedStorage")
-		--- local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+		--- local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 		--- -- waiting on https://github.com/luau-lang/rfcs/pull/95
-		--- local { .attribute, .isBasePart, .getMaybeRootPart } = utils.prelude
+		--- local { .attribute, .isBasePart, .getMaybeRootPart } = std.prelude
 		--- ```
 		{
 			createLogger = logger.createLogger,
@@ -133,7 +133,7 @@ local utils = table.freeze({
 do
 	-- HOW IS THIS PACKAGE NOT PROPERLY TYPED...
 	-- TODO: TYPE THIS SHIT
-	(sift.Dictionary.freezeDeep :: any)(utils)
+	(sift.Dictionary.freezeDeep :: any)(std)
 end
 
-return utils
+return std

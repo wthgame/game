@@ -1,19 +1,19 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local ShouldPrompt = prelude.attribute("ShouldPrompt", prelude.isBoolean, false)
 local TowerName = prelude.attribute("TowerName", prelude.isString)
 
 local function promptToLoadTower(towerName: string)
-	utils.bindings._callMechanicBinding("@game/TowerRunController/promptToLoadTower", towerName)
+	std.bindings._callMechanicBinding("@game/TowerRunController/promptToLoadTower", towerName)
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local TowerPortal = kit:tag("TowerPortal", prelude.isBasePart)
 
 	TowerPortal:onLoaded(function(trove, portal)

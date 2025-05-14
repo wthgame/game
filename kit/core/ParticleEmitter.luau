@@ -3,9 +3,9 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
 local function emitParticles(_, emitter: Instance)
@@ -16,7 +16,7 @@ local function emitParticles(_, emitter: Instance)
 	end
 end
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local ParticleEmitter = kit:tag("ParticleEmitter")
 	ParticleEmitter:onActivated(emitParticles)
 end

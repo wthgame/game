@@ -4,8 +4,8 @@
 -- TODO: button timers and tick sounds
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local ButtonActivatedAttributes = require(script:WaitForChild("ButtonActivatedAttributes"))
 local ButtonAttributes = require(script:WaitForChild("ButtonAttributes"))
@@ -18,8 +18,8 @@ local PressOffset = ButtonAttributes.PressOffset
 local glowButton = require(script:WaitForChild("glowButton"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
-local idToButtonActivateds: utils.MapSet<string, Instance> = utils.collections.MapSet()
-local idToButtonsPressed: utils.MapSet<string, BasePart> = utils.collections.MapSet()
+local idToButtonActivateds: std.MapSet<string, Instance> = std.collections.MapSet()
+local idToButtonsPressed: std.MapSet<string, BasePart> = std.collections.MapSet()
 
 local function updateId(id: string)
 	local buttonActivateds = idToButtonActivateds:get(id)
@@ -35,7 +35,7 @@ local function updateId(id: string)
 	end
 end
 
-local function pressButton(trove: utils.Trove, btn: BasePart, activationTrove: utils.Trove)
+local function pressButton(trove: std.Trove, btn: BasePart, activationTrove: std.Trove)
 	local id = ButtonId(btn)
 
 	if ButtonPressed(btn) or not id then
@@ -52,7 +52,7 @@ local function pressButton(trove: utils.Trove, btn: BasePart, activationTrove: u
 	end
 
 	local originalCFrame = btn.CFrame
-	local pressOffset = utils.physics.intoCFrameOffset(PressOffset(btn))
+	local pressOffset = std.physics.intoCFrameOffset(PressOffset(btn))
 
 	if btn.Anchored then
 		prelude.tweenMaybeInstant(
@@ -92,9 +92,9 @@ local function tryUpdateIdOfButton(btn: Instance)
 	end
 end
 
-local self = {} :: utils.KitScript<typeof(ButtonAttributes) & typeof(ButtonActivatedAttributes) & {
-	idToButtonsPressed: utils.MapSet<string, BasePart>,
-	glowButton: (trove: utils.Trove, btn: BasePart, flash: boolean?) -> (),
+local self = {} :: std.KitScript<typeof(ButtonAttributes) & typeof(ButtonActivatedAttributes) & {
+	idToButtonsPressed: std.MapSet<string, BasePart>,
+	glowButton: (trove: std.Trove, btn: BasePart, flash: boolean?) -> (),
 	updateId: (id: string) -> (),
 }>
 self.type = "KitScript"
@@ -110,7 +110,7 @@ for key, value in ButtonActivatedAttributes do
 	self[key] = value
 end
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Button = kit:tag("Button", prelude.isBasePart)
 	local ButtonActivated = kit:tag("ButtonActivated")
 

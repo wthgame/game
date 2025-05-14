@@ -9,8 +9,8 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 type FollowMode = "LookAt" | "RotationOf" | "PositionOf" | "PivotOf" | "None"
 type FollowTarget = "Character" | "Mouse" | "Camera" | "None"
@@ -51,11 +51,11 @@ local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFr
 	return nil
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
-	local Follower = kit:tag("Follower", prelude.t.instanceIsA("PVInstance") :: utils.check<PVInstance>)
+function self:run(kit: std.Kit)
+	local Follower = kit:tag("Follower", prelude.t.instanceIsA("PVInstance") :: std.check<PVInstance>)
 
 	kit:onRender(function(trove, dt)
 		debug.profilebegin("Follower")

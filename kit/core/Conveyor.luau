@@ -3,21 +3,21 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local Speed = prelude.attribute("Speed", prelude.isPositiveNumber, 0)
 local SynchronizeConveyorBeams = prelude.attribute("SynchronizeConveyorBeams", prelude.isBoolean, true)
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Conveyor = kit:tag("Conveyor", prelude.isBasePart)
 
 	kit:onPhysics(function(trove, dt)
 		debug.profilebegin("Conveyor")
-		local alreadySynchronized: utils.Set<Instance> = {}
+		local alreadySynchronized: std.Set<Instance> = {}
 		for _, conveyor in Conveyor:instances() do
 			local speed: number = prelude.Active(conveyor) and Speed(conveyor) or 0
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed

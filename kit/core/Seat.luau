@@ -4,8 +4,8 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local DISTANCE_FROM_ROOT_TO_GROUND = 3
 local OFFSET_CHARACTER_BY = DISTANCE_FROM_ROOT_TO_GROUND / 2
@@ -15,13 +15,10 @@ local JumpOnDismount = prelude.attribute("JumpOnDismount", prelude.isBoolean, tr
 -- local Visualize = prelude.attribute("Visualize", prelude.isBoolean, true)
 
 local seated = false
-local debounced: utils.Set<BasePart> = {}
+local debounced: std.Set<BasePart> = {}
 
-local function seatPlayer(trove: utils.Trove, seat: BasePart, activationTrove: utils.Trove)
-	local canBeSeated = prelude.Active(seat)
-		and not seated
-		and not debounced[seat]
-		and utils.character.isCharacterAlive()
+local function seatPlayer(trove: std.Trove, seat: BasePart, activationTrove: std.Trove)
+	local canBeSeated = prelude.Active(seat) and not seated and not debounced[seat] and std.character.isCharacterAlive()
 
 	if canBeSeated then
 		local root = assert(prelude.getMaybeHumanoidRootPart(), "can be assumed")
@@ -36,7 +33,7 @@ local function seatPlayer(trove: utils.Trove, seat: BasePart, activationTrove: u
 
 		local weldTrove = trove:extend()
 		weldTrove:attachToInstance(root)
-		utils.physics.weld(weldTrove, seat, root)
+		std.physics.weld(weldTrove, seat, root)
 
 		weldTrove:connect(UserInputService.JumpRequest, function()
 			weldTrove:clean()
@@ -62,10 +59,10 @@ local function seatPlayer(trove: utils.Trove, seat: BasePart, activationTrove: u
 	end
 end
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Seat = kit:tag("Seat", prelude.isBasePart)
 	Seat:onActivated(seatPlayer)
 end

@@ -4,8 +4,8 @@
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 type ColorPulserType = "Color3" | "ColorSequence" | "BrickColor"
 type NumberPulserType = "number" | "NumberSequence" | "NumberRange"
@@ -16,18 +16,18 @@ local MaximumDistance = prelude.attribute("MaximumDistance", prelude.isPositiveN
 
 local logger = prelude.createLogger("Pulser")
 local isSequence = prelude.t.union(prelude.t.ColorSequence, prelude.t.NumberSequence)
-local isColorPulserType: utils.check<PulserType> = prelude.t.literal("Color3", "ColorSequence", "BrickColor")
-local isNumberPulserType: utils.check<PulserType> = prelude.t.literal("number", "NumberSequence", "NumberRange")
-local isPulserType: utils.check<PulserType> = prelude.t.union(isColorPulserType, isNumberPulserType)
+local isColorPulserType: std.check<PulserType> = prelude.t.literal("Color3", "ColorSequence", "BrickColor")
+local isNumberPulserType: std.check<PulserType> = prelude.t.literal("number", "NumberSequence", "NumberRange")
+local isPulserType: std.check<PulserType> = prelude.t.union(isColorPulserType, isNumberPulserType)
 
-local self = {} :: utils.KitScript
+local self = {} :: std.KitScript
 self.type = "KitScript"
 
 local function setPropertyUnsafe(instance: Instance, property: string, value: unknown)
 	(instance :: any)[property] = value
 end
 
-function self:run(kit: utils.Kit)
+function self:run(kit: std.Kit)
 	local Pulser = kit:tag("Pulser")
 
 	local localPlayer = Players.LocalPlayer
@@ -56,10 +56,10 @@ function self:run(kit: utils.Kit)
 				end
 			end
 
-			local propertySequences: utils.Map<string, ColorSequence | NumberSequence> = {}
-			local offsets: utils.Map<string, number> = {}
-			local durations: utils.Map<string, number> = {}
-			local types: utils.Map<string, PulserType> = {}
+			local propertySequences: std.Map<string, ColorSequence | NumberSequence> = {}
+			local offsets: std.Map<string, number> = {}
+			local durations: std.Map<string, number> = {}
+			local types: std.Map<string, PulserType> = {}
 
 			for attributeName, value in toPulse:GetAttributes() do
 				local property = attributeName:match("^Property_(%w+)")
@@ -104,7 +104,7 @@ function self:run(kit: utils.Kit)
 				local newValue: unknown
 
 				if typeof(sequence) == "ColorSequence" then
-					local color = utils.color.pickTimeInColorSequence(sequence, time)
+					local color = std.color.pickTimeInColorSequence(sequence, time)
 					local propertyType: ColorPulserType = (types[property] or "Color3") :: any
 					if not isColorPulserType(propertyType) then
 						logger:warn(
@@ -121,9 +121,9 @@ function self:run(kit: utils.Kit)
 						then color
 						elseif propertyType == "ColorSequence" then ColorSequence.new(color)
 						elseif propertyType == "BrickColor" then BrickColor.new(color)
-						else utils.never()
+						else std.never()
 				elseif typeof(sequence) == "NumberSequence" then
-					local num = utils.math.pickTimeInNumberSequence(sequence, time)
+					local num = std.math.pickTimeInNumberSequence(sequence, time)
 					local propertyType: NumberPulserType = (types[property] or "number") :: any
 					if not isNumberPulserType(propertyType) then
 						logger:warn(
@@ -140,7 +140,7 @@ function self:run(kit: utils.Kit)
 						then num
 						elseif propertyType == "NumberSequence" then NumberSequence.new(num)
 						elseif propertyType == "NumberRange" then NumberRange.new(num)
-						else utils.never()
+						else std.never()
 				end
 
 				local setSuccess = pcall(setPropertyUnsafe, toPulse, property, newValue)

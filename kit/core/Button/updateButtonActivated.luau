@@ -3,8 +3,8 @@
 -- WELCOME TO HELL: COMMENT CORE MECHANIC WARNING
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
-local prelude = utils.prelude
+local std = require(ReplicatedStorage:WaitForChild("KitStd"))
+local prelude = std.prelude
 
 local ButtonActivatedAttributes = require("./ButtonActivatedAttributes")
 local Invert = ButtonActivatedAttributes.Invert
@@ -17,7 +17,7 @@ local ActiveTransparency = ButtonActivatedAttributes.ActiveTransparency
 local InactiveTransparency = ButtonActivatedAttributes.InactiveTransparency
 local KeepEnabled = ButtonActivatedAttributes.KeepEnabled
 
-local TOGGLE_ENABLED_CLASSES: utils.Set<string> = {
+local TOGGLE_ENABLED_CLASSES: std.Set<string> = {
 	Beam = true,
 	Constraint = true,
 	ParticleEmitter = true,
@@ -29,7 +29,7 @@ local TOGGLE_ENABLED_CLASSES: utils.Set<string> = {
 	UIGradient = true,
 }
 
-local TWEEN_CLASSES: utils.Map<string, string> = {
+local TWEEN_CLASSES: std.Map<string, string> = {
 	Decal = "Transparency",
 	Texture = "Transparency",
 	SelectionBox = "Transparency",
