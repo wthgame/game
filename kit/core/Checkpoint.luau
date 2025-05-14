@@ -6,33 +6,34 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local DEFAULT_RESPAWN_SOUND = "rbxassetid://12222140"
 
 export type NoCheckpointBehavior = "ReturnToSpawn" | "None"
 export type TransitionMode = "FadeScreen" | "PivotCharacter" | "Instant"
 
-local EmitCheckpointParticle = utils.attribute("EmitCheckpointParticle", utils.t.boolean, false)
-local TeleportOffset = utils.attribute(
+local EmitCheckpointParticle = prelude.attribute("EmitCheckpointParticle", prelude.isBoolean, false)
+local TeleportOffset = prelude.attribute(
 	"TeleportOffset",
-	utils.t.union(utils.t.number, utils.t.Vector3, utils.t.CFrame),
+	prelude.t.union(prelude.t.number, prelude.t.Vector3, prelude.t.CFrame),
 	Vector3.new(0, 3, 0)
 )
 
 local _NoCheckpointBehavior: utils.InstanceAttribute<NoCheckpointBehavior> = (
-	utils.attribute("NoCheckpointBehavior", utils.t.literal("ReturnToSpawn", "None"), "ReturnToSpawn")
+	prelude.attribute("NoCheckpointBehavior", prelude.t.literal("ReturnToSpawn", "None"), "ReturnToSpawn")
 )
 local TransitionMode: utils.InstanceAttribute<TransitionMode> = (
-	utils.attribute("TransitionMode", utils.t.literal("FadeScreen", "PivotCharacter", "Instant"), "Instant")
+	prelude.attribute("TransitionMode", prelude.t.literal("FadeScreen", "PivotCharacter", "Instant"), "Instant")
 )
-local FadeScreenColor = utils.attribute("FadeScreenColor", utils.t.Color3, Color3.new(0, 0, 0))
+local FadeScreenColor = prelude.attribute("FadeScreenColor", prelude.t.Color3, Color3.new(0, 0, 0))
 
-local PlaySound = utils.attribute("PlaySound", utils.t.boolean, false)
-local ActivatedColor = utils.attribute("ActivatedColor", utils.t.Color3, Color3.new(0, 1, 0))
-local DefaultColor = utils.attribute("DefaultColor", utils.t.Color3, Color3.new(0, 0, 0))
+local PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, false)
+local ActivatedColor = prelude.attribute("ActivatedColor", prelude.t.Color3, Color3.new(0, 1, 0))
+local DefaultColor = prelude.attribute("DefaultColor", prelude.t.Color3, Color3.new(0, 0, 0))
 
 local currentCheckpoint: BasePart? = nil
-local updateCheckpoint = utils.newSignal()
+local updateCheckpoint = utils.packages.createLemonSignal()
 local debounce = false
 
 local function tryEmitCheckpointParticles(checkpoint: Instance)
@@ -53,7 +54,7 @@ local function activateCheckpoint(trove: utils.Trove, checkpoint: BasePart, acti
 	updateCheckpoint:Fire()
 	tryEmitCheckpointParticles(checkpoint)
 	if PlaySound(checkpoint) then
-		utils.inferAndPlaySound(checkpoint, utils.AUDIO_ASSETS["core/towerSfx/button"], "Sound")
+		prelude.inferAndPlaySound(checkpoint, prelude.AUDIO_ASSETS["core/towerSfx/button"], "Sound")
 	end
 end
 
@@ -78,20 +79,20 @@ local function fadeScreenForReturner(outerTrove: utils.Trove, returner: BasePart
 	frame.Parent = screen
 	screen.Parent = Players.LocalPlayer.PlayerGui
 
-	local config = utils.tweenConfigFromAttributes(returner, "Transition")
-	utils.tween(frame, { BackgroundTransparency = 0 }, config)
+	local config = prelude.tweenConfigFromAttributes(returner, "Transition")
+	prelude.tween(frame, { BackgroundTransparency = 0 }, config)
 
 	task.wait(config.time)
 
 	root:PivotTo(destination)
 	root.Anchored = false
-	utils.tween(frame, { BackgroundTransparency = 1 }, config)
+	prelude.tween(frame, { BackgroundTransparency = 1 }, config)
 
 	task.delay(config.time, trove.clean, trove)
 end
 
 local function returnToCheckpoint(trove: utils.Trove, returner: BasePart)
-	local root = utils.getMaybeHumanoidRootPart()
+	local root = prelude.getMaybeHumanoidRootPart()
 	if root and currentCheckpoint and currentCheckpoint:IsDescendantOf(Workspace) then
 		if debounce then
 			return
@@ -112,7 +113,7 @@ local function returnToCheckpoint(trove: utils.Trove, returner: BasePart)
 		local destination = currentCheckpoint:GetPivot() * finalTeleportOffset
 
 		if PlaySound(returner) then
-			utils.inferAndPlaySound(returner, DEFAULT_RESPAWN_SOUND, "Sound")
+			prelude.inferAndPlaySound(returner, DEFAULT_RESPAWN_SOUND, "Sound")
 		end
 
 		local mode: TransitionMode = TransitionMode(returner)
@@ -121,8 +122,8 @@ local function returnToCheckpoint(trove: utils.Trove, returner: BasePart)
 		elseif mode == "PivotCharacter" then
 			root.Anchored = true
 			root.AssemblyLinearVelocity = Vector3.zero
-			local config = utils.tweenConfigFromAttributes(returner, "Transition")
-			utils.tween(root, { CFrame = destination }, config)
+			local config = prelude.tweenConfigFromAttributes(returner, "Transition")
+			prelude.tween(root, { CFrame = destination }, config)
 			task.wait(config.time)
 			root.Anchored = false
 		elseif mode == "FadeScreen" then
@@ -146,9 +147,9 @@ local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
-	local Checkpoint = kit:tag("Checkpoint", utils.isBasePart)
-	local CheckpointReturner = kit:tag("CheckpointReturner", utils.isBasePart)
-	local CheckpointResetter = kit:tag("CheckpointResetter", utils.isBasePart)
+	local Checkpoint = kit:tag("Checkpoint", prelude.isBasePart)
+	local CheckpointReturner = kit:tag("CheckpointReturner", prelude.isBasePart)
+	local CheckpointResetter = kit:tag("CheckpointResetter", prelude.isBasePart)
 
 	kit.trove:add(resetCheckpoint)
 
@@ -158,11 +159,11 @@ function self:run(kit: utils.Kit)
 
 	Checkpoint:onLoaded(function(trove, checkpoint)
 		trove:connect(updateCheckpoint :: any, function()
-			local tweenConfig = utils.tweenConfigFromAttributes(checkpoint, "Transition")
+			local tweenConfig = prelude.tweenConfigFromAttributes(checkpoint, "Transition")
 			for _, descendant in checkpoint:GetDescendants() do
 				if descendant.Name == "CheckpointSymbol" then
 					if descendant:IsA("ImageLabel") then
-						utils.tweenMaybeInstant(
+						prelude.tweenMaybeInstant(
 							descendant,
 							{ ImageColor3 = symbolColorOf(descendant, checkpoint) },
 							tweenConfig

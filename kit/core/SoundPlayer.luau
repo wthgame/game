@@ -4,11 +4,12 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
-local PlayFromAssets = utils.attribute("PlayFromAssets", utils.t.keyOf(utils.AUDIO_ASSETS) :: utils.check<string>)
-local Spatial = utils.attribute("Spatial", utils.t.boolean, false)
-local Volume = utils.attribute("Volume", utils.t.numberPositive)
-local Speed = utils.attribute("Speed", utils.t.numberPositive)
+local PlayFromAssets = prelude.attribute("PlayFromAssets", prelude.t.keyOf(prelude.AUDIO_ASSETS) :: utils.check<string>)
+local Spatial = prelude.attribute("Spatial", prelude.t.boolean, false)
+local Volume = prelude.attribute("Volume", prelude.t.numberPositive)
+local Speed = prelude.attribute("Speed", prelude.t.numberPositive)
 
 local self = {} :: utils.KitScript
 self.type = "KitScript"
@@ -22,9 +23,9 @@ local function playSound(_, player: Instance)
 		speed = Speed(player),
 	}
 	if assetKey then
-		return utils.playSoundFromGameAssets(assetKey, playFrom, config)
+		return prelude.playSoundFromGameAssets(assetKey, playFrom, config)
 	end
-	utils.inferAndPlaySound(player, nil, "Sound", config, isSpatial)
+	prelude.inferAndPlaySound(player, nil, "Sound", config, isSpatial)
 end
 
 function self:run(kit: utils.Kit)

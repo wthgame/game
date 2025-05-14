@@ -69,6 +69,16 @@
                 "StreamingEnabled": false,
                 "PhysicsSteppingMethod": "Fixed",
                 "SignalBehavior": "Immediate"
+            },
+            "Kit": {
+                "$className": "Folder",
+                "$ignoreUnknownInstances": true,
+                "README": {
+                    "$path": "kit/KitReadMe.luau"
+                },
+                "LICENSE": {
+                    "$path": "kit/KitLicense.luau"
+                }
             }
         },
         "HttpService": {

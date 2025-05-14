@@ -85,7 +85,7 @@ end
     "Sound".
 
     ```Lua
-    utils.inferAndPlaySound(btn, utils.SOUND_ASSETS.button, "PressSound")
+    prelude.inferAndPlaySound(btn, utils.SOUND_ASSETS.button, "PressSound")
     ```
 ]=]
 local function inferAndPlaySound(

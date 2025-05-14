@@ -19,6 +19,8 @@ export type InstanceTag<I> = {
 
 export type Kit = {
 	trove: trove.Trove,
+	loadedAt: number,
+	loadedLifetime: (self: Kit) -> number,
 	tag: ((self: Kit, tagName: string) -> InstanceTag<Instance>)
 		& (<I>(self: Kit, tagName: string, check: t.check<I>?) -> InstanceTag<I>),
 	onRender: (self: Kit, callback: (trove: trove.Trove, dt: number) -> ()) -> (),

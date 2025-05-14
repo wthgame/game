@@ -4,6 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local self = {} :: utils.KitScript
 self.type = "KitScript"

@@ -4,6 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local Button = require(script.Parent:WaitForChild("Button"))
 local PressOffset = Button.PressOffset
@@ -11,13 +12,13 @@ local PlaySound = Button.PlaySound
 
 export type BoxBehavior = "Unanchoring" | "Draggable" | "Pickupable"
 
-local BoxId = utils.attribute("BoxId", utils.t.string)
-local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
+local BoxId = prelude.attribute("BoxId", prelude.isString)
+local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
 -- local BoxBehavior: utils.InstanceAttribute<BoxBehavior> = (
--- 	utils.attribute("BoxBehavior", utils.t.literal("Unanchoring", "Draggable", "Pickupable"), "Unanchoring")
+-- 	prelude.attribute("BoxBehavior", prelude.t.literal("Unanchoring", "Draggable", "Pickupable"), "Unanchoring")
 -- )
 
-local idToBox: utils.MapSet<string, BasePart> = utils.MapSet()
+local idToBox: utils.MapSet<string, BasePart> = utils.collections.MapSet()
 local spawnBoxTroves: utils.Map<BasePart, utils.Trove> = {}
 
 local debouncedSpawners: utils.Set<BasePart> = {}
@@ -45,14 +46,14 @@ local function trySpawn(trove: utils.Trove, spawner: BasePart, activationTrove: 
 	activationTrove:clean()
 
 	if PlaySound(spawner) then
-		utils.inferAndPlaySound(spawner, utils.AUDIO_ASSETS["core/towerSfx/button"], "Press")
+		prelude.inferAndPlaySound(spawner, prelude.AUDIO_ASSETS["core/towerSfx/button"], "Press")
 	end
 
 	if spawner.Anchored then
-		utils.tweenMaybeInstant(
+		prelude.tweenMaybeInstant(
 			spawner,
-			{ CFrame = spawner.CFrame * utils.intoCFrameOffset(PressOffset(spawner)) },
-			utils.tweenConfigFromAttributes(spawner, "Press")
+			{ CFrame = spawner.CFrame * utils.physics.intoCFrameOffset(PressOffset(spawner)) },
+			prelude.tweenConfigFromAttributes(spawner, "Press")
 		)
 	end
 
@@ -65,7 +66,7 @@ local function trySpawn(trove: utils.Trove, spawner: BasePart, activationTrove: 
 	local function reset()
 		debouncedSpawners[spawner] = nil
 		activationTrove:clean()
-		utils.connectActivation(trove, spawner, trySpawn)
+		prelude.connectActivation(trove, spawner, trySpawn)
 	end
 
 	task.delay(Cooldown(spawner), reset)
@@ -75,8 +76,8 @@ local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
-	local BoxSpawner = kit:tag("BoxSpawner", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
-	local Box = kit:tag("Box", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local BoxSpawner = kit:tag("BoxSpawner", prelude.isBasePart)
+	local Box = kit:tag("Box", prelude.isBasePart)
 
 	Box:onLoaded(function(trove, box)
 		local id = BoxId:assert(box) :: string

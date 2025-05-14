@@ -5,23 +5,27 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local DISTANCE_FROM_ROOT_TO_GROUND = 3
 local OFFSET_CHARACTER_BY = DISTANCE_FROM_ROOT_TO_GROUND / 2
 
-local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
-local JumpOnDismount = utils.attribute("JumpOnDismount", utils.t.boolean, true)
--- local Visualize = utils.attribute("Visualize", utils.t.boolean, true)
+local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
+local JumpOnDismount = prelude.attribute("JumpOnDismount", prelude.isBoolean, true)
+-- local Visualize = prelude.attribute("Visualize", prelude.isBoolean, true)
 
 local seated = false
 local debounced: utils.Set<BasePart> = {}
 
 local function seatPlayer(trove: utils.Trove, seat: BasePart, activationTrove: utils.Trove)
-	local canBeSeated = utils.Active(seat) and not seated and not debounced[seat] and utils.isCharacterAlive()
+	local canBeSeated = prelude.Active(seat)
+		and not seated
+		and not debounced[seat]
+		and utils.character.isCharacterAlive()
 
 	if canBeSeated then
-		local root = assert(utils.getMaybeHumanoidRootPart(), "can be assumed")
-		local humanoid = assert(utils.getMaybeHumanoid(), "can be assumed")
+		local root = assert(prelude.getMaybeHumanoidRootPart(), "can be assumed")
+		local humanoid = assert(prelude.getMaybeHumanoid(), "can be assumed")
 
 		debounced[seat] = true
 		seated = true
@@ -32,7 +36,7 @@ local function seatPlayer(trove: utils.Trove, seat: BasePart, activationTrove: u
 
 		local weldTrove = trove:extend()
 		weldTrove:attachToInstance(root)
-		utils.weld(weldTrove, seat, root)
+		utils.physics.weld(weldTrove, seat, root)
 
 		weldTrove:connect(UserInputService.JumpRequest, function()
 			weldTrove:clean()
@@ -44,11 +48,11 @@ local function seatPlayer(trove: utils.Trove, seat: BasePart, activationTrove: u
 
 		local function dismount()
 			seated = false
-			local humanoid = utils.getMaybeHumanoid()
+			local humanoid = prelude.getMaybeHumanoid()
 			if JumpOnDismount(seat) and humanoid then
 				humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 			end
-			utils.connectActivation(trove, seat, seatPlayer)
+			prelude.connectActivation(trove, seat, seatPlayer)
 		end
 
 		weldTrove:add(dismount)
@@ -62,7 +66,7 @@ local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
-	local Seat = kit:tag("Seat", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local Seat = kit:tag("Seat", prelude.isBasePart)
 	Seat:onActivated(seatPlayer)
 end
 

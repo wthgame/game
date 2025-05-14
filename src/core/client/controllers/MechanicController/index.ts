@@ -4,9 +4,11 @@ import ty from "@rbxts/libopen-ty";
 import { ReplicatedStorage, RunService } from "@rbxts/services";
 import { t } from "@rbxts/t";
 import { Trove } from "@rbxts/trove";
-import { connectActivation } from "core/../../kit/utils";
+import { prelude } from "core/../../kit/utils";
 import { LogBenchmark } from "core/shared/decorators";
 import { createLogger } from "core/shared/logger";
+
+const { connectActivation } = prelude;
 
 export class InstanceTag {
 	readonly _instances = new Array<Instance>();
@@ -36,6 +38,8 @@ export class InstanceTag {
 export interface Kit {
 	trove: Trove;
 	mechanics: Instance;
+	loadedAt: number;
+	loadedLifetime(): number;
 	tag(tagName: string, check?: t.check<Instance>): InstanceTag;
 	onRender(callback: (trove: Trove, dt: number) => void): void;
 	onPhysics(callback: (trove: Trove, dt: number) => void): void;
@@ -95,6 +99,8 @@ export class MechanicController implements OnInit {
 
 	@LogBenchmark()
 	async loadMechanicsFromParent(trove: Trove, parent: Instance) {
+		const loadedAt = os.clock();
+
 		const tags = new Set<InstanceTag>();
 		const onRenderCallbacks = new Array<(trove: Trove, dt: number) => void>();
 		const onPhysicsCallbacks = new Array<(trove: Trove, dt: number) => void>();
@@ -103,6 +109,10 @@ export class MechanicController implements OnInit {
 		const kit = table.freeze<Kit>({
 			trove,
 			mechanics: parent,
+			loadedAt,
+			loadedLifetime() {
+				return os.clock() - loadedAt;
+			},
 			tag(tagName: string, check: t.check<Instance> = t.Instance): InstanceTag {
 				const instanceTag = new InstanceTag(ty.String.CastOrError(tagName), optionalCheck.CastOrError(check));
 				tags.add(instanceTag);

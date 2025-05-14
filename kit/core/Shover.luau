@@ -4,6 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 type ShoverDirectionAttributes = {
 	delay: utils.InstanceAttribute<number>,
@@ -12,12 +13,12 @@ type ShoverDirectionAttributes = {
 
 local SHOVER_DIRECTION_ATTRIBUTES = {
 	In = {
-		delay = utils.attribute("InDelay", utils.isPositiveNumber, 1),
-		power = utils.attribute("InPower", utils.isPositiveNumber, 0),
+		delay = prelude.attribute("InDelay", prelude.isPositiveNumber, 1),
+		power = prelude.attribute("InPower", prelude.isPositiveNumber, 0),
 	},
 	Out = {
-		delay = utils.attribute("OutDelay", utils.isPositiveNumber, 1),
-		power = utils.attribute("OutPower", utils.isPositiveNumber, 0),
+		delay = prelude.attribute("OutDelay", prelude.isPositiveNumber, 1),
+		power = prelude.attribute("OutPower", prelude.isPositiveNumber, 0),
 	},
 }
 
@@ -27,7 +28,7 @@ self.type = "KitScript"
 local function shove(direction: "In" | "Out", shover: Instance, ancestor: Instance)
 	local attributes: ShoverDirectionAttributes = SHOVER_DIRECTION_ATTRIBUTES[direction]
 	task.wait(attributes.delay(shover))
-	if utils.Active(shover) and shover:IsDescendantOf(ancestor) then
+	if prelude.Active(shover) and shover:IsDescendantOf(ancestor) then
 		local power = attributes.power(shover)
 		for _, descendant in shover:GetDescendants() do
 			if descendant.Name == "ShoverConstraint" and descendant:IsA("PrismaticConstraint") then

@@ -13,8 +13,9 @@ declare const audios: {
 	"core/towerSfx/victory": string
 	"core/towerSfx/vineGrab": string
 	"game/ost/001Title": string
+	"game/ost/002Prototype": string
 	"game/ost/003Deathbed": string
-	"game/ost/004DeepDeepBeneathTheCaelum": string
+	"game/ost/004Beneath": string
 	"game/ost/007MoltenHeart": string
 }
 

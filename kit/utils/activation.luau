@@ -188,13 +188,13 @@ end
                 task.delay(3, function()
                     isActivated = false
                     activationTrove = trove:extend()
-                    utils.connectActivation(activationTrove, connectTo, onSelfActivated)
+                    prelude.connectActivation(activationTrove, connectTo, onSelfActivated)
                     print("Deactivated!")
                 end)
             end
         end
 
-        utils.connectActivation(activationTrove, connectTo, onSelfActivated)
+        prelude.connectActivation(activationTrove, connectTo, onSelfActivated)
     end)
     ```
 ]=]

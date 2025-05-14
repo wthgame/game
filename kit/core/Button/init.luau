@@ -5,6 +5,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local ButtonActivatedAttributes = require(script:WaitForChild("ButtonActivatedAttributes"))
 local ButtonAttributes = require(script:WaitForChild("ButtonAttributes"))
@@ -17,8 +18,8 @@ local PressOffset = ButtonAttributes.PressOffset
 local glowButton = require(script:WaitForChild("glowButton"))
 local updateButtonActivated = require(script:WaitForChild("updateButtonActivated"))
 
-local idToButtonActivateds: utils.MapSet<string, Instance> = utils.MapSet()
-local idToButtonsPressed: utils.MapSet<string, BasePart> = utils.MapSet()
+local idToButtonActivateds: utils.MapSet<string, Instance> = utils.collections.MapSet()
+local idToButtonsPressed: utils.MapSet<string, BasePart> = utils.collections.MapSet()
 
 local function updateId(id: string)
 	local buttonActivateds = idToButtonActivateds:get(id)
@@ -47,25 +48,25 @@ local function pressButton(trove: utils.Trove, btn: BasePart, activationTrove: u
 	idToButtonsPressed:add(id, btn)
 
 	if PlaySound(btn) then
-		utils.inferAndPlaySound(btn, utils.AUDIO_ASSETS["core/towerSfx/button"], "Press")
+		prelude.inferAndPlaySound(btn, prelude.AUDIO_ASSETS["core/towerSfx/button"], "Press")
 	end
 
 	local originalCFrame = btn.CFrame
-	local pressOffset = utils.intoCFrameOffset(PressOffset(btn))
+	local pressOffset = utils.physics.intoCFrameOffset(PressOffset(btn))
 
 	if btn.Anchored then
-		utils.tweenMaybeInstant(
+		prelude.tweenMaybeInstant(
 			btn,
 			{ CFrame = originalCFrame * pressOffset },
-			utils.tweenConfigFromAttributes(btn, "Press")
+			prelude.tweenConfigFromAttributes(btn, "Press")
 		)
 	end
 
 	local deactivateTrove = trove:extend()
 	deactivateTrove:add(function()
 		btn:SetAttribute("ButtonPressed", false)
-		utils.tweenMaybeInstant(btn, { CFrame = originalCFrame }, utils.tweenConfigFromAttributes(btn, "Press"))
-		utils.connectActivation(trove, btn, pressButton)
+		prelude.tweenMaybeInstant(btn, { CFrame = originalCFrame }, prelude.tweenConfigFromAttributes(btn, "Press"))
+		prelude.connectActivation(trove, btn, pressButton)
 	end)
 
 	glowButton(deactivateTrove, btn)
@@ -110,7 +111,7 @@ for key, value in ButtonActivatedAttributes do
 end
 
 function self:run(kit: utils.Kit)
-	local Button = kit:tag("Button", utils.isBasePart)
+	local Button = kit:tag("Button", prelude.isBasePart)
 	local ButtonActivated = kit:tag("ButtonActivated")
 
 	ButtonActivated:onLoaded(function(trove, ba)

@@ -4,10 +4,11 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean?)
 	local trove = outerTrove:extend()
-	local instanceTrove = utils.Trove.new()
+	local instanceTrove = utils.packages.createTrove()
 
 	-- don't add to trove yet, we will when we finish animations
 	local glow = instanceTrove:clone(btn)
@@ -29,7 +30,7 @@ local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean
 	alignOrientation.MaxTorque = math.huge
 	alignOrientation.Responsiveness = 200
 
-	local attachment0, attachment1 = utils.populateConstraintAttachments(alignPosition)
+	local attachment0, attachment1 = utils.physics.populateConstraintAttachments(alignPosition)
 	alignOrientation.Attachment0 = instanceTrove:add(attachment0)
 	alignOrientation.Attachment1 = instanceTrove:add(attachment1)
 
@@ -41,11 +42,11 @@ local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean
 	alignOrientation.Parent = glow
 	glow.Parent = btn
 
-	local config = utils.tweenConfigFromAttributes(btn, "Press")
+	local config = prelude.tweenConfigFromAttributes(btn, "Press")
 
 	if flash then
 		local time = config.time or 1
-		utils.tweenMaybeInstant(glow, { Transparency = 0.5 }, {
+		prelude.tweenMaybeInstant(glow, { Transparency = 0.5 }, {
 			time = time / 2,
 			easingStyle = config.easingStyle,
 			easingDirection = config.easingDirection,
@@ -55,10 +56,10 @@ local function glowButton(outerTrove: utils.Trove, btn: BasePart, flash: boolean
 			instanceTrove:clean()
 		end)
 	else
-		utils.tweenMaybeInstant(glow, { Transparency = 0.5 }, utils.tweenConfigFromAttributes(btn, "Press"))
+		prelude.tweenMaybeInstant(glow, { Transparency = 0.5 }, prelude.tweenConfigFromAttributes(btn, "Press"))
 		trove:add(function()
 			local time = config.time or 1
-			utils.tweenMaybeInstant(glow, { Transparency = 1 }, utils.tweenConfigFromAttributes(btn, "Press"))
+			prelude.tweenMaybeInstant(glow, { Transparency = 1 }, prelude.tweenConfigFromAttributes(btn, "Press"))
 			task.delay(time, function()
 				instanceTrove:clean()
 			end)

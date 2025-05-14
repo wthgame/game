@@ -4,12 +4,15 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
-local Power = utils.attribute("Power", utils.t.numberPositive, 0)
-local MaxForce = utils.attribute("MaxForce", utils.t.numberPositive, math.huge)
-local Vector = utils.attribute("Vector", utils.t.literal("Up", "Right", "Look", "Z"), "Up")
+local Power = prelude.attribute("Power", prelude.isPositiveNumber, 0)
+local MaxForce = prelude.attribute("MaxForce", prelude.isPositiveNumber, math.huge)
+local Vector: utils.InstanceAttribute<Vector> = (
+	prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up")
+)
 
 local function wind(trove: utils.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
@@ -45,12 +48,12 @@ local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
-	local Wind = kit:tag("Wind", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local Wind = kit:tag("Wind", prelude.isBasePart)
 
 	Wind:onLoaded(function(trove, instance)
 		local windTroves: utils.Map<BasePart, utils.Trove> = {}
 		trove:connect(instance.Touched, function(toucher)
-			if not utils.Active(instance) then
+			if not prelude.Active(instance) then
 				for part, trove in windTroves do
 					(trove :: any):clean()
 				end
@@ -60,11 +63,11 @@ function self:run(kit: utils.Kit)
 
 			local partToWind: BasePart? = nil
 
-			local isToucherCharacter = utils.isToucherCharacter(instance, toucher)
+			local isToucherCharacter = utils.touch.isToucherCharacter(instance, toucher)
 
 			if isToucherCharacter then
 				-- For consistency, only wind up the humanoid root part.
-				local root = utils.getHumanoidRootPart()
+				local root = prelude.getHumanoidRootPart()
 				if windTroves[root] then
 					return
 				end
@@ -113,12 +116,12 @@ function self:run(kit: utils.Kit)
 		end)
 
 		trove:connect(instance.TouchEnded, function(toucher)
-			local isToucherCharacter = utils.isToucherCharacter(instance, toucher)
+			local isToucherCharacter = utils.touch.isToucherCharacter(instance, toucher)
 
 			if isToucherCharacter then
 				-- For consistency, only the humanoid root part should be winded
 				-- up.
-				local root = utils.getHumanoidRootPart()
+				local root = prelude.getHumanoidRootPart()
 				local rootTrove = windTroves[root]
 				if rootTrove then
 					rootTrove:clean()

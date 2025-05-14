@@ -5,18 +5,19 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 export type VineInstance = BasePart & {
 	Constraint: Constraint?,
 	Top: BasePart,
 }
 
-local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
-local KeepVelocity = utils.attribute("KeepVelocity", utils.t.boolean, true)
-local AllowJumpDismount = utils.attribute("AllowJumpDismount", utils.t.boolean, true)
-local JumpOnDismount = utils.attribute("JumpOnDismount", utils.t.boolean, true)
-local PlayGrabSound = utils.attribute("PlayGrabSound", utils.t.boolean, true)
-local PlayJumpSound = utils.attribute("PlayJumpSound", utils.t.boolean, true)
+local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
+local KeepVelocity = prelude.attribute("KeepVelocity", prelude.t.boolean, true)
+local AllowJumpDismount = prelude.attribute("AllowJumpDismount", prelude.t.boolean, true)
+local JumpOnDismount = prelude.attribute("JumpOnDismount", prelude.t.boolean, true)
+local PlayGrabSound = prelude.attribute("PlayGrabSound", prelude.t.boolean, true)
+local PlayJumpSound = prelude.attribute("PlayJumpSound", prelude.t.boolean, true)
 
 local debounced: utils.Set<VineInstance> = {}
 
@@ -53,21 +54,21 @@ local function doVine(trove: utils.Trove, vineInstance: VineInstance, activation
 
 	activationTrove:clean()
 
-	local root = utils.getHumanoidRootPart()
+	local root = prelude.getHumanoidRootPart()
 	local originalLinearVelocity = root.AssemblyLinearVelocity
 	local originalAngularVelocity = root.AssemblyAngularVelocity
 
 	local attachmentTrove = trove:extend()
 	local constraint = trove:clone(constraintOf(vineInstance))
 	local handle = createHandle(attachmentTrove)
-	local attachment0, attachment1 = utils.populateConstraintAttachments(constraint)
+	local attachment0, attachment1 = utils.physics.populateConstraintAttachments(constraint)
 	attachmentTrove:add(attachment0)
 	attachmentTrove:add(attachment1)
 
 	handle.Color = vineInstance.Color
 	handle.CFrame = root.CFrame * CFrame.new(0, 2.6, 0)
 
-	utils.weld(trove, handle, root)
+	utils.physics.weld(trove, handle, root)
 	handle.Parent = vineInstance
 
 	constraint.Visible = true
@@ -85,25 +86,25 @@ local function doVine(trove: utils.Trove, vineInstance: VineInstance, activation
 	end
 
 	if PlayGrabSound(vineInstance) then
-		utils.inferAndPlaySound(vineInstance, utils.AUDIO_ASSETS["core/towerSfx/button"], "GrabSound")
+		prelude.inferAndPlaySound(vineInstance, prelude.AUDIO_ASSETS["core/towerSfx/vineGrab"], "GrabSound")
 	end
 
 	local function dismount()
 		attachmentTrove:clean()
 
-		local humanoid = utils.getMaybeHumanoid()
+		local humanoid = utils.character.getMaybeHumanoid()
 		if humanoid and JumpOnDismount(vineInstance) then
 			humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 		end
 
 		if PlayJumpSound(vineInstance) then
-			utils.inferAndPlaySound(vineInstance, utils.AUDIO_ASSETS["core/towerSfx/jump"], "JumpSound")
+			prelude.inferAndPlaySound(vineInstance, prelude.AUDIO_ASSETS["core/towerSfx/jump"], "JumpSound")
 		end
 
 		task.delay(Cooldown(vineInstance), function(vineInstance)
 			debounced[vineInstance] = nil
 			vineInstance.Transparency = 0
-			utils.connectActivation(trove, vineInstance, doVine)
+			prelude.connectActivation(trove, vineInstance, doVine)
 		end, vineInstance)
 	end
 
@@ -118,9 +119,9 @@ self.type = "KitScript"
 function self:run(kit: utils.Kit)
 	local Vine = kit:tag(
 		"Vine",
-		utils.t.instanceIsA("BasePart", {
-			Constraint = utils.t.optional(utils.t.instanceIsA("Constraint")),
-			Top = utils.isBasePart,
+		prelude.t.instanceIsA("BasePart", {
+			Constraint = prelude.t.optional(prelude.t.instanceIsA("Constraint")),
+			Top = prelude.isBasePart,
 		}) :: utils.check<VineInstance>
 	)
 	Vine:onActivated(doVine)

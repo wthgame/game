@@ -4,7 +4,7 @@ import Maybe from "@rbxts/libopen-maybe";
 import Make from "@rbxts/make";
 import audios from "core/shared/audios";
 import { createLogger } from "core/shared/logger";
-import { BackgroundMusicZoneInstance } from "core/shared/types";
+import { BackgroundMusicZoneInstance, castToTowerInstance } from "core/shared/types";
 import { NAME_TO_TOWER, TowerInfo, TowerInstance } from "game/shared/areas";
 
 export interface Tower {
@@ -22,34 +22,6 @@ const TOWER_OBBY_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerOb
 const TOWER_DECORATION_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerDecoration" }));
 const TOWER_MECHANICS_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerMechanics" }));
 const TOWER_BGM_ZONES_SERVER_STORAGE = new Lazy(() => Make("Folder", { Name: "TowerBackgroundMusicZones" }));
-
-// TODO: remove link if not in studio
-const NO_ETOH =
-	"EToH kits with standard client objects aren't supported in Welcome To Hell. " +
-	"See section 1.1 'WTH for EToH' in The Tower Building Book:" +
-	"\nhttps://welcome-to-hell.com/go/ttbb-1.1";
-
-function castToTowerInstance(instance: Instance): Maybe.Maybe<TowerInstance> {
-	const mechanics = instance.FindFirstChild("Mechanics");
-	const decoration = instance.FindFirstChild("Decoration");
-	const obby = instance.FindFirstChild("Obby");
-	const spawn = instance.FindFirstChild("Spawn");
-	const bgmZones = instance.FindFirstChild("BackgroundMusicZones");
-
-	if (!mechanics) {
-		const clientSidedObjects = instance.FindFirstChild("ClientSidedObjects");
-		if (clientSidedObjects) return Maybe.None(NO_ETOH);
-		return Maybe.None("No Mechanics folder found");
-	}
-
-	if (!decoration) return Maybe.None("No Decoration folder found");
-	if (!obby) return Maybe.None("No Obby folder found");
-	if (!spawn) return Maybe.None("No Spawn found");
-	if (!spawn.IsA("BasePart")) return Maybe.None(`Expected Spawn to be a BasePart, got ${spawn.ClassName}`);
-	if (!bgmZones) return Maybe.None("No BackgroundMusicZones found");
-
-	return Maybe.Some(instance as TowerInstance);
-}
 
 @Service()
 export class TowerService {

@@ -1,15 +1,20 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
-local ShouldPrompt = utils.attribute("ShouldPrompt", utils.t.boolean, false)
-local TowerName = utils.attribute("TowerName", utils.t.string)
+local ShouldPrompt = prelude.attribute("ShouldPrompt", prelude.isBoolean, false)
+local TowerName = prelude.attribute("TowerName", prelude.isString)
+
+local function promptToLoadTower(towerName: string)
+	utils.bindings._callMechanicBinding("@game/TowerRunController/promptToLoadTower", towerName)
+end
 
 local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
-	local TowerPortal = kit:tag("TowerPortal", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local TowerPortal = kit:tag("TowerPortal", prelude.isBasePart)
 
 	TowerPortal:onLoaded(function(trove, portal)
 		if not ShouldPrompt(portal) then
@@ -30,7 +35,7 @@ function self:run(kit: utils.Kit)
 		trove:add(towerPrompt.Triggered:Connect(function(player)
 			-- TODO: is this check needed?
 			if Players.LocalPlayer == player then
-				utils._.callMechanicBinding("@game/TowerRunController/promptToLoadTower", TowerName(portal))
+				promptToLoadTower(TowerName:assert(portal) :: string)
 			end
 		end))
 	end)

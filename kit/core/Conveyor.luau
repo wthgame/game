@@ -4,23 +4,23 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
-local Speed = utils.attribute("Speed", utils.t.numberPositive, 0)
-local SynchronizeConveyorBeams = utils.attribute("SynchronizeConveyorBeams", utils.t.boolean, true)
+local Speed = prelude.attribute("Speed", prelude.isPositiveNumber, 0)
+local SynchronizeConveyorBeams = prelude.attribute("SynchronizeConveyorBeams", prelude.isBoolean, true)
 
 local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
-	local Conveyor = kit:tag("Conveyor", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local Conveyor = kit:tag("Conveyor", prelude.isBasePart)
 
 	kit:onPhysics(function(trove, dt)
+		debug.profilebegin("Conveyor")
 		local alreadySynchronized: utils.Set<Instance> = {}
-
 		for _, conveyor in Conveyor:instances() do
-			local speed: number = utils.Active(conveyor) and Speed(conveyor) or 0
+			local speed: number = prelude.Active(conveyor) and Speed(conveyor) or 0
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
-
 			if SynchronizeConveyorBeams(conveyor) then
 				for _, beam in conveyor:GetDescendants() do
 					if not alreadySynchronized[beam] then
@@ -32,8 +32,8 @@ function self:run(kit: utils.Kit)
 				end
 			end
 		end
-
 		table.clear(alreadySynchronized)
+		debug.profileend()
 	end)
 end
 

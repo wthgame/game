@@ -4,6 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local ButtonActivatedAttributes = require("./ButtonActivatedAttributes")
 local Invert = ButtonActivatedAttributes.Invert
@@ -56,7 +57,7 @@ local function updateButtonActivated(instance: Instance, active: boolean)
 		end
 
 		if not KeepTransparency(instance) then
-			utils.tweenMaybeInstant(
+			prelude.tweenMaybeInstant(
 				instance,
 				{ Transparency = active and ActiveTransparency(instance) or InactiveTransparency(instance) },
 				{
@@ -90,7 +91,7 @@ local function updateButtonActivated(instance: Instance, active: boolean)
 				instance:SetAttribute("InactiveTransparency", (instance :: any)[property])
 			end
 
-			utils.tweenMaybeInstant(
+			prelude.tweenMaybeInstant(
 				instance,
 				{ [property] = active and ActiveTransparency(instance) or InactiveTransparency(instance) },
 				{

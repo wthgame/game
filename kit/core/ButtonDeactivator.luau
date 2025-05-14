@@ -4,6 +4,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 local Button = require("./Button")
 local ButtonId = Button.ButtonId
@@ -27,7 +28,7 @@ local function deactivate(_, deactivator: BasePart)
 end
 
 function self:run(kit: utils.Kit)
-	local ButtonDeactivator = kit:tag("ButtonDeactivator", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local ButtonDeactivator = kit:tag("ButtonDeactivator", prelude.isBasePart)
 
 	ButtonDeactivator:onActivated(deactivate)
 end

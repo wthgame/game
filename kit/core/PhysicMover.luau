@@ -5,6 +5,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
 export type PhysicMoverInstance = BasePart & {
 	Positions: Instance,
@@ -12,11 +13,11 @@ export type PhysicMoverInstance = BasePart & {
 	AlignOrientation: AlignOrientation,
 }
 
-local PhysicMoverId = utils.attribute("PhysicMoverId", utils.isString)
-local PhysicMoverIndex = utils.attribute("PhysicMoverIndex", utils.t.integer)
-local Interval = utils.attribute("Interval", utils.isPositiveNumber)
+local PhysicMoverId = prelude.attribute("PhysicMoverId", prelude.isString)
+local PhysicMoverIndex = prelude.attribute("PhysicMoverIndex", prelude.t.integer)
+local Interval = prelude.attribute("Interval", prelude.isPositiveNumber)
 
-local idToDestination: utils.MapSet<string, BasePart> = utils.MapSet()
+local idToDestination: utils.MapSet<string, BasePart> = utils.collections.MapSet()
 
 local self = {} :: utils.KitScript
 self.type = "KitScript"
@@ -35,12 +36,12 @@ end
 function self:run(kit: utils.Kit)
 	local PhysicMover = kit:tag(
 		"PhysicMover",
-		utils.t.instanceIsA("BasePart", {
-			AlignPosition = utils.t.instanceIsA("AlignPosition"),
-			AlignOrientation = utils.t.instanceIsA("AlignOrientation"),
+		prelude.t.instanceIsA("BasePart", {
+			AlignPosition = prelude.t.instanceIsA("AlignPosition"),
+			AlignOrientation = prelude.t.instanceIsA("AlignOrientation"),
 		}) :: utils.check<PhysicMoverInstance>
 	)
-	local PhysicMoverDestination = kit:tag("PhysicMoverDestination", utils.isBasePart)
+	local PhysicMoverDestination = kit:tag("PhysicMoverDestination", prelude.isBasePart)
 	PhysicMover:onLoaded(function(trove, mover)
 		mover.AlignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
 		mover.Anchored = false

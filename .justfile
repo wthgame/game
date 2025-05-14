@@ -30,5 +30,5 @@ watch-kit:
 sync-audios:
     lune run sync-audios
 
-replace-comments:
-    lune run replace-comments
+package-kit:
+    lune run package-kit

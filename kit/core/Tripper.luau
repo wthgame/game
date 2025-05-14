@@ -4,8 +4,9 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
-local Cooldown = utils.attribute("Cooldown", utils.t.numberPositive, 0)
+local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
 
 local debounced: utils.Set<BasePart> = {}
 
@@ -14,7 +15,7 @@ self.type = "KitScript"
 
 local function tripPlayer(trove: utils.Trove, tripper: BasePart)
 	if not debounced[tripper] then
-		local humanoid = assert(utils.getMaybeHumanoid(), "can be assumed it exists")
+		local humanoid = assert(prelude.getMaybeHumanoid(), "can be assumed it exists")
 		humanoid.Sit = true
 		debounced[tripper] = true
 		task.delay(Cooldown(tripper), function()
@@ -24,7 +25,7 @@ local function tripPlayer(trove: utils.Trove, tripper: BasePart)
 end
 
 function self:run(kit: utils.Kit)
-	local Tripper = kit:tag("Tripper", utils.t.instanceIsA("BasePart") :: utils.check<BasePart>)
+	local Tripper = kit:tag("Tripper", prelude.isBasePart)
 	Tripper:onActivated(tripPlayer)
 end
 

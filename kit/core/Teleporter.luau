@@ -4,24 +4,25 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local utils = require(ReplicatedStorage:WaitForChild("KitUtils"))
+local prelude = utils.prelude
 
-local TeleporterId = utils.attribute("TeleporterId", utils.isString)
-local KeepVelocity = utils.attribute("KeepVelocity", utils.isBoolean, true)
-local Cooldown = utils.attribute("Cooldown", utils.isPositiveNumber, 0)
-local PlaySound = utils.attribute("PlaySound", utils.isBoolean, true)
-local TeleporterOffset = utils.attribute(
+local TeleporterId = prelude.attribute("TeleporterId", prelude.isString)
+local KeepVelocity = prelude.attribute("KeepVelocity", prelude.isBoolean, true)
+local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
+local PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
+local TeleporterOffset = prelude.attribute(
 	"TeleportOffset",
-	utils.t.union(utils.t.number, utils.t.Vector3, utils.t.CFrame),
+	prelude.t.union(prelude.t.number, prelude.t.Vector3, prelude.t.CFrame),
 	Vector3.new(0, 3, 0)
 )
 
 -- NOTE: using MapArray to use random teleporter destinations
-local idToDestination: utils.MapArray<string, BasePart> = utils.MapArray()
+local idToDestination: utils.MapArray<string, BasePart> = utils.collections.MapArray()
 local debounce = false
 local debouncedTeleporters: utils.Set<BasePart> = {}
 
 local function teleport(trove: utils.Trove, teleporter: BasePart)
-	local root = utils.getMaybeHumanoidRootPart()
+	local root = prelude.getMaybeHumanoidRootPart()
 	if not root then
 		return
 	end
@@ -52,20 +53,21 @@ local function teleport(trove: utils.Trove, teleporter: BasePart)
 		then first
 		else allDestinations[Random.new(os.clock() ^ 2):NextInteger(1, len)]
 
-	local targetCFrame = targetDestination:GetPivot() * utils.intoCFrameOffset(TeleporterOffset(targetDestination))
+	local targetCFrame = targetDestination:GetPivot()
+		* utils.physics.intoCFrameOffset(TeleporterOffset(targetDestination))
 
 	if PlaySound(teleporter) then
-		utils.inferAndPlaySound(teleporter, utils.AUDIO_ASSETS["core/towerSfx/teleport"], "TeleportSound")
+		prelude.inferAndPlaySound(teleporter, prelude.AUDIO_ASSETS["core/towerSfx/teleport"], "TeleportSound")
 	end
 
-	local config = utils.tweenConfigFromAttributes(teleporter, "Transition")
+	local config = prelude.tweenConfigFromAttributes(teleporter, "Transition")
 	if not config.time or config.time == 0 then
 		root:PivotTo(targetCFrame)
 	else
 		local wasAnchored = root.Anchored
 		root.Anchored = true
-		utils.tween(root, { CFrame = targetCFrame }, config).Completed:Wait()
-		root = utils.getMaybeHumanoidRootPart()
+		prelude.tween(root, { CFrame = targetCFrame }, config).Completed:Wait()
+		root = prelude.getMaybeHumanoidRootPart()
 		if root then
 			root.Anchored = wasAnchored
 			if KeepVelocity(teleporter) then
@@ -82,8 +84,8 @@ local self = {} :: utils.KitScript
 self.type = "KitScript"
 
 function self:run(kit: utils.Kit)
-	local Teleporter = kit:tag("Teleporter", utils.isBasePart)
-	local TeleporterDestination = kit:tag("TeleporterDestination", utils.isBasePart)
+	local Teleporter = kit:tag("Teleporter", prelude.isBasePart)
+	local TeleporterDestination = kit:tag("TeleporterDestination", prelude.isBasePart)
 
 	Teleporter:onActivated(teleport)
 
