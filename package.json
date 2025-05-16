@@ -33,6 +33,7 @@
         "@rbxts/lemon-signal": "^1.2.0",
         "@rbxts/libopen-event": "^1.0.1",
         "@rbxts/libopen-maybe": "^1.0.0",
+        "@rbxts/libopen-tabby": "^1.0.0",
         "@rbxts/libopen-ty": "1.0.0",
         "@rbxts/libopen-whyhttp": "1.0.0",
         "@rbxts/make": "^1.0.6",

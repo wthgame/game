@@ -7,6 +7,7 @@ local Debris = game:GetService("Debris")
 local SoundService = game:GetService("SoundService")
 
 local audios = require(game:GetService("ReplicatedStorage"):WaitForChild("WTHSharedCore"):WaitForChild("audios"))
+local t = require("./packages/t")
 local types = require("./types")
 
 export type PlaySoundConfig = {
@@ -20,6 +21,8 @@ local DEFAULT_PLAY_SOUND_CONFIG: types.PlaySoundConfig = {
 	volume = 1,
 	speed = 1,
 }
+
+local isAudioAsset = t.keyOf(AUDIO_ASSETS)
 
 local soundTimeLengths: { [string]: number } = {}
 
@@ -156,4 +159,5 @@ return {
 	inferAndPlaySound = inferAndPlaySound,
 	playSound = playSound,
 	playSoundFromGameAssets = playSoundFromGameAssets,
+	isAudioAsset = isAudioAsset,
 }

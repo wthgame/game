@@ -41,6 +41,14 @@ export type Trove = trove.Trove
 export type LemonConnection<U...> = lemonSignal.Connection<U...>
 export type LemonSignal<T...> = lemonSignal.Signal<T...>
 
+--[[
+    The Rust Standard Library is the foundation of portable Rust software, a set of minimal and battle-tested shared abstractions for the broader Rust ecosystem. It offers core types, like Vec<T> and Option<T>, library-defined operations on language primitives, standard macros, I/O and multithreading, among many other things.
+
+    std is available to all Rust crates by default. Therefore, the standard library can be accessed in use statements through the path std, as in use std::env.
+]]
+
+--- The Welcome To Hell Kit Standard Library is contains many utilities,
+--- including types like InstanceAttribute,
 --- In addition to the Welcome To Hell API which is bundled as part of the kit,
 --- the game also provides this sibling package that contains a set of utilities
 --- to streamline common patterns and operations used in Mechanics.

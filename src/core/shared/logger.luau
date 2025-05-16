@@ -18,7 +18,7 @@ export type Logger = {
 	warn: (self: Logger, ...unknown) -> LoggerMessage,
 	error: (self: Logger, ...unknown) -> LoggerMessage,
 
-	assert: typeof(function<T>(self: Logger, value: T)
+	assert: typeof(function<T>(self: Logger, value: T, ...: unknown)
 		return assert(value)
 	end),
 }

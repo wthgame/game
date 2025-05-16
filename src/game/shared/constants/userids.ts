@@ -8,4 +8,5 @@ export enum UserId {
 	Creepyrafa_rayitno = 153864921,
 	randomcoolers = 1557081177,
 	Miantoz1980 = 843234540,
+	LoozeBlox = 1946842374,
 }

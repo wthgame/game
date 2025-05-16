@@ -14,12 +14,11 @@ return table.freeze({
 	-- Control Flow
 	Compare = TODO,
 	If = TODO,
-	ForEach = TODO,
 	Repeat = TODO,
 	Spawn = TODO,
 
 	-- Inputs
-	GetActive = TODO,
+	GetAttribute = TODO,
 	GetProperty = TODO,
 	GetTag = TODO,
 	GetVariable = TODO,
@@ -29,7 +28,6 @@ return table.freeze({
 
 	-- Outputs
 	Activate = TODO,
-	SetActive = TODO,
 	SetAttribute = TODO,
 	SetProperty = TODO,
 	SetTag = TODO,

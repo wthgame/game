@@ -14,6 +14,7 @@
         "@rbxts/lemon-signal": "^1.2.0",
         "@rbxts/libopen-event": "^1.0.1",
         "@rbxts/libopen-maybe": "^1.0.0",
+        "@rbxts/libopen-tabby": "^1.0.0",
         "@rbxts/libopen-ty": "1.0.0",
         "@rbxts/libopen-whyhttp": "1.0.0",
         "@rbxts/make": "^1.0.6",
@@ -108,6 +109,8 @@
     "@rbxts/libopen-event": ["@rbxts/libopen-event@1.0.1", "", {}, "sha512-o2odA08gcvlwnvfmDlhI937uZ3L04zSsHsRzR+cSoICQR8XgPmvqKiSsrioh+tXm7pwOVg1fxWWwwzSGWMiunA=="],
 
     "@rbxts/libopen-maybe": ["@rbxts/libopen-maybe@1.0.0", "", {}, "sha512-fyGpKaVCjpjUHtCWWFlzvdJ2BjpPJ+1Ppx9CZlQZUMqhjJeqyIU3lxzahvVu+YNvXNcRlen78/EowNr9+/lFLA=="],
+
+    "@rbxts/libopen-tabby": ["@rbxts/libopen-tabby@1.0.0", "", {}, "sha512-uatjegy00mqo7VDVuTnFOCLDykpPiT1Hz94AdKdX7CZJVdCg3ANnt6kB2arplfYSSV1jtwx9zwq7YaZxJ3fSGw=="],
 
     "@rbxts/libopen-ty": ["@rbxts/libopen-ty@1.0.0", "", { "dependencies": { "@rbxts/libopen-maybe": "npm:@rbxts/libopen-ty@1.0.0" } }, "sha512-bvO4ft7rIP4fzazQC5QeokxSBFLu4FFOEFtJaDHJaLJbdq7UzIGja61L5eDIxPs4qd3Wnc55yVjqQVcpWuPTsQ=="],
 

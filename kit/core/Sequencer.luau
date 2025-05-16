@@ -7,18 +7,18 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-type ColorPulserType = "Color3" | "ColorSequence" | "BrickColor"
-type NumberPulserType = "number" | "NumberSequence" | "NumberRange"
-type PulserType = ColorPulserType | NumberPulserType
+type ColorSequencerType = "Color3" | "ColorSequence" | "BrickColor"
+type NumberSequencerType = "number" | "NumberSequence" | "NumberRange"
+type SequencerType = ColorSequencerType | NumberSequencerType
 
 local MinimumDistance = prelude.attribute("MinimumDistance", prelude.isPositiveNumber, -math.huge)
 local MaximumDistance = prelude.attribute("MaximumDistance", prelude.isPositiveNumber, 100)
 
-local logger = prelude.createLogger("Pulser")
+local logger = prelude.createLogger("Sequencer")
 local isSequence = prelude.t.union(prelude.t.ColorSequence, prelude.t.NumberSequence)
-local isColorPulserType: std.check<PulserType> = prelude.t.literal("Color3", "ColorSequence", "BrickColor")
-local isNumberPulserType: std.check<PulserType> = prelude.t.literal("number", "NumberSequence", "NumberRange")
-local isPulserType: std.check<PulserType> = prelude.t.union(isColorPulserType, isNumberPulserType)
+local isColorSequencerType: std.check<SequencerType> = prelude.t.literal("Color3", "ColorSequence", "BrickColor")
+local isNumberSequencerType: std.check<SequencerType> = prelude.t.literal("number", "NumberSequence", "NumberRange")
+local isSequencerType: std.check<SequencerType> = prelude.t.union(isColorSequencerType, isNumberSequencerType)
 
 local self = {} :: std.KitScript
 self.type = "KitScript"
@@ -28,22 +28,22 @@ local function setPropertyUnsafe(instance: Instance, property: string, value: un
 end
 
 function self:run(kit: std.Kit)
-	local Pulser = kit:tag("Pulser")
+	local Sequencer = kit:tag("Sequencer")
 
 	local localPlayer = Players.LocalPlayer
 
 	kit:onRender(function()
 		local loadedLifetime = kit:loadedLifetime()
-		for _, toPulse in Pulser:instances() do
-			if not prelude.Active(toPulse) then
+		for _, toUpdate in Sequencer:instances() do
+			if not prelude.Active(toUpdate) then
 				continue
 			end
 
 			local position: Vector3
-			if toPulse:IsA("BasePart") then
-				position = toPulse.Position
+			if toUpdate:IsA("BasePart") then
+				position = toUpdate.Position
 			else
-				local ancestor = toPulse:FindFirstAncestorWhichIsA("BasePart")
+				local ancestor = toUpdate:FindFirstAncestorWhichIsA("BasePart")
 				if ancestor then
 					position = ancestor.Position
 				end
@@ -51,7 +51,7 @@ function self:run(kit: std.Kit)
 
 			if position then
 				local distance = localPlayer:DistanceFromCharacter(position)
-				if distance < MinimumDistance(toPulse) or distance > MaximumDistance(toPulse) then
+				if distance < MinimumDistance(toUpdate) or distance > MaximumDistance(toUpdate) then
 					continue
 				end
 			end
@@ -59,9 +59,9 @@ function self:run(kit: std.Kit)
 			local propertySequences: std.Map<string, ColorSequence | NumberSequence> = {}
 			local offsets: std.Map<string, number> = {}
 			local durations: std.Map<string, number> = {}
-			local types: std.Map<string, PulserType> = {}
+			local types: std.Map<string, SequencerType> = {}
 
-			for attributeName, value in toPulse:GetAttributes() do
+			for attributeName, value in toUpdate:GetAttributes() do
 				local property = attributeName:match("^Property_(%w+)")
 				if property then
 					assert(isSequence(value))
@@ -69,23 +69,23 @@ function self:run(kit: std.Kit)
 					continue
 				end
 
-				local offsetForProperty = attributeName:match("^PulseOffset_(%w+)")
+				local offsetForProperty = attributeName:match("^SequencerOffset_(%w+)")
 				if offsetForProperty then
 					assert(prelude.t.number(value))
 					offsets[offsetForProperty] = value :: any
 					continue
 				end
 
-				local durationForProperty = attributeName:match("^PulseDuration_(%w+)")
+				local durationForProperty = attributeName:match("^SequencerDuration_(%w+)")
 				if durationForProperty then
 					assert(prelude.isPositiveNumber(value))
 					durations[durationForProperty] = value :: any
 					continue
 				end
 
-				local typeForProperty = attributeName:match("^PulserType_(%w+)")
+				local typeForProperty = attributeName:match("^SequencerType_(%w+)")
 				if typeForProperty then
-					assert(isPulserType(value))
+					assert(isSequencerType(value))
 					types[typeForProperty] = value :: any
 					continue
 				end
@@ -105,13 +105,13 @@ function self:run(kit: std.Kit)
 
 				if typeof(sequence) == "ColorSequence" then
 					local color = std.color.pickTimeInColorSequence(sequence, time)
-					local propertyType: ColorPulserType = (types[property] or "Color3") :: any
-					if not isColorPulserType(propertyType) then
+					local propertyType: ColorSequencerType = (types[property] or "Color3") :: any
+					if not isColorSequencerType(propertyType) then
 						logger:warn(
 							"Expected property",
 							property,
-							"of Pulser",
-							toPulse:GetFullName(),
+							"of Sequencer",
+							toUpdate:GetFullName(),
 							"to be Color3, ColorSequence, or BrickColor, but got",
 							propertyType,
 							"instead."
@@ -124,13 +124,13 @@ function self:run(kit: std.Kit)
 						else std.never()
 				elseif typeof(sequence) == "NumberSequence" then
 					local num = std.math.pickTimeInNumberSequence(sequence, time)
-					local propertyType: NumberPulserType = (types[property] or "number") :: any
-					if not isNumberPulserType(propertyType) then
+					local propertyType: NumberSequencerType = (types[property] or "number") :: any
+					if not isNumberSequencerType(propertyType) then
 						logger:warn(
 							"Expected property",
 							property,
-							"of Pulser",
-							toPulse:GetFullName(),
+							"of Sequencer",
+							toUpdate:GetFullName(),
 							"to be number, NumberSequence, or NumberRange, but got",
 							propertyType,
 							"instead."
@@ -143,10 +143,10 @@ function self:run(kit: std.Kit)
 						else std.never()
 				end
 
-				local setSuccess = pcall(setPropertyUnsafe, toPulse, property, newValue)
+				local setSuccess = pcall(setPropertyUnsafe, toUpdate, property, newValue)
 				if not setSuccess then
 					-- TODO: more helpful error handling
-					logger:warn("Cannot update property", property, "of Pulser", toPulse:GetFullName())
+					logger:warn("Cannot update property", property, "of Sequencer", toUpdate:GetFullName())
 				end
 			end
 		end
