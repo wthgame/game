@@ -37,6 +37,9 @@
             "KitStd": {
                 "$path": "kit/std"
             },
+            "NEW_KitStd": {
+                "$path": "kit/new_std"
+            },
             "WTHSharedCore": {
                 "$path": "out/core/shared",
                 "include": {
