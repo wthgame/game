@@ -56,6 +56,10 @@ export type LemonSignal<T...> = lemonSignal.Signal<T...>
 --- local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 --- ```
 local std = {}
+
+--- @prop version string
+--- @within KitStd
+--- The current version of the Kit Standard Library.
 std.version = "1.0.0-dev"
 
 --- @prop activation KitStdActivation
