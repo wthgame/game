@@ -37,6 +37,7 @@ export type Tag<T> = {
 	onPostSimulation: (self: Tag<T>, callback: TagSimulationCallback<T>) -> () -> (),
 	onPreRender: (self: Tag<T>, callback: TagSimulationCallback<T>) -> () -> (),
 	onPreAnimation: (self: Tag<T>, callback: TagSimulationCallback<T>) -> () -> (),
+	onRenderStep: (self: Tag<T>, callback: TagSimulationCallback<T>, priority: number?) -> () -> (),
 
 	trove: trove.Trove,
 	destroy: (self: Tag<T>) -> (),
