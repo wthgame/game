@@ -3,6 +3,7 @@
 local t = require("./packages/t")
 local trove = require("./packages/trove")
 
+export type Map<K, V> = { [K]: V }
 export type Set<T> = { [T]: true }
 
 -- ew... metatables...
