@@ -5,12 +5,15 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
+local siftDictionary = std.packages.sift.Dictionary
 
 local Button = require(script.Parent:WaitForChild("Button"))
 local PressOffset = Button.PressOffset
 local PlaySound = Button.PlaySound
 
 export type BoxBehavior = "Unanchoring" | "Draggable" | "Pickupable"
+
+local REVERSE: std.TweenConfig = { reverse = true }
 
 local BoxId = prelude.attribute("BoxId", prelude.isString)
 local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
@@ -53,12 +56,11 @@ local function trySpawn(trove: std.Trove, spawner: BasePart, activationTrove: st
 		prelude.tweenMaybeInstant(
 			spawner,
 			{ CFrame = spawner.CFrame * std.physics.intoCFrameOffset(PressOffset(spawner)) },
-			prelude.tweenConfigFromAttributes(spawner, "Press")
+			siftDictionary.merge(prelude.tweenConfigFromAttributes(spawner, "Press"), REVERSE)
 		)
 	end
 
-	local id = BoxId(spawner)
-	assert(id, `No BoxId attribute for BoxSpawner {spawner:GetFullName()}`)
+	local id = BoxId:assert(spawner) :: string
 	local spawnTrove = trove:extend()
 	spawnBoxTroves[spawner] = spawnTrove
 	spawnBoxesWithId(spawnTrove, id)

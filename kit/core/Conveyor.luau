@@ -6,11 +6,27 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local Speed = prelude.attribute("Speed", prelude.isPositiveNumber, 0)
-local SynchronizeConveyorBeams = prelude.attribute("SynchronizeConveyorBeams", prelude.isBoolean, true)
-
+--[=[
+    @class Conveyor
+    @tag KitObjectTag
+    Conveyors speeds contacting objects facing it's direction.
+]=]
 local self = {} :: std.KitScript
 self.type = "KitScript"
+
+--[=[
+    @prop Speed number
+    @within Conveyor
+    The speed in studs per second that objects move along the conveyor.
+]=]
+local Speed = prelude.attribute("Speed", prelude.isPositiveNumber, 0)
+--[=[
+    @prop SynchronizeConveyorBeams boolean
+    @within Conveyor
+    If true, the conveyor will update all Beam objects named "ConveyorBeam" to
+    move at the same pace as the `Speed` attribute.
+]=]
+local SynchronizeConveyorBeams = prelude.attribute("SynchronizeConveyorBeams", prelude.isBoolean, true)
 
 function self:run(kit: std.Kit)
 	local Conveyor = kit:tag("Conveyor", prelude.isBasePart)

@@ -16,6 +16,7 @@ local logger = require(script.logger)
 local math = require(script.math)
 local never = require(script.never)
 local physics = require(script.physics)
+local prelude = require(script.prelude)
 local sift = require(script.packages.sift)
 local t = require(script.packages.t)
 local touch = require(script.touch)
@@ -41,12 +42,9 @@ export type Trove = trove.Trove
 export type LemonConnection<U...> = lemonSignal.Connection<U...>
 export type LemonSignal<T...> = lemonSignal.Signal<T...>
 
---[[
-    The Rust Standard Library is the foundation of portable Rust software, a set of minimal and battle-tested shared abstractions for the broader Rust ecosystem. It offers core types, like Vec<T> and Option<T>, library-defined operations on language primitives, standard macros, I/O and multithreading, among many other things.
-
-    std is available to all Rust crates by default. Therefore, the standard library can be accessed in use statements through the path std, as in use std::env.
-]]
-
+--- @class KitStd
+--- @since 1.0.0
+---
 --- The Welcome To Hell Kit Standard Library is contains many utilities,
 --- including types like InstanceAttribute,
 --- In addition to the Welcome To Hell API which is bundled as part of the kit,
@@ -57,91 +55,85 @@ export type LemonSignal<T...> = lemonSignal.Signal<T...>
 --- local ReplicatedStorage = game:GetService("ReplicatedStorage")
 --- local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 --- ```
-local std = table.freeze({
-	version = "1.0.0-dev",
+local std = {}
 
-	animation = animation,
-	assets = assets,
-	audio = audio,
-	bindings = bindings,
-	character = character,
-	collections = collections,
-	color = color,
-	math = math,
-	never = never,
-	physics = physics,
-	touch = touch,
+--- @prop version string
+--- @within KitStd
+--- The current version of the Kit Standard Library.
+std.version = "1.0.0-dev"
 
-	prelude = table.freeze(
-		--- Welcome To Hell comes with a variety of things in its utility
-		--- library. However, if you had to manually import every single thing
-		--- that you used, it would be very verbose. But importing a lot of
-		--- things that a script never uses isn’t good either. A balance needs
-		--- to be struck.
-		---
-		--- The prelude is the list of things that most KitScripts will use, and
-		--- is kept as small as possible.
-		---
-		--- ```luau
-		--- local ReplicatedStorage = game:GetService("ReplicatedStorage")
-		--- local std = require(ReplicatedStorage:WaitForChild("KitStd"))
-		--- local prelude = std.prelude
-		--- ```
-		---
-		--- When Luau table destructuring is implemented, the prelude can be
-		--- imported as such:
-		---
-		--- ```luau
-		--- local ReplicatedStorage = game:GetService("ReplicatedStorage")
-		--- local std = require(ReplicatedStorage:WaitForChild("KitStd"))
-		--- -- waiting on https://github.com/luau-lang/rfcs/pull/95
-		--- local { .attribute, .isBasePart, .getMaybeRootPart } = std.prelude
-		--- ```
-		{
-			createLogger = logger.createLogger,
+--- @prop activation KitStdActivation
+--- @within KitStd
+--- Activation utilities.
+std.activation = activation
 
-			attribute = attributes.attribute,
+--- @prop animation unknown
+--- @within KitStd
+--- Animation utilities including tweens.
+std.animation = animation
 
-			Active = activation.Active,
-			connectActivation = activation.connectActivation,
+--- @prop assets unknown
+--- @within KitStd
+--- Image and sound assets used by Welcome To Hell.
+std.assets = assets
 
-			getHumanoid = character.getHumanoid,
-			getMaybeHumanoid = character.getMaybeHumanoid,
-			getHumanoidRootPart = character.getHumanoidRootPart,
-			getMaybeHumanoidRootPart = character.getMaybeHumanoidRootPart,
+--- @prop audio unknown
+--- @within KitStd
+--- Audio utilities.
+std.audio = audio
 
-			t = t,
-			isBasePart = t.instanceIsA("BasePart") :: t.check<BasePart>,
-			isPositiveNumber = t.numberMin(0),
-			isBoolean = t.boolean,
-			isString = t.string,
+--- @prop bindings KitStdBindings
+--- @within KitStd
+--- Bindings to Welcome To Hell's controllers.
+std.bindings = bindings
 
-			tweenConfigFromAttributes = animation.tweenConfigFromAttributes,
-			tween = animation.tween,
-			tweenMaybeInstant = animation.tweenMaybeInstant,
+--- @prop character unknown
+--- @within KitStd
+--- Character utilities.
+std.character = character
 
-			IMAGE_ASSETS = assets.IMAGE_ASSETS,
-			AUDIO_ASSETS = audio.AUDIO_ASSETS,
-			inferAndPlaySound = audio.inferAndPlaySound,
-			playSound = audio.playSound,
-			playSoundFromGameAssets = audio.playSoundFromGameAssets,
-		}
-	),
-	packages = table.freeze(
-		--- References to common packages.
-		{
-			t = t,
-			createTrove = trove.Trove.new,
-			sift = sift,
-			createLemonSignal = lemonSignal.Signal.new,
-		}
-	),
+--- @prop collections unknown
+--- @within KitStd
+--- Collection utilities and implementations.
+std.collections = collections
+
+--- @prop color unknown
+--- @within KitStd
+--- Color utilities.
+std.color = color
+
+--- @prop logger unknown
+--- @within KitStd
+--- Logger implementation.
+std.logger = logger
+
+--- @prop collections unknown
+--- @within KitStd
+--- Math utilities.
+std.math = math
+
+std.never = never
+
+--- @prop physics unknown
+--- @within KitStd
+--- Physic utilities.
+std.physics = physics
+
+--- @prop touch unknown
+--- @within KitStd
+--- Touch utilities.
+std.touch = touch
+
+--- @prop prelude KitStdPrelude
+--- @within KitStd
+--- Reference to the prelude, the list of things that most KitScripts will use,
+--- and is kept as small as possible.
+std.prelude = prelude
+std.packages = table.freeze({
+	t = t,
+	createTrove = trove.Trove.new,
+	sift = sift,
+	createLemonSignal = lemonSignal.Signal.new,
 })
 
-do
-	-- HOW IS THIS PACKAGE NOT PROPERLY TYPED...
-	-- TODO: TYPE THIS SHIT
-	(sift.Dictionary.freezeDeep :: any)(std)
-end
-
-return std
+return table.freeze(std)
