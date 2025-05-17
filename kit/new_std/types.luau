@@ -10,9 +10,10 @@ export type InstanceAttribute<T> = typeof(setmetatable(
 	{} :: {
 		name: string,
 		check: t.check<T>?,
-		defaultValue: T?,
+		default: T?,
 		get: (self: InstanceAttribute<T>, instance: Instance) -> T,
 		assert: (self: InstanceAttribute<T>, instance: Instance) -> typeof(assert((nil :: any) :: T, "Luau")),
+		set: (self: InstanceAttribute<T>, instance: Instance, value: T) -> T,
 	},
 	{} :: {
 		__tostring: (self: InstanceAttribute<T>) -> string,
@@ -20,17 +21,21 @@ export type InstanceAttribute<T> = typeof(setmetatable(
 	}
 ))
 
-export type InstanceTag<T, Self> = Self & {
-	get: (self: InstanceTag<T, Self>) -> { T },
-	added: (self: InstanceTag<T, Self>, trove: trove.Trove, instance: T) -> (),
-	activated: (self: InstanceTag<T, Self>, trove: trove.Trove, instance: T) -> (),
+export type TagMethods<T> = {
+	get: (self: TagMethods<T>) -> { T },
+	added: (self: TagMethods<T>, callback: (instance: T, trove: trove.Trove) -> ()) -> () -> (),
+	activated: (self: TagMethods<T>, callback: (instance: T, trove: trove.Trove) -> ()) -> () -> (),
 }
 
 local prelude = {
-	createAttribute = function<T>(name: string, attributeCheck: t.check<T>): InstanceAttribute<T>
+	attribute = function<T>(name: string, attributeCheck: t.check<T>): InstanceAttribute<T>
 		return nil :: any
 	end,
-	createTag = function<T, Self>(collectionServiceTag: string, instanceCheck: t.check<T>, self: Self?): InstanceTag<T, Self>
+	tagged = function<T, Self>(props: {
+		tag: string,
+		check: t.check<T>,
+		new: (self: TagMethods<T>) -> Self,
+	}): Self
 		return nil :: any
 	end,
 	getMaybeHumanoid = function(): Humanoid
@@ -40,33 +45,29 @@ local prelude = {
 	isPositiveNumber = t.numberMin(0),
 }
 
-local Tripper = prelude.createTag("Tripper", prelude.isBasePart, {
-	debounced = {},
-	cooldown = prelude.createAttribute("Cooldown", prelude.isPositiveNumber),
+local Tripper = prelude.tagged({
+	tag = "Tripper",
+	check = prelude.isBasePart,
+	new = function(tag)
+		local self = {}
+		self.tag = tag
+		self.debounced = {} :: Set<BasePart>
+		self.cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber)
 
-	trip = function(self: Self)
-		if not self.debounced[self] then
-			local humanoid = prelude.getMaybeHumanoid() :: Humanoid
-			humanoid.Sit = true
-			self.debounced[self] = true
-			task.delay(self.cooldown(self), function(self)
-				self.debounced[self] = nil
-			end, self)
+		function self.trip(instance)
+			if not self.debounced[instance] then
+				local humanoid = prelude.getMaybeHumanoid() :: Humanoid
+				humanoid.Sit = true
+				self.debounced[instance] = true
+				task.delay(self.cooldown(instance), function(instance)
+					self.debounced[instance] = nil
+				end, instance)
+			end
 		end
+
+		tag:added(self.trip)
+		return self
 	end,
 })
 
-type Self = typeof(Tripper)
-
-local debounced: Set<typeof(Tripper)> = {}
-
-function Tripper:added(trove, trip)
-	if not debounced[self] then
-		local humanoid = prelude.getMaybeHumanoid() :: Humanoid
-		humanoid.Sit = true
-		debounced[self] = true
-		task.delay(self.cooldown(trip), function()
-			debounced[self] = nil
-		end)
-	end
-end
+return Tripper
