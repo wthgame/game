@@ -6,42 +6,45 @@ local Players = game:GetService("Players")
 
 local types = require("./types")
 
---- @within KitStd
+--- @class KitStdCharacter
+--- Character utilities.
+
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns true if a model is a character
 local function isCharacter(character: Instance): boolean
 	return Players:GetPlayerFromCharacter(character :: Model) ~= nil
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns true if a model is the local player's character
 local function isLocalPlayerCharacter(character: Instance): boolean
 	return Players:GetPlayerFromCharacter(character :: Model) == Players.LocalPlayer
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns the local player's character if it exists
 local function getMaybeCharacter(): types.Character?
 	return Players.LocalPlayer.Character
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Waits for and returns the local player's character when it is added
 local function waitForCharacter(): types.Character
 	return Players.LocalPlayer.CharacterAdded:Wait()
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns current character if it exists. Otherwise, wait for it to be added.
 local function getCharacter(): types.Character
 	return getMaybeCharacter() or waitForCharacter()
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns true if the character exists and the given instance is a descendant
 --- of the local character.
@@ -50,14 +53,14 @@ local function isFromMaybeCharacter(instance: Instance): boolean
 	return if character then character:IsAncestorOf(instance) else false
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns true if the given instance is a descendant of the local character.
 local function isFromCharacter(instance: Instance): boolean
 	return getCharacter():IsAncestorOf(instance)
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns the character's HumanoidRootPart if it exists.
 local function getMaybeHumanoidRootPart(): BasePart?
@@ -68,7 +71,7 @@ local function getMaybeHumanoidRootPart(): BasePart?
 	return nil
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns the character's HumanoidRootPart if it exists. Otherwise, wait for
 --- it to be added.
@@ -76,7 +79,7 @@ local function getHumanoidRootPart(): BasePart
 	return getCharacter():WaitForChild("HumanoidRootPart") :: BasePart
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns the character's Humanoid if it exists.
 local function getMaybeHumanoid(): Humanoid?
@@ -87,7 +90,7 @@ local function getMaybeHumanoid(): Humanoid?
 	return nil
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns the character's Humanoid if it exists. Otherwise, waits for it to
 --- be added.
@@ -95,7 +98,7 @@ local function getHumanoid(): Humanoid
 	return getCharacter():WaitForChild("Humanoid") :: Humanoid
 end
 
---- @within KitStd
+--- @within KitStdCharacter
 --- @tag Character
 --- Returns true if the character is alive.
 local function isCharacterAlive(): boolean

@@ -26,8 +26,10 @@ local isAudioAsset = t.keyOf(AUDIO_ASSETS)
 
 local soundTimeLengths: { [string]: number } = {}
 
---- @within KitStd
---- @tag Audio
+--- @class KitStdAudio
+--- Audio utilities.
+
+--- @within KitStdAudio
 --- Plays a sound from an asset string or cloned from a Sound instance.
 local function playSound(asset: string | Sound, from: Instance?, config: types.PlaySoundConfig?)
 	local speed = if config and config.speed then config.speed else DEFAULT_PLAY_SOUND_CONFIG.speed :: number
@@ -54,7 +56,7 @@ local function playSound(asset: string | Sound, from: Instance?, config: types.P
 	Debris:AddItem(sound, (soundTimeLengths[sound.SoundId] or sound.TimeLength) * speed + DELETE_SOUNDS_AFTER_SECONDS)
 end
 
---- @within KitStd
+--- @within KitStdAudio
 --- @tag Audio
 --- Plays a sound from the game's assets module. See the sounds table in the
 --- Replicated.WTHShared.assets module for what sounds can be played.
@@ -78,19 +80,17 @@ local function playSoundFromGameAssets(key: string, from: Instance?, config: typ
 	Debris:AddItem(sound, (soundTimeLengths[asset] or sound.TimeLength) * speed + DELETE_SOUNDS_AFTER_SECONDS)
 end
 
---[=[
-    @within KitStd
-    @tag Audio
-
-    Tries to infer a sound from the instance's attributes or a Sound instance.
-    If no sound is found, plays the specified default sound. Can specify the
-    name of the attribute or child to search for, or defaults to searching for
-    "Sound".
-
-    ```Lua
-    prelude.inferAndPlaySound(btn, std.SOUND_ASSETS.button, "PressSound")
-    ```
-]=]
+--- @within KitStdAudio
+--- @tag Audio
+---
+--- Tries to infer a sound from the instance's attributes or a Sound instance.
+--- If no sound is found, plays the specified default sound. Can specify the
+--- name of the attribute or child to search for, or defaults to searching for
+--- "Sound".
+---
+--- ```Lua
+--- prelude.inferAndPlaySound(btn, std.SOUND_ASSETS.button, "PressSound")
+--- ```
 local function inferAndPlaySound(
 	instance: Instance,
 	defaultSound: string?,

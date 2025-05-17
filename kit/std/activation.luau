@@ -11,12 +11,15 @@ local isToucherValid = touch.isToucherValid
 local t = require("./packages/t")
 local trove = require("./packages/trove")
 
+--- @type ActivationMode "Touch" | "Prompt" | "Click" | "KeyCode"
+--- @within KitStdActivation
+--- Defines how a kit object will be activated.
 -- TODO: ScreenPress, ControllerCode, HumanoidStateChanged
 export type ActivationMode = "Touch" | "Prompt" | "Click" | "KeyCode"
 
--- TODO: split Active to Enabled, for controlling if a mechanic can be activated
--- and Active, for if the mechanic should do something. Most likely will do
--- after initial alpha
+-- TODO: split Active to Activatable, for controlling if a mechanic can be
+-- Activated and Active, for if the mechanic should do something. Most likely
+-- will do after initial alpha
 local Active = attributes.attribute("Active", t.boolean, false)
 local ActivationMode: attributes.InstanceAttribute<ActivationMode> = (
 	attributes.attribute("ActivationMode", t.literal("Touch", "Prompt", "Click", "Control"))
@@ -141,64 +144,85 @@ local function connectActivationOnce<T>(
 	end
 end
 
---[=[
-    @within KitStd
+--- @class KitStdActivation
+--- Implements activation for kit objects.
+local activation = {}
 
-    Calls the callback when the connected instance is activated based on it's
-    `ActivationMode` attribute:
+--- @prop Active InstanceAttribute<boolean>
+--- @within KitStdActivation
+--- TBA
+activation.Active = Active
 
-    * If `ActivationMode == "Touch" and connectTo:IsA("BasePart")`, activates
-      when the supported instances touch the connected instance
-    * If `ActivationMode == "Prompt" and connectTo:IsA("BasePart")`,
-      activates when a `connectTo.ActivationProximityPrompt` ProximityPrompt -
-      or creates one - is triggered. `MaxActivationDistance` is also set.
-    * If `ActivationMode == "Click" and connectTo:IsA("BasePart")`,
-      activates when a `connectTo.ActivationClickDetector` ClickDetector - or
-      creates one- is triggered. `MaxActivationDistance` is also set.
-    * If `ActivationMode == "KeyCode"`, it activates when `ActivationKeyCode`
-      is triggered.
+--- @prop ActivationMode InstanceAttribute<ActivationMode>
+--- @within KitStdActivation
+--- TBA
+activation.ActivationMode = ActivationMode
 
-    `onActivated` receives the connected instance so callbacks can be cached.
+--- @prop MaxActivationDistance InstanceAttribute<number>
+--- @within KitStdActivation
+--- TBA
+activation.MaxActivationDistance = MaxActivationDistance
 
-    `onActivated` is only called if the `Active` attribute is enabled.
+--- @prop ActivationKeyCode InstanceAttribute<Enum.KeyCode>
+--- @within KitStdActivation
+--- TBA
+activation.ActivationKeyCode = ActivationKeyCode
 
-    Once activated, the consumer should cleanup the given trove and reconnect
-    once it is deactivated.
-
-    This implements the following attributes for the connected instance:
-    * `ActivationMode`
-    * `MaxActivationDistance`
-    * `ActivationKeyCode` if `ActivationMode == "Control"`
-    * `SupportsCharacter` if `ActivationMode == "Control"`
-    * `SupportsBoxes` if `ActivationMode == "Control"`
-    * `BoxesRequiresMatchingId` if `ActivationMode == "Control"`
-    * `RequiredBoxId` if `ActivationMode == "Control"`
-
-    ```Lua
-    Self:onLoaded(function(trove, self)
-        local activationTrove = trove:extend()
-        local isActivated = false
-
-        local function onSelfActivated()
-            if not isActivated then
-                isActivated = true
-                activationTrove:clean()
-                print("Activated!")
-
-                task.delay(3, function()
-                    isActivated = false
-                    activationTrove = trove:extend()
-                    prelude.connectActivation(activationTrove, connectTo, onSelfActivated)
-                    print("Deactivated!")
-                end)
-            end
-        end
-
-        prelude.connectActivation(activationTrove, connectTo, onSelfActivated)
-    end)
-    ```
-]=]
-local function connectActivation<T>(
+--- @within KitStdActivation
+--- Calls the callback when the connected instance is activated based on it's
+--- `ActivationMode` attribute:
+---
+--- * If `ActivationMode == "Touch" and connectTo:IsA("BasePart")`, activates
+---   when the supported instances touch the connected instance
+--- * If `ActivationMode == "Prompt" and connectTo:IsA("BasePart")`,
+---   activates when a `connectTo.ActivationProximityPrompt` ProximityPrompt -
+---   or creates one - is triggered. `MaxActivationDistance` is also set.
+--- * If `ActivationMode == "Click" and connectTo:IsA("BasePart")`,
+---   activates when a `connectTo.ActivationClickDetector` ClickDetector - or
+---   creates one- is triggered. `MaxActivationDistance` is also set.
+--- * If `ActivationMode == "KeyCode"`, it activates when `ActivationKeyCode`
+---   is triggered.
+---
+--- `onActivated` receives the connected instance so callbacks can be cached.
+---
+--- `onActivated` is only called if the `Active` attribute is enabled.
+---
+--- Once activated, the consumer should cleanup the given trove and reconnect
+--- once it is deactivated.
+---
+--- This implements the following attributes for the connected instance:
+--- * `ActivationMode`
+--- * `MaxActivationDistance`
+--- * `ActivationKeyCode` if `ActivationMode == "Control"`
+--- * `SupportsCharacter` if `ActivationMode == "Control"`
+--- * `SupportsBoxes` if `ActivationMode == "Control"`
+--- * `BoxesRequiresMatchingId` if `ActivationMode == "Control"`
+--- * `RequiredBoxId` if `ActivationMode == "Control"`
+---
+--- ```luau
+--- Self:onLoaded(function(trove, self)
+---     local activationTrove = trove:extend()
+---     local isActivated = false
+---
+---     local function onSelfActivated()
+---         if not isActivated then
+---             isActivated = true
+---             activationTrove:clean()
+---             print("Activated!")
+---
+---             task.delay(3, function()
+---                 isActivated = false
+---                 activationTrove = trove:extend()
+---                 prelude.connectActivation(activationTrove, connectTo, onSelfActivated)
+---                 print("Deactivated!")
+---             end)
+---         end
+---     end
+---
+---     prelude.connectActivation(activationTrove, connectTo, onSelfActivated)
+--- end)
+--- ```
+function activation.connectActivation<T>(
 	outerTrove: trove.Trove,
 	connectTo: T & Instance,
 	onActivated: (outerTrove: trove.Trove, instance: T, activationTrove: trove.Trove) -> (),
@@ -215,10 +239,4 @@ local function connectActivation<T>(
 	return activationTrove
 end
 
-return {
-	connectActivation = connectActivation,
-	Active = Active,
-	ActivationMode = ActivationMode,
-	MaxActivationDistance = MaxActivationDistance,
-	ActivationKeyCode = ActivationKeyCode,
-}
+return table.freeze(activation)
