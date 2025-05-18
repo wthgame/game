@@ -8,7 +8,7 @@ import { createLogger } from "core/shared/logger";
 import { BackgroundMusicZoneInstance } from "core/shared/types";
 import { OnPreRender } from "../hook-managers/RenderHookManager";
 import { CharacterController } from "./CharacterController";
-import { addMechanicBinding } from "./MechanicController/bindings";
+import { addMechanicBinding } from "./KitObjectController/bindings";
 
 export const LOADED_ZONE_TAG = "LoadedBackgroundMusicZone";
 

@@ -4,7 +4,7 @@ import { Lazy } from "@rbxts/lazy";
 import ty from "@rbxts/libopen-ty";
 import Make from "@rbxts/make";
 import { Lighting } from "@rbxts/services";
-import { addMechanicBinding } from "./MechanicController/bindings";
+import { addMechanicBinding } from "./KitObjectController/bindings";
 
 export enum LightingPriority {
 	/// Base lighting

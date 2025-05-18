@@ -28,47 +28,4 @@ export type TagMethods<T> = {
 	activated: (self: TagMethods<T>, callback: (instance: T, trove: trove.Trove) -> ()) -> () -> (),
 }
 
-local prelude = {
-	attribute = function<T>(name: string, attributeCheck: t.check<T>): InstanceAttribute<T>
-		return nil :: any
-	end,
-	tagged = function<T, Self>(props: {
-		tag: string,
-		check: t.check<T>,
-		new: (self: TagMethods<T>) -> Self,
-	}): Self
-		return nil :: any
-	end,
-	getMaybeHumanoid = function(): Humanoid
-		return nil :: any
-	end,
-	isBasePart = t.instanceIsA("BasePart") :: t.check<BasePart>,
-	isPositiveNumber = t.numberMin(0),
-}
-
-local Tripper = prelude.tagged({
-	tag = "Tripper",
-	check = prelude.isBasePart,
-	new = function(tag)
-		local self = {}
-		self.tag = tag
-		self.debounced = {} :: Set<BasePart>
-		self.cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber)
-
-		function self.trip(instance)
-			if not self.debounced[instance] then
-				local humanoid = prelude.getMaybeHumanoid() :: Humanoid
-				humanoid.Sit = true
-				self.debounced[instance] = true
-				task.delay(self.cooldown(instance), function(instance)
-					self.debounced[instance] = nil
-				end, instance)
-			end
-		end
-
-		tag:added(self.trip)
-		return self
-	end,
-})
-
-return Tripper
+return nil

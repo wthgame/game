@@ -10,7 +10,7 @@ do
 	local clientBindings = require(
 		ReplicatedStorage:WaitForChild("WTHClientCore")
 			:WaitForChild("controllers")
-			:WaitForChild("MechanicController")
+			:WaitForChild("KitObjectController")
 			:WaitForChild("bindings")
 	)
 	addMechanicBinding = clientBindings.addMechanicBinding

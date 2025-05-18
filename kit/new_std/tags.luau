@@ -7,8 +7,8 @@ local t = require("./packages/t")
 local trove = require("./packages/trove")
 local types = require("./types")
 
-type TagInstanceCallback<T> = (instance: T, trove: trove.Trove) -> ()
-type TagSimulationCallback<T> = (instance: T, dt: number, trove: trove.Trove) -> ()
+type TagInstanceCallback<T> = (trove: trove.Trove, instance: T) -> ()
+type TagEventCallback<T, Args...> = (trove: trove.Trove, Args...) -> ()
 
 --- @class Tag
 --- Methods to interact with tagged objects.
@@ -27,17 +27,18 @@ export type Tag<T> = {
 	---
 	--- Calls the given callback every `RunService.PreSimulation`. It is called
 	--- after physics has been done and is optimal for responding to changes in
-	--- the physics state. If no instances are being observed, this connection
-	--- disconnects, until a instance is observed, when it will be reconnected.
+	--- the physics state. If no instances are being observed, this event
+	--- disconnects, until a new instance is observed, when it will be
+	--- reconnected.
 	---
 	--- @param self Tag<T: Instance> -- TBA
 	--- @param callback (instance: T, dt: number, trove: trove.Trove) -> () -- TBA
 	--- @return () -> () -- When called, removes the callback from the lifecycle event
-	onPreSimulation: (self: Tag<T>, callback: TagSimulationCallback<T>) -> () -> (),
-	onPostSimulation: (self: Tag<T>, callback: TagSimulationCallback<T>) -> () -> (),
-	onPreRender: (self: Tag<T>, callback: TagSimulationCallback<T>) -> () -> (),
-	onPreAnimation: (self: Tag<T>, callback: TagSimulationCallback<T>) -> () -> (),
-	onRenderStep: (self: Tag<T>, callback: TagSimulationCallback<T>, priority: number?) -> () -> (),
+	onPreSimulation: (self: Tag<T>, callback: TagEventCallback<T, number>) -> () -> (),
+	onPostSimulation: (self: Tag<T>, callback: TagEventCallback<T, number>) -> () -> (),
+	onPreRender: (self: Tag<T>, callback: TagEventCallback<T, number>) -> () -> (),
+	onPreAnimation: (self: Tag<T>, callback: TagEventCallback<T, number>) -> () -> (),
+	onRenderStep: (self: Tag<T>, callback: TagEventCallback<T, number>, priority: number?) -> () -> (),
 
 	trove: trove.Trove,
 	destroy: (self: Tag<T>) -> (),
@@ -49,14 +50,17 @@ local SHOULD_OBSERVE_TAG = "__EXTREMELY_DANGEROUS_doNotRemove__wthShouldObserve"
 
 local tagTroves: types.Map<AnyTag, trove.Trove> = {}
 local addedCallbacks: types.Map<AnyTag, { TagInstanceCallback<unknown> }> = {}
-local preSimulationCallbacks: types.Map<AnyTag, { TagSimulationCallback<unknown> }> = {}
-local postSimulationCallbacks: types.Map<AnyTag, { TagSimulationCallback<unknown> }> = {}
-local preRenderCallbacks: types.Map<AnyTag, { TagSimulationCallback<unknown> }> = {}
-local preAnimationCallbacks: types.Map<AnyTag, { TagSimulationCallback<unknown> }> = {}
+local allTaggedInstanceTroves: types.Map<AnyTag, types.Map<Instance, trove.Trove>> = {}
 
 --- @class KitStdTags
 --- Implements tracking CollectionService tags.
 local tags = {}
+
+--- @prop SHOULD_OBSERVE_TAG string
+--- @within KitStdTags
+--- @internal
+--- A tag that is added when a kit object should be observed.
+tags.SHOULD_OBSERVE_TAG = SHOULD_OBSERVE_TAG
 
 local function startObservingTag(self: Tag<any>)
 	local callbacks = addedCallbacks[self]
@@ -66,22 +70,30 @@ local function startObservingTag(self: Tag<any>)
 	end
 
 	local tag = self.tag
-	local allInstanceTroves: types.Map<Instance, trove.Trove> = {}
+	local allInstanceTroves = allTaggedInstanceTroves[self]
+	if not allInstanceTroves then
+		allInstanceTroves = {}
+		allTaggedInstanceTroves[self] = allInstanceTroves
+	end
 
-	self.trove:add(CollectionService:GetInstanceAddedSignal(tag):Connect(function(instance)
-		if instance:HasTag(SHOULD_OBSERVE_TAG) then
-			local instanceTrove = self.trove:extend()
-			-- attachToInstance already binds to Instance.Destroying, so we
-			-- don't have to worry about that
-			instanceTrove:attachToInstance(instance)
-			for _, added in callbacks do
-				task.spawn(added, instance, instanceTrove)
-			end
-			allInstanceTroves[instance] = instanceTrove
+	local function implementTag(instance)
+		local instanceTrove = self.trove:extend()
+		-- attachToInstance already binds to Instance.Destroying, so we
+		-- don't have to worry about that
+		instanceTrove:attachToInstance(instance)
+		for _, added in callbacks do
+			task.spawn(added, instanceTrove, instance)
+		end
+		allInstanceTroves[instance] = instanceTrove
+	end
+
+	self.trove:add(CollectionService:GetInstanceAddedSignal(SHOULD_OBSERVE_TAG):Connect(function(instance)
+		if instance:HasTag(tag) then
+			implementTag(instance)
 		end
 	end))
 
-	self.trove:add(CollectionService:GetInstanceRemovedSignal(tag):Connect(function(instance)
+	self.trove:add(CollectionService:GetInstanceRemovedSignal(SHOULD_OBSERVE_TAG):Connect(function(instance)
 		local trove = allInstanceTroves[instance]
 		if trove then
 			trove:clean()
@@ -132,32 +144,75 @@ local function onActivated<T>(self: Tag<T>, callback: TagInstanceCallback<T>): n
 	error("not yet implemented")
 end
 
-local function createSignalLifecycle(signal: RBXScriptSignal)
+local function createSignalLifecycle<Args...>(signal: RBXScriptSignal)
 	local num = 0
-	return function<T>(self: Tag<T>, callback: TagSimulationCallback<T>)
-		-- TODO: hardcode
-		num += 1
+	local callbacks: types.Map<TagEventCallback<any, Args...>, AnyTag> = {}
+	local connection: RBXScriptConnection?
+
+	local function updateConnection()
+		if num > 0 then
+			connection = signal:Connect(function(...)
+				for callback, self: AnyTag in callbacks :: any do
+					task.spawn(callback, trove, ...)
+				end
+			end)
+		elseif connection then
+			connection:Disconnect()
+			connection = nil
+		end
 	end
+
+	local function connect<T>(self: Tag<T>, callback: TagEventCallback<any, Args...>)
+		num += 1
+		callbacks[callback] = self
+		updateConnection()
+
+		local function disconnect()
+			if callbacks[callback] then
+				callbacks[callback] = nil
+				num -= 1
+				updateConnection()
+			end
+		end
+
+		return tagTroves[self]:add(disconnect)
+	end
+	return connect
 end
 
--- local function onPreSimulation<T>(self: Tag<T>, callback: TagSimulationCallback<T>)
--- 	if #self:get() > 0 then
--- 		RunService.PreSimulation:Connect(function(dt) end)
--- 	end
--- end
+local onPreSimulation = createSignalLifecycle(RunService.PreSimulation)
+local onPostSimulation = createSignalLifecycle(RunService.PostSimulation)
+local onPreRender = createSignalLifecycle(RunService.PreSimulation)
+local onPreAnimation = createSignalLifecycle(RunService.PreAnimation)
+
+local function onRenderStep()
+	error("not yet implemented")
+end
 
 --- @within KitStdTagged
 --- Observes a CollectionService tag that should be observed.
 function tags.observeTag<T>(tag: string, check: t.check<T>?, tagTrove: trove.Trove?): Tag<T>
+	local trove = tagTrove or trove.Trove.new()
 	local self: Tag<T> = {
 		type = "Tag",
 		tag = tag,
 		check = check or t.Instance,
+
 		get = get,
+
 		onAdded = onAdded,
 		onActivated = onActivated,
 
-		trove = tagTrove or trove.Trove.new(),
+		onPreSimulation = onPreSimulation,
+		onPostSimulation = onPostSimulation,
+		onPreRender = onPreRender,
+		onPreAnimation = onPreAnimation,
+		onRenderStep = onRenderStep,
+
+		trove = trove,
+		destroy = function()
+			trove:clean()
+		end,
 	} :: any
 	tagTroves[self] = self.trove
 	task.spawn(startObservingTag, self)

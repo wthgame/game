@@ -1,6 +1,6 @@
 import { createLogger } from "core/shared/logger";
 
-const logger = createLogger("MechanicController.bindings");
+const logger = createLogger("KitObjectController.bindings");
 
 const bindings = new Map<unknown, (...args: unknown[]) => unknown>();
 
@@ -13,6 +13,7 @@ export function callMechanicBinding(key: unknown, ...args: unknown[]) {
 	logger.trace(`Calling mechanic binding: ${key}`);
 	const callback = bindings.get(key);
 	if (callback) {
-		callback(...args);
+		return callback(...args);
 	}
+	return undefined;
 }
