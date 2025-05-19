@@ -20,10 +20,10 @@ local TeleportOffset = prelude.attribute(
 	Vector3.new(0, 3, 0)
 )
 
-local _NoCheckpointBehavior: std.InstanceAttribute<NoCheckpointBehavior> = (
+local _NoCheckpointBehavior: std.Attribute<NoCheckpointBehavior> = (
 	prelude.attribute("NoCheckpointBehavior", prelude.t.literal("ReturnToSpawn", "None"), "ReturnToSpawn")
 )
-local TransitionMode: std.InstanceAttribute<TransitionMode> = (
+local TransitionMode: std.Attribute<TransitionMode> = (
 	prelude.attribute("TransitionMode", prelude.t.literal("FadeScreen", "PivotCharacter", "Instant"), "Instant")
 )
 local FadeScreenColor = prelude.attribute("FadeScreenColor", prelude.t.Color3, Color3.new(0, 0, 0))
@@ -46,10 +46,11 @@ local function tryEmitCheckpointParticles(checkpoint: Instance)
 	end
 end
 
-local function activateCheckpoint(trove: std.Trove, checkpoint: BasePart, activationTrove: std.Trove)
+local function activateCheckpoint(trove: std.Trove, checkpoint: BasePart)
 	if currentCheckpoint == checkpoint then
 		return
 	end
+	prelude.Activatable:set(checkpoint, false)
 	currentCheckpoint = checkpoint
 	updateCheckpoint:Fire()
 	tryEmitCheckpointParticles(checkpoint)
@@ -135,7 +136,10 @@ local function returnToCheckpoint(trove: std.Trove, returner: BasePart)
 end
 
 local function resetCheckpoint()
-	currentCheckpoint = nil
+	if currentCheckpoint then
+		prelude.Activatable:set(currentCheckpoint, true)
+		currentCheckpoint = nil
+	end
 	updateCheckpoint:Fire()
 end
 
@@ -144,7 +148,7 @@ local function symbolColorOf(target: Instance, checkpoint: Instance)
 end
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Checkpoint = kit:tag("Checkpoint", prelude.isBasePart)

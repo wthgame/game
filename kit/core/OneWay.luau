@@ -9,7 +9,7 @@ local prelude = std.prelude
 local OneWayOffset = prelude.attribute("OneWayOffset", prelude.t.CFrame, CFrame.identity)
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local OneWay = kit:tag("OneWay", prelude.isBasePart)
@@ -25,11 +25,14 @@ function self:run(kit: std.Kit)
 			local partPivot = toUpdate:GetPivot()
 			local upVector = partPivot.UpVector
 			-- etoh v6 dark magic
-			local look = CFrame.lookAt(
-				(partPivot * (CFrame.new(Vector3.yAxis * (toUpdate.Size.Y * 0.5)) * OneWayOffset(toUpdate))).Position,
-				(rootPivot * CFrame.new(0, -math.sign(upVector:Dot(Vector3.yAxis)), 0)).Position
-			).LookVector
-			local active = prelude.Active(toUpdate) and upVector:Dot(look) > 0
+			local active = prelude.Enabled(toUpdate)
+				and upVector:Dot(
+						CFrame.lookAt(
+							(partPivot * (CFrame.new(Vector3.yAxis * (toUpdate.Size.Y * 0.5)) * OneWayOffset(toUpdate))).Position,
+							(rootPivot * CFrame.new(0, -math.sign(upVector:Dot(Vector3.yAxis)), 0)).Position
+						).LookVector
+					)
+					> 0
 			if toUpdate.CanCollide ~= active then
 				toUpdate.CanCollide = active
 			end

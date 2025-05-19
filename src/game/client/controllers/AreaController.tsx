@@ -5,8 +5,8 @@ import { Trove } from "@rbxts/trove";
 import Vide, { Derivable, mount, read } from "@rbxts/vide";
 import { useAtom } from "@rbxts/vide-charm";
 import { BackgroundMusicController } from "core/client/controllers/BackgroundMusicController";
+import { KitObjectController } from "core/client/controllers/KitObjectController";
 import { LightingController, LightingPriority } from "core/client/controllers/LightingController";
-import { MechanicController } from "core/client/controllers/MechanicController";
 import { Text } from "core/client/ui/components/Text";
 import { PrimaryTriangularButton } from "core/client/ui/components/TriangularButton";
 import { palette } from "core/client/ui/palette";
@@ -68,7 +68,7 @@ export class AreaController implements OnStart {
 	isLoaded = atom(false);
 
 	constructor(
-		private mechanicController: MechanicController,
+		private KitObjectController: KitObjectController,
 		private lightingController: LightingController,
 		private backgroundMusicController: BackgroundMusicController,
 	) {}
@@ -116,7 +116,7 @@ export class AreaController implements OnStart {
 		this.backgroundMusicController.consumeMusicZones(trove, clone.BackgroundMusicZones);
 
 		this.logger.trace("Loading mechanics");
-		await this.mechanicController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
+		await this.KitObjectController.loadMechanicsFromParent(trove, clone.WaitForChild("Mechanics"));
 		this.logger.trace("Finished loading mechanics");
 
 		this.logger.trace("Finished loading area");

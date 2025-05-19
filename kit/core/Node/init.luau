@@ -9,10 +9,10 @@ local prelude = std.prelude
 local NodeTypes = require(script:WaitForChild("NodeTypes"))
 local NodeUtils = require(script:WaitForChild("NodeUtils"))
 
-local NodeType: std.InstanceAttribute<string> = prelude.attribute("NodeType", prelude.t.keyOf(NodeTypes)) :: any
+local NodeType: std.Attribute<string> = prelude.attribute("NodeType", prelude.t.keyOf(NodeTypes)) :: any
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Node = kit:tag("Node")

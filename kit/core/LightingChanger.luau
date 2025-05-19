@@ -6,7 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 local function changeLighting(_: std.Trove, changer: Instance)
 	-- TODO

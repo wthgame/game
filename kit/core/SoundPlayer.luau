@@ -19,7 +19,7 @@ local prelude = std.prelude
     3. A `Sound` instance named "Sound"
 ]=]
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 --[=[
     @prop PlayFromAssets keyof<AUDIO_ASSETS>?

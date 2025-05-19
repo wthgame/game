@@ -9,14 +9,14 @@ local prelude = std.prelude
 
 export type Damage = number | "Normal" | "Heavy" | "Super" | "Lethal"
 
-local Damage: std.InstanceAttribute<Damage> = prelude.attribute(
+local Damage: std.Attribute<Damage> = prelude.attribute(
 	"Damage",
 	prelude.t.union(prelude.isPositiveNumber, prelude.t.literal("Normal", "Heavy", "Super", "Lethal")),
 	0
 )
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Damager = kit:tag("Damager", prelude.isBasePart)

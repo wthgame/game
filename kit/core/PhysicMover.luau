@@ -20,7 +20,7 @@ local Interval = prelude.attribute("Interval", prelude.isPositiveNumber)
 local idToDestination: std.MapSet<string, BasePart> = std.collections.MapSet()
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 local function destinationsOfId(id: string)
 	local destinations = idToDestination:get(id)
@@ -85,6 +85,7 @@ function self:run(kit: std.Kit)
 			end
 		end
 	end)
+
 	PhysicMoverDestination:onLoaded(function(trove, destination)
 		local id = PhysicMoverId(destination)
 		if id then

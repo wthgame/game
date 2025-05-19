@@ -8,8 +8,6 @@ import { prelude } from "core/../../kit/std";
 import { LogBenchmark } from "core/shared/decorators";
 import { createLogger } from "core/shared/logger";
 
-const { connectActivation } = prelude;
-
 export class InstanceTag {
 	readonly _instances = new Array<Instance>();
 	readonly onLoadedCallbacks = new Set<(trove: Trove, instance: Instance) => void>();
@@ -30,7 +28,7 @@ export class InstanceTag {
 	onActivated(onActivated: (trove: Trove, instance: Instance, activationTrove: Trove) => void): void {
 		ty.Function.CastOrError(onActivated);
 		this.onLoadedCallbacks.add((trove, instance) => {
-			connectActivation(trove, instance, onActivated);
+			prelude.onActivated(trove, instance, onActivated);
 		});
 	}
 }
@@ -47,7 +45,7 @@ export interface Kit {
 }
 
 export interface KitScript {
-	type: "KitScript";
+	implements: { KitScript: true };
 	run: (self: KitScript, kit: Kit) => void;
 }
 
@@ -55,7 +53,7 @@ const KitScript = ty
 	.Struct(
 		{ exhaustive: false },
 		{
-			type: ty.Just("KitScript"),
+			implements: ty.Struct({ exhaustive: false }, { KitScript: ty.Just(true) }),
 			run: ty.Function,
 		},
 	)
@@ -67,8 +65,8 @@ const optionalCheck = ty.Function.Optional().Retype<Maybe<t.check<any>>>();
 const MECHANIC_MODULES_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("KitScripts"));
 
 @Controller()
-export class MechanicController implements OnInit {
-	private logger = createLogger("MechanicController");
+export class KitObjectController implements OnInit {
+	private logger = createLogger("KitObjectController");
 	private scriptToModule = new Map<KitScript, Instance>();
 
 	onInit(): void {

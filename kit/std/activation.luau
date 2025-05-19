@@ -1,31 +1,69 @@
 --!strict
 
--- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
-
 local Players = game:GetService("Players")
--- local UserInputService = game:GetService("UserInputService")
+local UserInputService = game:GetService("UserInputService")
 
 local attributes = require("./attributes")
-local touch = require("./touch")
-local isToucherValid = touch.isToucherValid
 local t = require("./packages/t")
+local touch = require("./touch")
 local trove = require("./packages/trove")
 
---- @type ActivationMode "Touch" | "Prompt" | "Click" | "KeyCode"
---- @within KitStdActivation
---- Defines how a kit object will be activated.
--- TODO: ScreenPress, ControllerCode, HumanoidStateChanged
-export type ActivationMode = "Touch" | "Prompt" | "Click" | "KeyCode"
+type ActivationBehaviorImpl = {
+	predicate: ((instance: Instance) -> boolean)?,
+	implement: (
+		trove: trove.Trove,
+		instanceTrove: trove.Trove,
+		instance: Instance,
+		onActivated: (trove: trove.Trove, instance: Instance) -> ()
+	) -> (),
+}
 
--- TODO: split Active to Activatable, for controlling if a mechanic can be
--- Activated and Active, for if the mechanic should do something. Most likely
--- will do after initial alpha
-local Active = attributes.attribute("Active", t.boolean, false)
-local ActivationMode: attributes.InstanceAttribute<ActivationMode> = (
-	attributes.attribute("ActivationMode", t.literal("Touch", "Prompt", "Click", "Control"))
-) :: any
-local MaxActivationDistance = attributes.attribute("MaxActivationDistance", t.number, math.huge)
-local ActivationKeyCode = attributes.attribute("ActivationKeyCode", t.enum(Enum.KeyCode) :: t.check<Enum.KeyCode>)
+local localPlayer = Players.LocalPlayer
+
+--- @class KitStdActivation
+--- Implements activation for kit objects.
+local activation = {}
+
+--- @prop Activatable Attribute<boolean>
+--- @within KitStdActivation
+--- Whether if a kit object can be activated.
+activation.Activatable = attributes.attribute("Activatable", t.boolean, false)
+
+--- @prop Enabled Attribute<boolean>
+--- @within KitStdActivation
+--- TBA
+activation.Enabled = attributes.attribute("Enabled", t.boolean, false)
+
+--- @prop ActivationBehavior Attribute<ActivationBehavior>
+--- @within KitStdActivation
+--- How to handle activation behavior.
+activation.ActivationBehavior = attributes.attribute("ActivationBehavior", t.string)
+
+--- @prop MaxActivationDistance Attribute<number?>
+--- @within KitStdActivation
+--- TBA
+activation.MaxActivationDistance = attributes.attribute("MaxActivationDistance", t.numberPositive)
+
+--- @prop ActivationKeyCode Attribute<Enum.KeyCode?>
+--- @within ActivationKeyCode
+--- TBA
+activation.ActivationKeyCode = attributes.attribute("ActivationKeyCode", t.enum(Enum.KeyCode))
+
+--- @prop ActivationInterval Attribute<number?>
+--- @within KitStdActivation
+--- TBA
+activation.ActivationInterval = attributes.attribute("ActivationInterval", t.numberPositive)
+
+--- @prop ActivationHumanoidStateType Attribute<Enum.HumanoidStateType?>
+--- @within KitStdActivation
+--- TBA
+activation.ActivationHumanoidStateType = (
+	attributes.attribute("ActivationHumanoidStateType", t.enum(Enum.HumanoidStateType))
+)
+
+local function ActivationBehaviorImpl(x: ActivationBehaviorImpl)
+	return table.freeze(x)
+end
 
 local function createActivationClickDetector(trove: trove.Trove, parent: Instance)
 	local clickDetector = trove:add(Instance.new("ClickDetector"))
@@ -45,20 +83,27 @@ local function getActivationClickDetector(trove: trove.Trove, parent: Instance)
 		detect = createActivationClickDetector(trove, parent)
 	end
 
-	detect.MaxActivationDistance = MaxActivationDistance(parent)
+	local max = activation.MaxActivationDistance(parent)
+	if max then
+		detect.MaxActivationDistance = max
+	end
 
 	return detect
 end
 
 local function createActivationProximityPrompt(trove: trove.Trove, parent: Instance)
-	local clickDetector = trove:add(Instance.new("ProximityPrompt"))
-	clickDetector.Name = "ActivationProximityPrompt"
-	clickDetector.Parent = parent
-	return clickDetector
+	warn("NEW PROMPT")
+	local prompt = trove:add(Instance.new("ProximityPrompt"))
+	prompt.Name = "ActivationProximityPrompt"
+	prompt.RequiresLineOfSight = false
+	prompt.Parent = parent
+	return prompt
 end
 
 local function getActivationProximityPrompt(trove: trove.Trove, parent: Instance)
+	warn("GET PROMPT")
 	local prompt = parent:FindFirstChild("ActivationProximityPrompt", true) :: ProximityPrompt
+	print(prompt)
 
 	if not prompt then
 		prompt = createActivationProximityPrompt(trove, parent)
@@ -68,105 +113,110 @@ local function getActivationProximityPrompt(trove: trove.Trove, parent: Instance
 		prompt = createActivationProximityPrompt(trove, parent)
 	end
 
-	prompt.MaxActivationDistance = MaxActivationDistance(parent)
+	local max = activation.MaxActivationDistance(parent)
+	if max then
+		prompt.MaxActivationDistance = max
+	end
+
+	trove:add(function()
+		warn("PROMPT DESTROYED")
+		prompt.Enabled = false
+	end)
+
+	prompt.Enabled = true
 
 	return prompt
 end
 
--- local function connectToKeycodeInput<T>(trove: trove.Trove, connectTo: T & Instance, onActivated: (T) -> ())
--- 	trove:connect(UserInputService.InputBegan, function(io, gc)
--- 		if not gc and Active(connectTo) and io == ActivationKeyCode(connectTo) then
--- 			onActivated(connectTo)
--- 		end
--- 	end)
--- end
-
-local function connectActivationOnce<T>(
-	outerTrove: trove.Trove,
-	activationTrove: trove.Trove,
-	connectTo: T & Instance,
-	onActivated: (outerTrove: trove.Trove, instance: T, activationTrove: trove.Trove) -> (),
-	defaultMode: ActivationMode?
-)
-	local mode: ActivationMode? = ActivationMode(connectTo) or defaultMode
-
-	if mode then
-		if mode == "Touch" then
-			if connectTo:IsA("BasePart") then
-				activationTrove:connect(connectTo.Touched, function(toucher)
-					if Active(connectTo) and isToucherValid(connectTo, toucher) then
-						onActivated(outerTrove, connectTo, activationTrove)
-					end
-				end)
-			end
-		elseif mode == "Click" then
-			local detect: ClickDetector? = if connectTo:IsA("ClickDetector")
-				then connectTo
-				elseif connectTo:IsA("BasePart") then getActivationClickDetector(activationTrove, connectTo)
+local activationBehaviorImpls = table.freeze({
+	Touch = ActivationBehaviorImpl {
+		predicate = t.instanceIsA("BasePart"),
+		implement = function(trove, instanceTrove, instance, onActivated)
+			trove:connect((instance :: BasePart).Touched, function(toucher: BasePart)
+				if touch.isToucherValid(instance, toucher) then
+					onActivated(instanceTrove, instance)
+				end
+			end)
+		end,
+	},
+	Prompt = ActivationBehaviorImpl {
+		implement = function(trove, instanceTrove, instance, onActivated)
+			local prompt: ProximityPrompt? = if instance:IsA("ProximityPrompt")
+				then instance
+				elseif instance:IsA("BasePart") then getActivationProximityPrompt(trove, instance)
 				else nil
 
-			if detect then
-				activationTrove:connect(detect.MouseClick, function(player: Player)
-					-- TODO: do we need this?
-					if Active(connectTo) and player == Players.LocalPlayer then
-						onActivated(outerTrove, connectTo, activationTrove)
-					end
-				end)
-			end
-		elseif mode == "Prompt" then
-			local prompt: ProximityPrompt? = if connectTo:IsA("ProximityPrompt")
-				then connectTo
-				elseif connectTo:IsA("BasePart") then getActivationProximityPrompt(activationTrove, connectTo)
-				else nil
+			warn("IMPL PROMPT")
 
 			if prompt then
-				activationTrove:connect(prompt.Triggered, function(player: Player)
-					-- TODO: do we need this?
-					if Active(connectTo) and player == Players.LocalPlayer then
-						onActivated(outerTrove, connectTo, activationTrove)
+				trove:connect(prompt.Triggered, function(player)
+					if player == localPlayer then
+						onActivated(instanceTrove, instance)
 					end
 				end)
 			end
-			-- elseif mode == "KeyCode" then
-			-- 	local inputTrove = activationTrove:extend()
-			-- 	inputTrove:connect(connectTo:GetAttributeChangedSignal("ActivationKeyCode"), function()
-			-- 		-- local keycode = ActivationKeyCode(connectTo)
-			-- 		-- if keycode then
-			-- 		-- 	-- return connectToKeycodeInput(inputTrove, connectTo, onActivated)
-			-- 		-- end
-			-- 		inputTrove:clean()
-			-- 	end)
-			-- 	-- local keycode = ActivationKeyCode(connectTo)
-			-- 	-- if keycode then
-			-- 	-- 	-- connectToKeycodeInput(inputTrove, connectTo, onActivated)
-			-- 	-- end
+		end,
+	},
+	Click = ActivationBehaviorImpl {
+		implement = function(trove, instanceTrove, instance, onActivated)
+			local click: ClickDetector? = if instance:IsA("ClickDetector")
+				then instance
+				elseif instance:IsA("BasePart") then getActivationClickDetector(trove, instance)
+				else nil
+
+			if click then
+				trove:connect(click.MouseClick, function(player)
+					if player == localPlayer then
+						onActivated(instanceTrove, instance)
+					end
+				end)
+			end
+		end,
+	},
+	KeyCode = ActivationBehaviorImpl {
+		implement = function(trove, instanceTrove, instance, onActivated)
+			trove:connect(UserInputService.InputBegan, function(inputObject, gameProcessed)
+				if not gameProcessed and inputObject == activation.ActivationKeyCode(instance) then
+					onActivated(instanceTrove, instance)
+				end
+			end)
+		end,
+	},
+	HumanoidStateChanged = ActivationBehaviorImpl {
+		implement = function(trove, instanceTrove, instance, onActivated)
+			-- TODO
+		end,
+	},
+	Interval = ActivationBehaviorImpl {
+		implement = function(trove, instanceTrove, instance, onActivated)
+			-- TODO
+		end,
+	},
+	Node = ActivationBehaviorImpl {
+		implement = function(trove, instanceTrove, instance, onActivated)
+			-- TODO
+		end,
+	},
+})
+
+local function implementActivationBehavior<T>(
+	trove: trove.Trove,
+	instanceTrove: trove.Trove,
+	instance: T & Instance,
+	onActivated: (trove: trove.Trove, instance: T) -> ()
+)
+	local behavior = activation.ActivationBehavior(instance)
+	local behaviorImpl: ActivationBehaviorImpl? = activationBehaviorImpls[behavior]
+	if behaviorImpl then
+		if behaviorImpl.predicate and not behaviorImpl.predicate(instance) then
+			return
 		end
+		warn("IMPLEMENTING", behavior, "FOR", instance)
+		-- What
+		-- behaviorImpl.implement(trove, instanceTrove, instance, onActivated :: any)
+		task.defer(behaviorImpl.implement, trove, instanceTrove, instance, onActivated :: any)
 	end
 end
-
---- @class KitStdActivation
---- Implements activation for kit objects.
-local activation = {}
-
---- @prop Active InstanceAttribute<boolean>
---- @within KitStdActivation
---- TBA
-activation.Active = Active
-
---- @prop ActivationMode InstanceAttribute<ActivationMode>
---- @within KitStdActivation
---- TBA
-activation.ActivationMode = ActivationMode
-
---- @prop MaxActivationDistance InstanceAttribute<number>
---- @within KitStdActivation
---- TBA
-activation.MaxActivationDistance = MaxActivationDistance
-
---- @prop ActivationKeyCode InstanceAttribute<Enum.KeyCode>
---- @within KitStdActivation
---- TBA
-activation.ActivationKeyCode = ActivationKeyCode
 
 --- @within KitStdActivation
 --- Calls the callback when the connected instance is activated based on it's
@@ -222,21 +272,31 @@ activation.ActivationKeyCode = ActivationKeyCode
 ---     prelude.connectActivation(activationTrove, connectTo, onSelfActivated)
 --- end)
 --- ```
-function activation.connectActivation<T>(
-	outerTrove: trove.Trove,
-	connectTo: T & Instance,
-	onActivated: (outerTrove: trove.Trove, instance: T, activationTrove: trove.Trove) -> (),
-	defaultMode: ActivationMode?
+function activation.onActivated<T>(
+	instanceTrove: trove.Trove,
+	instance: T & Instance,
+	onActivated: (trove: trove.Trove, instance: T) -> ()
 )
-	local activationTrove = outerTrove:extend()
-	local activationInnerTrove = activationTrove:extend()
-	connectActivationOnce(outerTrove, activationInnerTrove, connectTo, onActivated, defaultMode)
-	activationTrove:connect(connectTo:GetAttributeChangedSignal(ActivationMode.name), function()
-		activationInnerTrove:clean()
-		activationInnerTrove = activationTrove:extend()
-		connectActivationOnce(outerTrove, activationInnerTrove, connectTo, onActivated, defaultMode)
+	local trove = instanceTrove:extend()
+	trove:add(function()
+		warn("TROVE DEAD")
 	end)
-	return activationTrove
+	local activationTrove = trove:extend()
+	activationTrove:add(function()
+		warn("ACT TROVE DEAD")
+	end)
+	if activation.Activatable(instance) then
+		implementActivationBehavior(activationTrove, trove, instance, onActivated)
+	end
+	trove:add(activation.Activatable:changed(instance, function(new)
+		warn(new)
+		activationTrove = activationTrove:clean()
+		activationTrove = trove:extend()
+		if new then
+			warn("REIMPLEMENTING", instance)
+			implementActivationBehavior(activationTrove, trove, instance, onActivated)
+		end
+	end))
 end
 
 return table.freeze(activation)

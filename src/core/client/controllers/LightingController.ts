@@ -4,7 +4,7 @@ import { Lazy } from "@rbxts/lazy";
 import ty from "@rbxts/libopen-ty";
 import Make from "@rbxts/make";
 import { Lighting } from "@rbxts/services";
-import { addMechanicBinding } from "./MechanicController/bindings";
+import { addKitBinding } from "./KitObjectController/bindings";
 
 export enum LightingPriority {
 	/// Base lighting
@@ -257,7 +257,7 @@ export class LightingController implements OnInit, OnStart {
 			.Retype<LightingAttributes>();
 
 		const TowerLightingPriority = ty.Number.IntoDefault(LightingPriority.Tower);
-		addMechanicBinding("setTowerLighting", async (attributes, priority) => {
+		addKitBinding("setTowerLighting", async (attributes, priority) => {
 			const castedAttributes = LightingAttributes.CastOrError(attributes);
 			const castedPriority = TowerLightingPriority.CastOrError(priority);
 			this.setLightingAtPriority(castedAttributes, castedPriority);

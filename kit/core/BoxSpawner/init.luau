@@ -17,7 +17,7 @@ local REVERSE: std.TweenConfig = { reverse = true }
 
 local BoxId = prelude.attribute("BoxId", prelude.isString)
 local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
--- local BoxBehavior: std.InstanceAttribute<BoxBehavior> = (
+-- local BoxBehavior: std.Attribute<BoxBehavior> = (
 -- 	prelude.attribute("BoxBehavior", prelude.t.literal("Unanchoring", "Draggable", "Pickupable"), "Unanchoring")
 -- )
 
@@ -33,11 +33,12 @@ local function spawnBoxesWithId(trove: std.Trove, id: string)
 	end
 end
 
-local function trySpawn(trove: std.Trove, spawner: BasePart, activationTrove: std.Trove)
+local function trySpawn(trove: std.Trove, spawner: BasePart)
 	if debouncedSpawners[spawner] then
 		return
 	end
 
+	prelude.Activatable:set(spawner, false)
 	debouncedSpawners[spawner] = true
 
 	local existingSpawnTrove = spawnBoxTroves[spawner]
@@ -45,8 +46,6 @@ local function trySpawn(trove: std.Trove, spawner: BasePart, activationTrove: st
 		existingSpawnTrove:clean()
 		spawnBoxTroves[spawner] = nil
 	end
-
-	activationTrove:clean()
 
 	if PlaySound(spawner) then
 		prelude.inferAndPlaySound(spawner, prelude.AUDIO_ASSETS["core/towerSfx/button"], "Press")
@@ -67,15 +66,14 @@ local function trySpawn(trove: std.Trove, spawner: BasePart, activationTrove: st
 
 	local function reset()
 		debouncedSpawners[spawner] = nil
-		activationTrove:clean()
-		prelude.connectActivation(trove, spawner, trySpawn)
+		prelude.Activatable:set(spawner, true)
 	end
 
 	task.delay(Cooldown(spawner), reset)
 end
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local BoxSpawner = kit:tag("BoxSpawner", prelude.isBasePart)

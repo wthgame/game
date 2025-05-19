@@ -4,7 +4,7 @@ import { Trove } from "@rbxts/trove";
 // and the controllers stay the same
 declare namespace KitStd {
 	export namespace prelude {
-		export function connectActivation<T extends Instance>(
+		export function onActivated<T extends Instance>(
 			outerTrove: Trove,
 			connectTo: T,
 			onActivated: (outerTrove: Trove, instance: T, activationTrove: Trove) => void,

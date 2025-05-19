@@ -17,8 +17,11 @@ local JumpOnDismount = prelude.attribute("JumpOnDismount", prelude.isBoolean, tr
 local seated = false
 local debounced: std.Set<BasePart> = {}
 
-local function seatPlayer(trove: std.Trove, seat: BasePart, activationTrove: std.Trove)
-	local canBeSeated = prelude.Active(seat) and not seated and not debounced[seat] and std.character.isCharacterAlive()
+local function seatPlayer(trove: std.Trove, seat: BasePart)
+	local canBeSeated = prelude.Enabled(seat)
+		and not seated
+		and not debounced[seat]
+		and std.character.isCharacterAlive()
 
 	if canBeSeated then
 		local root = assert(prelude.getMaybeHumanoidRootPart(), "can be assumed")
@@ -26,7 +29,9 @@ local function seatPlayer(trove: std.Trove, seat: BasePart, activationTrove: std
 
 		debounced[seat] = true
 		seated = true
-		activationTrove:clean()
+
+		local wasActivatable = prelude.Activatable(seat)
+		prelude.Activatable:set(seat, false)
 
 		root.CFrame = seat.CFrame + Vector3.new(0, seat.Size.Y / 2 + OFFSET_CHARACTER_BY, 0)
 		humanoid.Sit = true
@@ -49,7 +54,7 @@ local function seatPlayer(trove: std.Trove, seat: BasePart, activationTrove: std
 			if JumpOnDismount(seat) and humanoid then
 				humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 			end
-			prelude.connectActivation(trove, seat, seatPlayer)
+			prelude.Activatable:set(seat, wasActivatable)
 		end
 
 		weldTrove:add(dismount)
@@ -60,7 +65,7 @@ local function seatPlayer(trove: std.Trove, seat: BasePart, activationTrove: std
 end
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Seat = kit:tag("Seat", prelude.isBasePart)

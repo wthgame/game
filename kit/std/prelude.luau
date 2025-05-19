@@ -36,8 +36,9 @@ local prelude = {}
 prelude.createLogger = logger.createLogger
 
 prelude.attribute = attributes.attribute
-prelude.Active = activation.Active
-prelude.connectActivation = activation.connectActivation
+prelude.Activatable = activation.Activatable
+prelude.Enabled = activation.Enabled
+prelude.onActivated = activation.onActivated
 
 prelude.getHumanoid = character.getHumanoid
 prelude.getMaybeHumanoid = character.getMaybeHumanoid

@@ -3,7 +3,7 @@ import { atom } from "@rbxts/charm";
 import ty from "@rbxts/libopen-ty";
 import { ContentProvider } from "@rbxts/services";
 import { Trove } from "@rbxts/trove";
-import { addMechanicBinding } from "core/client/controllers/MechanicController/bindings";
+import { addKitBinding } from "core/client/controllers/KitObjectController/bindings";
 import { TowerLoadController } from "core/client/controllers/TowerLoadController";
 import { Blink, LogBenchmark } from "core/shared/decorators";
 import { createLogger } from "core/shared/logger";
@@ -34,7 +34,7 @@ export class TowerRunController implements OnInit {
 	}
 
 	onInit(): void {
-		addMechanicBinding("@game/TowerRunController/promptToLoadTower", (name) => {
+		addKitBinding("@game/TowerRunController/promptToLoadTower", (name) => {
 			this.promptToLoadTower(ty.String.CastOrError(name));
 		});
 	}

@@ -4,25 +4,25 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local addMechanicBinding: (key: unknown, fn: (...unknown) -> ...unknown) -> ()
-local callMechanicBinding: (key: unknown, ...unknown) -> ()
+local addKitBinding: (key: unknown, fn: (...unknown) -> ...unknown) -> ()
+local callKitBinding: (key: unknown, ...unknown) -> ()
 do
 	local clientBindings = require(
 		ReplicatedStorage:WaitForChild("WTHClientCore")
 			:WaitForChild("controllers")
-			:WaitForChild("MechanicController")
+			:WaitForChild("KitObjectController")
 			:WaitForChild("bindings")
 	)
-	addMechanicBinding = clientBindings.addMechanicBinding
-	callMechanicBinding = clientBindings.callMechanicBinding
+	addKitBinding = clientBindings.addKitBinding
+	callKitBinding = clientBindings.callKitBinding
 end
 
 --- @class KitStdBindings
 --- Bindings to the Welcome To Hell controllers.
 local bindings = {
 
-	_addMechanicBinding = addMechanicBinding,
-	_callMechanicBinding = callMechanicBinding,
+	_addKitBinding = addKitBinding,
+	_callKitBinding = callKitBinding,
 }
 
 --- @class BackgroundMusicController
@@ -30,7 +30,7 @@ local bindings = {
 bindings.BackgroundMusicController = {}
 do
 	function bindings.BackgroundMusicController.setTransitionTime(time: number)
-		callMechanicBinding("@core/BackgroundMusicController/setTransitionTime", time)
+		callKitBinding("@core/BackgroundMusicController/setTransitionTime", time)
 	end
 
 	table.freeze(bindings.BackgroundMusicController)
@@ -41,31 +41,31 @@ end
 bindings.UiController = {}
 do
 	function bindings.UiController.toggleRunTimerVisible()
-		callMechanicBinding("@game/MenuController/toggleRunTimerVisible")
+		callKitBinding("@game/MenuController/toggleRunTimerVisible")
 	end
 
 	function bindings.UiController.setRunTimerVisible(visible: boolean)
-		callMechanicBinding("@game/MenuController/setRunTimerVisible", visible)
+		callKitBinding("@game/MenuController/setRunTimerVisible", visible)
 	end
 
 	function bindings.UiController.setRunInfoTowerName(newName: string?)
-		callMechanicBinding("@game/MenuController/setRunInfoTowerName", newName)
+		callKitBinding("@game/MenuController/setRunInfoTowerName", newName)
 	end
 
 	function bindings.UiController.setRunInfoTowerNameVisible(visible: boolean)
-		callMechanicBinding("@game/MenuController/setRunInfoTowerNameVisible", visible)
+		callKitBinding("@game/MenuController/setRunInfoTowerNameVisible", visible)
 	end
 
 	function bindings.UiController.toggleRunInfoTowerNameVisible()
-		callMechanicBinding("@game/MenuController/toggleRunInfoTowerNameVisible")
+		callKitBinding("@game/MenuController/toggleRunInfoTowerNameVisible")
 	end
 
 	function bindings.UiController.setMenuVisible(visible: boolean)
-		callMechanicBinding("@game/MenuController/setMenuVisible", visible)
+		callKitBinding("@game/MenuController/setMenuVisible", visible)
 	end
 
 	function bindings.UiController.toggleMenuVisible()
-		callMechanicBinding("@game/MenuController/toggleMenuVisible")
+		callKitBinding("@game/MenuController/toggleMenuVisible")
 	end
 
 	table.freeze(bindings.UiController)

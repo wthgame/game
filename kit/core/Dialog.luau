@@ -55,7 +55,7 @@ export type DialogAction = DialogText | DialogPlaySound | DialogChoose | DialogP
 local AwaitWriteFinish = prelude.attribute("AwaitWriteFinish", prelude.isBoolean, true)
 local AwaitTextFade = prelude.attribute("AwaitTextFade", prelude.isBoolean, true)
 local DeleteAfter = prelude.attribute("DeleteAfter", prelude.isPositiveNumber, 1)
-local WrapBehavior: std.InstanceAttribute<DialogWrapBehavior> = (
+local WrapBehavior: std.Attribute<DialogWrapBehavior> = (
 	prelude.attribute("WrapBehavior", prelude.t.literal("NoWrap", "Wrap"), "NoWrap")
 )
 
@@ -67,7 +67,7 @@ local Spatial = prelude.attribute("Spatial", prelude.isBoolean, false)
 local logger = prelude.createLogger("Dialog")
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 local function collectActionsFromSequence(sequence: Instance): { DialogAction }
 	local collected: { DialogAction } = {}

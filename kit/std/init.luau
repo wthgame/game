@@ -30,9 +30,7 @@ export type MapArray<K, T> = collections.MapArray<K, T>
 export type Kit = types.Kit
 export type KitScript<Self = {}> = types.KitScript<Self>
 export type InstanceTag<I> = types.InstanceTag<I>
-export type InstanceByIds<Instance, Id> = types.InstanceByIds<Instance, Id>
-export type InstanceAttribute<T> = attributes.InstanceAttribute<T>
-export type ActivationMode = activation.ActivationMode
+export type Attribute<T> = attributes.Attribute<T>
 export type Character = types.Character
 export type PlaySoundConfig = audio.PlaySoundConfig
 export type TweenConfig = animation.TweenConfig
@@ -46,7 +44,7 @@ export type LemonSignal<T...> = lemonSignal.Signal<T...>
 --- @since 1.0.0
 ---
 --- The Welcome To Hell Kit Standard Library is contains many utilities,
---- including types like InstanceAttribute,
+--- including types like Attribute,
 --- In addition to the Welcome To Hell API which is bundled as part of the kit,
 --- the game also provides this sibling package that contains a set of utilities
 --- to streamline common patterns and operations used in Mechanics.

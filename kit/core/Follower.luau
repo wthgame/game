@@ -15,7 +15,7 @@ local prelude = std.prelude
 type FollowMode = "LookAt" | "RotationOf" | "PositionOf" | "PivotOf" | "None"
 type FollowTarget = "Character" | "Mouse" | "Camera" | "None"
 
-local MAX_RAY_LENGTH = 10_000
+local MAX_RAY_LENGTH = 2_000
 local mouse = Players.LocalPlayer:GetMouse()
 
 local FollowMode =
@@ -38,10 +38,10 @@ local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFr
 	end
 
 	if target == "Mouse" then
-		local raycast = Workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MAX_RAY_LENGTH, params)
-		if raycast then
-			return CFrame.new(raycast.Position)
-		end
+		-- local raycast = Workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MAX_RAY_LENGTH, params)
+		-- if raycast then
+		-- 	return CFrame.new(raycast.Position)
+		-- end
 	end
 
 	if target == "Camera" then
@@ -52,12 +52,12 @@ local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFr
 end
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Follower = kit:tag("Follower", prelude.t.instanceIsA("PVInstance") :: std.check<PVInstance>)
 
-	kit:onRender(function(trove, dt)
+	kit:onPhysics(function(trove, dt)
 		debug.profilebegin("Follower")
 
 		local params = RaycastParams.new()
@@ -68,7 +68,7 @@ function self:run(kit: std.Kit)
 			local mode: FollowMode = FollowMode(pv)
 			local target: FollowTarget = FollowTarget(pv)
 
-			if not prelude.Active(pv) or mode == "None" or target == "None" then
+			if not prelude.Enabled(pv) or mode == "None" or target == "None" then
 				continue
 			end
 

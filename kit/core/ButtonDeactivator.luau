@@ -12,7 +12,7 @@ local idToButtonsPressed = Button.idToButtonsPressed
 local updateId = Button.updateId
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 local function deactivate(_, deactivator: BasePart)
 	local id = ButtonId(deactivator)
@@ -29,7 +29,6 @@ end
 
 function self:run(kit: std.Kit)
 	local ButtonDeactivator = kit:tag("ButtonDeactivator", prelude.isBasePart)
-
 	ButtonDeactivator:onActivated(deactivate)
 end
 

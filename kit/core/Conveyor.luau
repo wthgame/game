@@ -12,7 +12,7 @@ local prelude = std.prelude
     Conveyors speeds contacting objects facing it's direction.
 ]=]
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 --[=[
     @prop Speed number
@@ -35,7 +35,7 @@ function self:run(kit: std.Kit)
 		debug.profilebegin("Conveyor")
 		local alreadySynchronized: std.Set<Instance> = {}
 		for _, conveyor in Conveyor:instances() do
-			local speed: number = prelude.Active(conveyor) and Speed(conveyor) or 0
+			local speed: number = prelude.Enabled(conveyor) and Speed(conveyor) or 0
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
 			if SynchronizeConveyorBeams(conveyor) then
 				for _, beam in conveyor:GetDescendants() do

@@ -35,16 +35,19 @@ local function updateId(id: string)
 	end
 end
 
-local function pressButton(trove: std.Trove, btn: BasePart, activationTrove: std.Trove)
+local function pressButton(trove: std.Trove, btn: BasePart)
 	local id = ButtonId(btn)
 
 	if ButtonPressed(btn) or not id then
 		return
 	end
+	print("START PRESS")
 
-	activationTrove:clean()
-
+	print("SETTING ACT")
+	prelude.Activatable:set(btn, false)
+	print("SETTING BTN PRESS")
 	btn:SetAttribute("ButtonPressed", true)
+	print("IDING PRESS")
 	idToButtonsPressed:add(id, btn)
 
 	if PlaySound(btn) then
@@ -64,25 +67,29 @@ local function pressButton(trove: std.Trove, btn: BasePart, activationTrove: std
 
 	local deactivateTrove = trove:extend()
 	deactivateTrove:add(function()
+		print("DEACTIVATING")
 		btn:SetAttribute("ButtonPressed", false)
+		prelude.Activatable:set(btn, true)
 		prelude.tweenMaybeInstant(btn, { CFrame = originalCFrame }, prelude.tweenConfigFromAttributes(btn, "Press"))
-		prelude.connectActivation(trove, btn, pressButton)
 	end)
 
 	glowButton(deactivateTrove, btn)
 
 	local duration = Duration(btn)
-	if duration >= 0 then
+	if duration > 0 then
 		task.delay(duration, function()
+			print("DURATION END")
 			deactivateTrove:clean()
 		end)
 	end
 
-	deactivateTrove:connect(btn:GetAttributeChangedSignal("ButtonPressed"), function()
-		if not ButtonPressed(btn) then
+	deactivateTrove:add(ButtonPressed:changed(btn, function(pressed)
+		print("WOW")
+		if not pressed then
+			print("PRESSED?!", pressed)
 			deactivateTrove:clean()
 		end
-	end)
+	end))
 end
 
 local function tryUpdateIdOfButton(btn: Instance)
@@ -97,7 +104,8 @@ local self = {} :: std.KitScript<typeof(ButtonAttributes) & typeof(ButtonActivat
 	glowButton: (trove: std.Trove, btn: BasePart, flash: boolean?) -> (),
 	updateId: (id: string) -> (),
 }>
-self.type = "KitScript"
+
+self.implements = { KitScript = true }
 self.idToButtonsPressed = idToButtonsPressed
 self.glowButton = glowButton
 self.updateId = updateId
@@ -120,18 +128,17 @@ function self:run(kit: std.Kit)
 			idToButtonActivateds:add(id, ba)
 		end
 
-		trove:connect(ba:GetAttributeChangedSignal("ButtonId"), function()
-			local id = ButtonId(ba)
+		trove:add(ButtonId:changed(ba, function(id)
 			if id then
 				idToButtonActivateds:add(id, ba)
 			end
-		end)
+		end))
 	end)
 
 	Button:onActivated(pressButton)
 
 	Button:onLoaded(function(trove, btn)
-		trove:connect(btn:GetAttributeChangedSignal("ButtonPressed"), function()
+		trove:add(ButtonPressed:changed(btn, function(id)
 			local id = ButtonId(btn)
 
 			if not ButtonPressed(btn) then
@@ -143,14 +150,14 @@ function self:run(kit: std.Kit)
 			if id then
 				updateId(id)
 			end
-		end)
+		end))
 
 		-- try update once to set initial properties
 		tryUpdateIdOfButton(btn)
 
-		trove:connect(btn:GetAttributeChangedSignal("ButtonId"), function()
+		trove:add(ButtonId:changed(btn, function(id)
 			-- TOOD
-		end)
+		end))
 	end)
 end
 

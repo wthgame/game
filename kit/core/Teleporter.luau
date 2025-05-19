@@ -31,6 +31,8 @@ local function teleport(trove: std.Trove, teleporter: BasePart)
 		return
 	end
 
+	prelude.Activatable:set(teleporter, false)
+
 	local allDestinations = idToDestination:get(TeleporterId:assert(teleporter) :: string)
 
 	local _, first = next(allDestinations)
@@ -78,10 +80,11 @@ local function teleport(trove: std.Trove, teleporter: BasePart)
 	end
 
 	debounce = false
+	prelude.Activatable:set(teleporter, true)
 end
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Teleporter = kit:tag("Teleporter", prelude.isBasePart)

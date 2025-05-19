@@ -7,7 +7,7 @@ local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit) end
 

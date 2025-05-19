@@ -30,7 +30,7 @@ export type Kit = {
 }
 
 export type KitScript<Self> = Self & {
-	type: "KitScript",
+	implements: { KitScript: true },
 	run: (self: KitScript<Self>, kit: Kit) -> (),
 }
 

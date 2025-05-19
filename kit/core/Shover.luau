@@ -7,8 +7,8 @@ local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
 type ShoverDirectionAttributes = {
-	delay: std.InstanceAttribute<number>,
-	power: std.InstanceAttribute<number>,
+	delay: std.Attribute<number>,
+	power: std.Attribute<number>,
 }
 
 local SHOVER_DIRECTION_ATTRIBUTES = {
@@ -23,12 +23,12 @@ local SHOVER_DIRECTION_ATTRIBUTES = {
 }
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 local function shove(direction: "In" | "Out", shover: Instance, ancestor: Instance)
 	local attributes: ShoverDirectionAttributes = SHOVER_DIRECTION_ATTRIBUTES[direction]
 	task.wait(attributes.delay(shover))
-	if prelude.Active(shover) and shover:IsDescendantOf(ancestor) then
+	if prelude.Enabled(shover) and shover:IsDescendantOf(ancestor) then
 		local power = attributes.power(shover)
 		for _, descendant in shover:GetDescendants() do
 			if descendant.Name == "ShoverConstraint" and descendant:IsA("PrismaticConstraint") then

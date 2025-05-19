@@ -18,7 +18,7 @@ local function glowButton(outerTrove: std.Trove, btn: BasePart, flash: boolean?)
 	glow.CanQuery = false
 	glow.Material = Enum.Material.Neon
 	glow.Name = "ButtonGlow"
-	glow.Size *= Vector3.new(1.008, 1.008, 1.008)
+	glow.Size *= Vector3.new(1.01, 1.01, 1.01)
 	glow.Massless = true
 	glow.Transparency = 1
 

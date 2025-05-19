@@ -15,7 +15,7 @@ local VerticalLoop = prelude.attribute("VerticalLoop", prelude.isBoolean, true)
 local Synchronized = prelude.attribute("Synchronized", prelude.isBoolean, true)
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local MovingTexture = kit:tag("MovingTexture", prelude.t.instanceIsA("Texture") :: std.check<Texture>)
@@ -32,7 +32,7 @@ function self:run(kit: std.Kit)
 	kit:onRender(function(_, dt)
 		local loadedLifetime = kit:loadedLifetime()
 		for _, toMove in MovingTexture:instances() do
-			if not prelude.Active(toMove) then
+			if not prelude.Enabled(toMove) then
 				continue
 			end
 

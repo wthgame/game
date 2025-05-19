@@ -21,7 +21,7 @@ local isNumberSequencerType: std.check<SequencerType> = prelude.t.literal("numbe
 local isSequencerType: std.check<SequencerType> = prelude.t.union(isColorSequencerType, isNumberSequencerType)
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 local function setPropertyUnsafe(instance: Instance, property: string, value: unknown)
 	(instance :: any)[property] = value
@@ -35,7 +35,7 @@ function self:run(kit: std.Kit)
 	kit:onRender(function()
 		local loadedLifetime = kit:loadedLifetime()
 		for _, toUpdate in Sequencer:instances() do
-			if not prelude.Active(toUpdate) then
+			if not prelude.Enabled(toUpdate) then
 				continue
 			end
 

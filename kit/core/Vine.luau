@@ -46,13 +46,13 @@ local function createHandle(trove: std.Trove)
 	return handle
 end
 
-local function doVine(trove: std.Trove, vineInstance: VineInstance, activationTrove: std.Trove)
+local function doVine(trove: std.Trove, vineInstance: VineInstance)
 	if debounced[vineInstance] then
 		return
 	end
-	debounced[vineInstance] = true
 
-	activationTrove:clean()
+	prelude.Activatable:set(vineInstance, false)
+	debounced[vineInstance] = true
 
 	local root = prelude.getHumanoidRootPart()
 	local originalLinearVelocity = root.AssemblyLinearVelocity
@@ -104,7 +104,7 @@ local function doVine(trove: std.Trove, vineInstance: VineInstance, activationTr
 		task.delay(Cooldown(vineInstance), function(vineInstance)
 			debounced[vineInstance] = nil
 			vineInstance.Transparency = 0
-			prelude.connectActivation(trove, vineInstance, doVine)
+			prelude.Activatable:set(vineInstance, true)
 		end, vineInstance)
 	end
 
@@ -114,7 +114,7 @@ local function doVine(trove: std.Trove, vineInstance: VineInstance, activationTr
 end
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Vine = kit:tag(

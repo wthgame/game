@@ -16,6 +16,13 @@ local MaxForce = prelude.attribute("MaxForce", prelude.isPositiveNumber, math.hu
 local Vector = prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up")
 local PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
 
+local debounced: std.Set<BasePart> = {}
+
+local function reset(launcher: BasePart)
+	debounced[launcher] = nil
+	prelude.Activatable:set(launcher, false)
+end
+
 local function launch(trove: std.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
 	velocityAttachment.Name = "LauncherAttachment"
@@ -33,81 +40,69 @@ local function launch(trove: std.Trove, parent: BasePart, power: number, maxAxes
 	velocityAttachment.Parent = parent
 end
 
+local function tryLaunchPlauer(trove: std.Trove, instance: BasePart)
+	if not prelude.Enabled(instance) or debounced[instance] then
+		return
+	end
+
+	debounced[instance] = true
+	prelude.Activatable:set(instance, false)
+
+	local maxForce = MaxForce(instance)
+	local launcherVector: Vector = Vector(instance)
+
+	local faceVector: Vector3
+	if launcherVector == "Up" then
+		faceVector = instance.CFrame.UpVector
+	elseif launcherVector == "Right" then
+		faceVector = instance.CFrame.RightVector
+	elseif launcherVector == "Look" then
+		faceVector = instance.CFrame.LookVector
+	elseif launcherVector == "Z" then
+		faceVector = instance.CFrame.ZVector
+	else
+		std.never()
+	end
+
+	-- NOTE: do not do Vector3.yAxis * math.huge
+	local maxAxesForce = Vector3.new(0, maxForce, 0)
+	if faceVector.X ~= 0 then
+		maxAxesForce = Vector3.new(maxForce, maxAxesForce.Y, maxAxesForce.Z)
+	end
+	if faceVector.Z ~= 0 then
+		maxAxesForce = Vector3.new(maxAxesForce.X, maxAxesForce.Y, maxForce)
+	end
+
+	local root = prelude.getHumanoidRootPart()
+
+	local velocityTrove = trove:extend()
+	launch(velocityTrove, root, Power(instance), maxAxesForce, faceVector)
+
+	if PlaySound(instance) then
+		prelude.inferAndPlaySound(instance, prelude.AUDIO_ASSETS["core/towerSfx/button"], "LaunchSound")
+	end
+
+	if EmitLauncherParticle(instance) then
+		local launchParticles = instance:FindFirstChild("LaunchParticle")
+		if launchParticles and launchParticles:IsA("ParticleEmitter") then
+			launchParticles:Emit(1)
+		end
+	end
+
+	task.delay(Cooldown(instance), reset, instance)
+
+	-- ???
+	RunService.PostSimulation:Wait()
+	RunService.PostSimulation:Wait()
+	velocityTrove:clean()
+end
+
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Launcher = kit:tag("Launcher", prelude.isBasePart)
-
-	Launcher:onLoaded(function(trove, instance)
-		local debounce = false
-
-		local function resetDebounce()
-			debounce = false
-		end
-
-		-- TODO: figure out how to do prelude.connectActivation
-		trove:connect(instance.Touched, function(toucher)
-			if not prelude.Active(instance) or debounce then
-				return
-			end
-
-			local isCharacterTouched = std.touch.isToucherCharacter(instance, toucher)
-			if not isCharacterTouched then
-				return
-			end
-
-			debounce = true
-
-			local maxForce = MaxForce(instance)
-			local launcherVector: Vector = Vector(instance)
-
-			local faceVector: Vector3
-			if launcherVector == "Up" then
-				faceVector = instance.CFrame.UpVector
-			elseif launcherVector == "Right" then
-				faceVector = instance.CFrame.RightVector
-			elseif launcherVector == "Look" then
-				faceVector = instance.CFrame.LookVector
-			elseif launcherVector == "Z" then
-				faceVector = instance.CFrame.ZVector
-			else
-				std.never()
-			end
-
-			-- NOTE: do not do Vector3.yAxis * math.huge
-			local maxAxesForce = Vector3.new(0, maxForce, 0)
-			if faceVector.X ~= 0 then
-				maxAxesForce = Vector3.new(maxForce, maxAxesForce.Y, maxAxesForce.Z)
-			end
-			if faceVector.Z ~= 0 then
-				maxAxesForce = Vector3.new(maxAxesForce.X, maxAxesForce.Y, maxForce)
-			end
-
-			local root = prelude.getHumanoidRootPart()
-
-			local velocityTrove = trove:extend()
-			launch(velocityTrove, root, Power(instance), maxAxesForce, faceVector)
-
-			if PlaySound(instance) then
-				prelude.inferAndPlaySound(instance, prelude.AUDIO_ASSETS["core/towerSfx/button"], "LaunchSound")
-			end
-
-			if EmitLauncherParticle(instance) then
-				local launchParticles = instance:FindFirstChild("LaunchParticle")
-				if launchParticles and launchParticles:IsA("ParticleEmitter") then
-					launchParticles:Emit(1)
-				end
-			end
-
-			task.delay(Cooldown(instance), resetDebounce)
-
-			-- ???
-			RunService.PostSimulation:Wait()
-			RunService.PostSimulation:Wait()
-			velocityTrove:clean()
-		end)
-	end)
+	Launcher:onActivated(tryLaunchPlauer)
 end
 
 return self

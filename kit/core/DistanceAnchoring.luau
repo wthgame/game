@@ -11,7 +11,7 @@ local MinimumDistance = prelude.attribute("MinimumDistance", prelude.isPositiveN
 local MaximumDistance = prelude.attribute("MaximumDistance", prelude.isPositiveNumber, math.huge)
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local DistanceAnchoring = kit:tag("DistanceAnchoring")
@@ -20,6 +20,7 @@ function self:run(kit: std.Kit)
 
 	kit:onPhysics(function()
 		debug.profilebegin("DistanceAnchoring")
+
 		for _, toAnchor in DistanceAnchoring:instances() do
 			if toAnchor:IsA("BasePart") then
 				local distance = localPlayer:DistanceFromCharacter(toAnchor.Position)
@@ -29,6 +30,7 @@ function self:run(kit: std.Kit)
 				end
 			end
 		end
+
 		debug.profileend()
 	end)
 end

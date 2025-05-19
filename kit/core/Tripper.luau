@@ -11,7 +11,7 @@ local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
 local debounced: std.Set<BasePart> = {}
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 local function tripPlayer(trove: std.Trove, tripper: BasePart)
 	if not debounced[tripper] then

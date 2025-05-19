@@ -10,9 +10,7 @@ type Vector = "Up" | "Right" | "Look" | "Z"
 
 local Power = prelude.attribute("Power", prelude.isPositiveNumber, 0)
 local MaxForce = prelude.attribute("MaxForce", prelude.isPositiveNumber, math.huge)
-local Vector: std.InstanceAttribute<Vector> = (
-	prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up")
-)
+local Vector: std.Attribute<Vector> = (prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up"))
 
 local function wind(trove: std.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))
@@ -45,7 +43,7 @@ local function windUpTrove(
 end
 
 local self = {} :: std.KitScript
-self.type = "KitScript"
+self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
 	local Wind = kit:tag("Wind", prelude.isBasePart)
@@ -53,7 +51,7 @@ function self:run(kit: std.Kit)
 	Wind:onLoaded(function(trove, instance)
 		local windTroves: std.Map<BasePart, std.Trove> = {}
 		trove:connect(instance.Touched, function(toucher)
-			if not prelude.Active(instance) then
+			if not prelude.Enabled(instance) then
 				for part, trove in windTroves do
 					(trove :: any):clean()
 				end
