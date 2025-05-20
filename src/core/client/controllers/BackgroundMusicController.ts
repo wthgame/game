@@ -8,7 +8,7 @@ import { createLogger } from "core/shared/logger";
 import { BackgroundMusicZoneInstance } from "core/shared/types";
 import { OnPreRender } from "../hook-managers/RenderHookManager";
 import { CharacterController } from "./CharacterController";
-import { addKitBinding } from "./KitObjectController/bindings";
+import { addBinding } from "./KitObjectController/bindings";
 
 export const LOADED_ZONE_TAG = "LoadedBackgroundMusicZone";
 
@@ -102,17 +102,17 @@ export class BackgroundMusicController implements OnStart, OnPreRender {
 	}
 
 	onStart(): void {
-		addKitBinding("@core/BackgroundMusicController/setTransitionTime", (time) =>
+		addBinding("@core/BackgroundMusicController/setTransitionTime", (time) =>
 			this.transitionTime(ty.Number.CastOrError(time)),
 		);
 
 		// const EasingStyle = ty.Predicate(t.enum(Enum.EasingStyle)).Nicknamed("Enum.EasingStyle");
-		// addKitBinding("@core/BackgroundMusicController/setTransitionEasingStyle", (style) =>
+		// addBinding("@core/BackgroundMusicController/setTransitionEasingStyle", (style) =>
 		// 	this.transitionEasingStyle(EasingStyle.CastOrError(style)),
 		// );
 
 		// const EasingDirection = ty.Predicate(t.enum(Enum.EasingDirection)).Nicknamed("Enum.EasingDirection");
-		// addKitBinding("@core/BackgroundMusicController/transitionEasingDirection", (style) =>
+		// addBinding("@core/BackgroundMusicController/transitionEasingDirection", (style) =>
 		// 	this.transitionEasingDirection(EasingDirection.CastOrError(style)),
 		// );
 

@@ -7,7 +7,7 @@ local ShouldPrompt = prelude.attribute("ShouldPrompt", prelude.isBoolean, false)
 local TowerName = prelude.attribute("TowerName", prelude.isString)
 
 local function promptToLoadTower(towerName: string)
-	std.bindings._callKitBinding("@game/TowerRunController/promptToLoadTower", towerName)
+	std.bindings._callBinding("@game/TowerRunController/promptToLoadTower", towerName)
 end
 
 local self = {} :: std.KitScript
