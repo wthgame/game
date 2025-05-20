@@ -62,7 +62,7 @@ const KitScript = ty
 
 const optionalCheck = ty.Function.Optional().Retype<Maybe<t.check<any>>>();
 
-const MECHANIC_MODULES_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("KitScripts"));
+const KIT_SCRIPTS_PARENT = new Lazy(() => ReplicatedStorage.WaitForChild("KitScripts"));
 
 @Controller()
 export class KitObjectController implements OnInit {
@@ -70,23 +70,19 @@ export class KitObjectController implements OnInit {
 	private scriptToModule = new Map<KitScript, Instance>();
 
 	onInit(): void {
-		for (const module of MECHANIC_MODULES_PARENT.getValue().GetDescendants()) {
+		const kitScriptsParent = KIT_SCRIPTS_PARENT.getValue();
+		const fullName = kitScriptsParent.GetFullName();
+		for (const module of kitScriptsParent.GetDescendants()) {
 			if (!classIs(module, "ModuleScript")) continue;
 
 			const [requireSuccess, requireValue] = pcall(require, module);
 			if (requireSuccess) {
 				const maybe = KitScript.Cast(requireValue);
 				if (maybe.some) {
+					this.logger.trace("Found KitScript", module.GetFullName().gsub(fullName, "")[0].sub(2));
 					this.scriptToModule.set(requireValue as never, module);
 					continue;
 				}
-
-				this.logger.trace(
-					"Ignoring module",
-					module.GetFullName(),
-					"because of bad type:",
-					maybe.reason ?? "(no reason provided)",
-				);
 
 				continue;
 			}
