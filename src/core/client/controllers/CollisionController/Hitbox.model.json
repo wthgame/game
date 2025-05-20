@@ -1,0 +1,116 @@
+{
+    "ClassName": "Model",
+    "Children": [
+        {
+            "ClassName": "Part",
+            "Name": "Root",
+            "Properties": {
+                "Anchored": true,
+                "BottomSurface": "Smooth",
+                "CanCollide": false,
+                "CollisionGroup": "NeverCollide",
+                "Massless": true,
+                "Size": [
+                    2,
+                    2,
+                    1
+                ],
+                "TopSurface": "Smooth",
+                "Transparency": 1
+            }
+        },
+        {
+            "ClassName": "Part",
+            "Name": "Arms",
+            "Properties": {
+                "CanCollide": false,
+                "CollisionGroup": "NeverCollide",
+                "Color": [
+                    0.498,
+                    0.498,
+                    0.498
+                ],
+                "Massless": true,
+                "Size": [
+                    4,
+                    2,
+                    1
+                ],
+                "Transparency": 1
+            }
+        },
+        {
+            "ClassName": "Part",
+            "Name": "Center",
+            "Properties": {
+                "CFrame": {
+                    "CFrame": {
+                        "position": [
+                            0,
+                            -0.5,
+                            0
+                        ],
+                        "orientation": [
+                            [
+                                1,
+                                0,
+                                0
+                            ],
+                            [
+                                0,
+                                1,
+                                0
+                            ],
+                            [
+                                0,
+                                0,
+                                1
+                            ]
+                        ]
+                    }
+                },
+                "CanCollide": false,
+                "CollisionGroup": "NeverCollide",
+                "Color": [
+                    0.498,
+                    0.498,
+                    0.498
+                ],
+                "Massless": true,
+                "PivotOffset": {
+                    "CFrame": {
+                        "position": [
+                            0,
+                            -22.5,
+                            0
+                        ],
+                        "orientation": [
+                            [
+                                1,
+                                0,
+                                0
+                            ],
+                            [
+                                0,
+                                1,
+                                0
+                            ],
+                            [
+                                0,
+                                0,
+                                1
+                            ]
+                        ]
+                    }
+                },
+                "Size": [
+                    2,
+                    5,
+                    1
+                ],
+                "TopSurface": "Smooth",
+                "Transparency": 1
+            }
+        }
+    ]
+}
