@@ -18,6 +18,8 @@ local Typecheck = attributes.attribute("Typecheck", t.boolean, isStudio)
 local config = {}
 
 --- @prop debug boolean
+--- @within KitStdConfig
+---
 --- Controls whether debug mode is enabled for the Kit.
 ---
 --- In debug, additional logging and checks may be performed, which can

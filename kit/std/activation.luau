@@ -45,7 +45,7 @@ activation.ActivationBehavior = attributes.attribute("ActivationBehavior", t.str
 activation.MaxActivationDistance = attributes.attribute("MaxActivationDistance", t.numberPositive)
 
 --- @prop ActivationKeyCode Attribute<Enum.KeyCode?>
---- @within ActivationKeyCode
+--- @within KitStdActivation
 --- TBA
 activation.ActivationKeyCode = attributes.attribute("ActivationKeyCode", t.enum(Enum.KeyCode))
 
@@ -102,8 +102,8 @@ end
 
 local function getActivationProximityPrompt(trove: trove.Trove, parent: Instance)
 	warn("GET PROMPT")
-	local prompt = parent:FindFirstChild("ActivationProximityPrompt", true) :: ProximityPrompt
-	print(prompt)
+	local prompt = parent:FindFirstChild("ActivationProximityPrompt") :: ProximityPrompt
+	print(prompt, prompt and prompt:GetFullName())
 
 	if not prompt then
 		prompt = createActivationProximityPrompt(trove, parent)
@@ -213,8 +213,8 @@ local function implementActivationBehavior<T>(
 		end
 		warn("IMPLEMENTING", behavior, "FOR", instance)
 		-- What
-		-- behaviorImpl.implement(trove, instanceTrove, instance, onActivated :: any)
-		task.defer(behaviorImpl.implement, trove, instanceTrove, instance, onActivated :: any)
+		behaviorImpl.implement(trove, instanceTrove, instance, onActivated :: any)
+		-- task.defer(behaviorImpl.implement, trove, instanceTrove, instance, onActivated :: any)
 	end
 end
 

@@ -38,10 +38,10 @@ local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFr
 	end
 
 	if target == "Mouse" then
-		-- local raycast = Workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MAX_RAY_LENGTH, params)
-		-- if raycast then
-		-- 	return CFrame.new(raycast.Position)
-		-- end
+		local raycast = Workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MAX_RAY_LENGTH, params)
+		if raycast then
+			return CFrame.new(raycast.Position)
+		end
 	end
 
 	if target == "Camera" then
@@ -84,7 +84,7 @@ function self:run(kit: std.Kit)
 				elseif mode == "PivotOf" then
 					newCFrame = targetCFrame
 				else
-					error("Invalid FollowMode (unreachable?)")
+					std.never(mode)
 				end
 
 				local lerp = Lerp(pv)

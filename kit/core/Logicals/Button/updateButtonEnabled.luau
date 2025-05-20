@@ -6,16 +6,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local ButtonActivatedAttributes = require("./ButtonActivatedAttributes")
-local Invert = ButtonActivatedAttributes.Invert
-local KeepCollision = ButtonActivatedAttributes.KeepCollision
-local KeepTransparency = ButtonActivatedAttributes.KeepTransparency
-local TransitionTime = ButtonActivatedAttributes.TransitionTime
-local TransitionEasingStyle = ButtonActivatedAttributes.TransitionEasingStyle
-local TransitionEasingDirection = ButtonActivatedAttributes.TransitionEasingDirection
-local ActiveTransparency = ButtonActivatedAttributes.ActiveTransparency
-local InactiveTransparency = ButtonActivatedAttributes.InactiveTransparency
-local KeepEnabled = ButtonActivatedAttributes.KeepEnabled
+local ButtonEnabledAttributes = require("./ButtonEnabledAttributes")
+local Invert = ButtonEnabledAttributes.Invert
+local KeepCollision = ButtonEnabledAttributes.KeepCollision
+local KeepTransparency = ButtonEnabledAttributes.KeepTransparency
+local TransitionTime = ButtonEnabledAttributes.TransitionTime
+local TransitionEasingStyle = ButtonEnabledAttributes.TransitionEasingStyle
+local TransitionEasingDirection = ButtonEnabledAttributes.TransitionEasingDirection
+local ActiveTransparency = ButtonEnabledAttributes.ActiveTransparency
+local InactiveTransparency = ButtonEnabledAttributes.InactiveTransparency
+local KeepEnabled = ButtonEnabledAttributes.KeepEnabled
 
 local TOGGLE_ENABLED_CLASSES: std.Set<string> = {
 	Beam = true,
@@ -40,7 +40,7 @@ local TWEEN_CLASSES: std.Map<string, string> = {
 	ImageLabel = "ImageTransparency",
 }
 
-local function updateButtonActivated(instance: Instance, active: boolean)
+local function updateButtonEnabled(instance: Instance, active: boolean)
 	if Invert(instance) then
 		active = not active
 	end
@@ -106,4 +106,4 @@ local function updateButtonActivated(instance: Instance, active: boolean)
 	end
 end
 
-return updateButtonActivated
+return updateButtonEnabled

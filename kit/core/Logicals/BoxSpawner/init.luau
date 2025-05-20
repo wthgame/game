@@ -7,7 +7,7 @@ local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 local siftDictionary = std.packages.sift.Dictionary
 
-local Button = require(script.Parent:WaitForChild("Button"))
+local Button = require("./Button")
 local PressOffset = Button.PressOffset
 local PlaySound = Button.PlaySound
 
