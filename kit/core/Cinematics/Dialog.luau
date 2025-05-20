@@ -6,7 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local Button = require("./Button")
+local Button = require("../Logicals/Button")
 local ButtonId = Button.ButtonId
 local idToButtonsPressed = Button.idToButtonsPressed
 
