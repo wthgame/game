@@ -1,5 +1,6 @@
 import { Controller, OnInit } from "@flamework/core";
 import { Lazy } from "@rbxts/lazy";
+import Make from "@rbxts/make";
 import { Players } from "@rbxts/services";
 import { OnPreSimulation } from "core/shared/hook-managers/PhysicHookManager";
 import { OnPlayerAdded } from "core/shared/hook-managers/PlayersHookManager";
@@ -32,11 +33,11 @@ const HUMANOID_STATES = [
 const localPlayer = Players.LocalPlayer;
 
 function weld(p0: BasePart, p1: BasePart): WeldConstraint {
-	const weldConstraint = new Instance("WeldConstraint");
-	weldConstraint.Part0 = p0;
-	weldConstraint.Part1 = p1;
-	weldConstraint.Parent = p0;
-	return weldConstraint;
+	return Make("WeldConstraint", {
+		Part0: p0,
+		Part1: p1,
+		Parent: p0,
+	});
 }
 
 @Controller()
