@@ -41,13 +41,9 @@ local function pressButton(trove: std.Trove, btn: BasePart)
 	if ButtonPressed(btn) or not id then
 		return
 	end
-	print("START PRESS")
 
-	print("SETTING ACT")
 	prelude.Activatable:set(btn, false)
-	print("SETTING BTN PRESS")
 	btn:SetAttribute("ButtonPressed", true)
-	print("IDING PRESS")
 	idToButtonsPressed:add(id, btn)
 
 	if PlaySound(btn) then
@@ -67,7 +63,6 @@ local function pressButton(trove: std.Trove, btn: BasePart)
 
 	local deactivateTrove = trove:extend()
 	deactivateTrove:add(function()
-		print("DEACTIVATING")
 		btn:SetAttribute("ButtonPressed", false)
 		prelude.Activatable:set(btn, true)
 		prelude.tweenMaybeInstant(btn, { CFrame = originalCFrame }, prelude.tweenConfigFromAttributes(btn, "Press"))
@@ -78,15 +73,12 @@ local function pressButton(trove: std.Trove, btn: BasePart)
 	local duration = Duration(btn)
 	if duration > 0 then
 		task.delay(duration, function()
-			print("DURATION END")
 			deactivateTrove:clean()
 		end)
 	end
 
 	deactivateTrove:add(ButtonPressed:changed(btn, function(pressed)
-		print("WOW")
 		if not pressed then
-			print("PRESSED?!", pressed)
 			deactivateTrove:clean()
 		end
 	end))
