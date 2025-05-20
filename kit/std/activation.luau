@@ -73,7 +73,7 @@ local function createActivationClickDetector(trove: trove.Trove, parent: Instanc
 end
 
 local function getActivationClickDetector(trove: trove.Trove, parent: Instance)
-	local detect = parent:FindFirstChild("ActivationClickDetector", true) :: ClickDetector
+	local detect = parent:FindFirstChild("ActivationClickDetector") :: ClickDetector
 
 	if not detect then
 		detect = createActivationClickDetector(trove, parent)
