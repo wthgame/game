@@ -92,7 +92,6 @@ local function getActivationClickDetector(trove: trove.Trove, parent: Instance)
 end
 
 local function createActivationProximityPrompt(trove: trove.Trove, parent: Instance)
-	warn("NEW PROMPT")
 	local prompt = trove:add(Instance.new("ProximityPrompt"))
 	prompt.Name = "ActivationProximityPrompt"
 	prompt.RequiresLineOfSight = false
@@ -101,9 +100,7 @@ local function createActivationProximityPrompt(trove: trove.Trove, parent: Insta
 end
 
 local function getActivationProximityPrompt(trove: trove.Trove, parent: Instance)
-	warn("GET PROMPT")
 	local prompt = parent:FindFirstChild("ActivationProximityPrompt") :: ProximityPrompt
-	print(prompt, prompt and prompt:GetFullName())
 
 	if not prompt then
 		prompt = createActivationProximityPrompt(trove, parent)
@@ -119,7 +116,6 @@ local function getActivationProximityPrompt(trove: trove.Trove, parent: Instance
 	end
 
 	trove:add(function()
-		warn("PROMPT DESTROYED")
 		prompt.Enabled = false
 	end)
 
@@ -145,8 +141,6 @@ local activationBehaviorImpls = table.freeze({
 				then instance
 				elseif instance:IsA("BasePart") then getActivationProximityPrompt(trove, instance)
 				else nil
-
-			warn("IMPL PROMPT")
 
 			if prompt then
 				trove:connect(prompt.Triggered, function(player)
@@ -211,10 +205,7 @@ local function implementActivationBehavior<T>(
 		if behaviorImpl.predicate and not behaviorImpl.predicate(instance) then
 			return
 		end
-		warn("IMPLEMENTING", behavior, "FOR", instance)
-		-- What
 		behaviorImpl.implement(trove, instanceTrove, instance, onActivated :: any)
-		-- task.defer(behaviorImpl.implement, trove, instanceTrove, instance, onActivated :: any)
 	end
 end
 
@@ -278,22 +269,16 @@ function activation.onActivated<T>(
 	onActivated: (trove: trove.Trove, instance: T) -> ()
 )
 	local trove = instanceTrove:extend()
-	trove:add(function()
-		warn("TROVE DEAD")
-	end)
 	local activationTrove = trove:extend()
-	activationTrove:add(function()
-		warn("ACT TROVE DEAD")
-	end)
+
 	if activation.Activatable(instance) then
 		implementActivationBehavior(activationTrove, trove, instance, onActivated)
 	end
+
 	trove:add(activation.Activatable:changed(instance, function(new)
-		warn(new)
 		activationTrove = activationTrove:clean()
 		activationTrove = trove:extend()
 		if new then
-			warn("REIMPLEMENTING", instance)
 			implementActivationBehavior(activationTrove, trove, instance, onActivated)
 		end
 	end))
