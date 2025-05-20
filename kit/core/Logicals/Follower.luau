@@ -57,7 +57,7 @@ self.implements = { KitScript = true }
 function self:run(kit: std.Kit)
 	local Follower = kit:tag("Follower", prelude.t.instanceIsA("PVInstance") :: std.check<PVInstance>)
 
-	kit:onPhysics(function(trove, dt)
+	local function updateFollower(trove: std.Trove, dt: number)
 		debug.profilebegin("Follower")
 
 		local params = RaycastParams.new()
@@ -97,7 +97,10 @@ function self:run(kit: std.Kit)
 		end
 
 		debug.profileend()
-	end)
+	end
+
+	kit:onPhysics(updateFollower)
+	kit:onTick(updateFollower)
 end
 
 return self
