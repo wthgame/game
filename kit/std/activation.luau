@@ -68,6 +68,7 @@ end
 local function createActivationClickDetector(trove: trove.Trove, parent: Instance)
 	local clickDetector = trove:add(Instance.new("ClickDetector"))
 	clickDetector.Name = "ActivationClickDetector"
+	clickDetector.MaxActivationDistance = math.huge
 	clickDetector.Parent = parent
 	return clickDetector
 end
@@ -95,6 +96,7 @@ local function createActivationProximityPrompt(trove: trove.Trove, parent: Insta
 	local prompt = trove:add(Instance.new("ProximityPrompt"))
 	prompt.Name = "ActivationProximityPrompt"
 	prompt.RequiresLineOfSight = false
+	prompt.MaxActivationDistance = math.huge
 	prompt.Parent = parent
 	return prompt
 end
