@@ -98,10 +98,9 @@ function self:run(kit: std.Kit)
 					if Lerp(part) then part.CFrame:Lerp(newCFrame, 1 / LerpAlpha(part)) else newCFrame
 				)
 			end
-
-			Workspace:BulkMoveTo(bulkInstances, bulkCFrames)
 		end
 
+		Workspace:BulkMoveTo(bulkInstances, bulkCFrames)
 		debug.profileend()
 	end
 
