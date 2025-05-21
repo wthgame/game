@@ -99,22 +99,31 @@ local function calculateTeleportCFrame(teleporter: BasePart, destination: BasePa
 		local rootPosition = root.Position
 		local teleporterPosition = teleporter.Position
 
+		local distance = rootPosition - teleporterPosition
+
 		local measurement = Teleporter.SeamlessMeasurement(teleporter)
 		if measurement == "World" then
-			local distance = rootPosition - teleporterPosition
 			if not Teleporter.SeamlessOverflow(teleporter) then
 				local destinationSize = destination.Size
 				local sizeX, sizeY, sizeZ = destinationSize.X, destinationSize.Y, destinationSize.Z
+				local halfSizeX, halfSizeY, halfSizeZ = sizeX / 2, sizeY / 2, sizeZ / 2
 				distance = Vector3.new(
-					math.clamp(distance.X, -sizeX, sizeX),
-					math.clamp(distance.Y, -sizeY, sizeY),
-					math.clamp(distance.Z, -sizeZ, sizeZ)
+					math.clamp(distance.X, -halfSizeX, halfSizeX),
+					math.clamp(distance.Y, -halfSizeY, halfSizeY),
+					math.clamp(distance.Z, -halfSizeZ, halfSizeZ)
 				)
 			end
 			destinationCFrame = destination.CFrame * CFrame.new(distance)
 		else
-			-- TODO: Implement Relative SeamlessMeasurement
-			logger:error("SeamlessMeasurement of Relative not yet implemented")
+			distance /= teleporter.Size
+			if not Teleporter.SeamlessOverflow(teleporter) then
+				distance = Vector3.new(
+					math.clamp(distance.X, -0.5, 0.5),
+					math.clamp(distance.Y, -0.5, 0.5),
+					math.clamp(distance.Z, -0.5, 0.5)
+				)
+			end
+			destinationCFrame = destination.CFrame * CFrame.new(destination.Size * distance)
 		end
 	end
 	return destinationCFrame * std.physics.intoCFrameOffset(TeleporterDestination.TeleporterOffset(destination))
