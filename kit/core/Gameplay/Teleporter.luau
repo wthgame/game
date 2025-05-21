@@ -8,7 +8,7 @@ local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 local TeleporterDestination = require("./TeleporterDestination")
 
---- @prop SeamlessMeasurement "Relative" | "World"
+--- @type SeamlessMeasurement "Relative" | "World"
 --- @within Teleporter
 ---
 --- The proportions used to calculate the teleport if `Seamless` is enabled.
