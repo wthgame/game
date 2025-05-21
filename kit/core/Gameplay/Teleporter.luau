@@ -71,7 +71,7 @@ Teleporter.PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
 --- end up in the bottom northwest of the destination.
 Teleporter.Seamless = prelude.attribute("Seamless", prelude.isBoolean, false)
 
---- @prop SeamlessMeasurement "Relative" | "World"
+--- @prop SeamlessMeasurement SeamlessMeasurement
 --- @within Teleporter
 --- @tag Attribute
 ---
