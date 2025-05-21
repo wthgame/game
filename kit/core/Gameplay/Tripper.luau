@@ -6,27 +6,38 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
-
 local debounced: std.Set<BasePart> = {}
 
-local self = {} :: std.KitScript
-self.implements = { KitScript = true }
+--- @class Tripper
+--- @tag KitObject
+--- @tag Activatable
+---
+--- Trips the player, seating them, when activated.
+local Tripper = {}
+type Self = typeof(Tripper)
+Tripper.implements = { KitScript = true }
+
+--- @prop Cooldown number
+--- @within Tripper
+--- @tag Attribute
+---
+--- Defines the cooldown period in seconds after a `Tripper` has been
+--- activated, before it can be used again.
+Tripper.Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
 
 local function tripPlayer(trove: std.Trove, tripper: BasePart)
 	if not debounced[tripper] then
 		local humanoid = assert(prelude.getMaybeHumanoid(), "can be assumed it exists")
 		humanoid.Sit = true
 		debounced[tripper] = true
-		task.delay(Cooldown(tripper), function()
+		task.delay(Tripper.Cooldown(tripper), function()
 			debounced[tripper] = nil
 		end)
 	end
 end
 
-function self:run(kit: std.Kit)
-	local Tripper = kit:tag("Tripper", prelude.isBasePart)
-	Tripper:onActivated(tripPlayer)
+function Tripper:run(kit: std.Kit)
+	kit:tag("Tripper", prelude.isBasePart):onActivated(tripPlayer)
 end
 
-return self
+return Tripper

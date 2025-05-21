@@ -7,7 +7,7 @@ local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
 --- @class LimitActivations
---- @tag KitObjectTag
+--- @tag KitObject
 ---
 --- Limits the amount of activations for a given kit object.
 local self = {} :: std.KitScript
@@ -15,6 +15,7 @@ self.implements = { KitScript = true }
 
 --- @prop MaxActivations number
 --- @within LimitActivations
+--- @tag Attribute
 ---
 --- The amount of activations before the limited kit object should not be
 --- activatable.
@@ -22,6 +23,7 @@ local MaxActivations = prelude.attribute("MaxActivations", prelude.isPositiveNum
 
 --- @prop ResetWhenUnactivatable boolean
 --- @within LimitActivations
+--- @tag Attribute
 ---
 --- If a kit object should reset it's "activations count" when it's
 --- `Activatable` attribute is disabled.

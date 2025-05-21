@@ -6,9 +6,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local self = {} :: std.KitScript
-self.implements = { KitScript = true }
+local CoreTemplate = {}
+type Self = typeof(CoreTemplate)
+CoreTemplate.implements = { KitScript = true }
 
-function self:run(kit: std.Kit) end
+function CoreTemplate.run(self: Self, kit: std.Kit) end
 
-return self
+return CoreTemplate

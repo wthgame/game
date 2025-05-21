@@ -4,8 +4,10 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
+
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
+local Dismounter = require("./Dismounter")
 
 export type VineInstance = BasePart & {
 	Constraint: Constraint?,
@@ -108,6 +110,12 @@ local function doVine(trove: std.Trove, vineInstance: VineInstance)
 		end, vineInstance)
 	end
 
+	attachmentTrove:connect(Dismounter.onDismount :: any, function(targets)
+		if targets.Vine then
+			dismount()
+		end
+	end)
+
 	if AllowJumpDismount(vineInstance) then
 		attachmentTrove:connect(UserInputService.JumpRequest, dismount)
 	end
@@ -124,6 +132,7 @@ function self:run(kit: std.Kit)
 			Top = prelude.isBasePart,
 		}) :: std.check<VineInstance>
 	)
+
 	Vine:onActivated(doVine)
 end
 

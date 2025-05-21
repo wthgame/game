@@ -2,10 +2,10 @@
 // This file is not meant to be edited
 
 export declare const stepReplication: () => void
-type DamageKind = "Normal" | "Heavy" | "Super" | "Lethal"
+type DamageKind = "Normal" | "Double" | "Quadruple" | "Lethal"
 export declare const damageSelfVariable: {
 	on: (Listener: (Player: Player, Value: number) => void) => (() => void)
 }
 export declare const damageSelf: {
-	on: (Listener: (Player: Player, Value: "Normal" | "Heavy" | "Super" | "Lethal") => void) => (() => void)
+	on: (Listener: (Player: Player, Value: "Normal" | "Double" | "Quadruple" | "Lethal") => void) => (() => void)
 }

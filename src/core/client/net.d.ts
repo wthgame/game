@@ -2,10 +2,10 @@
 // This file is not meant to be edited
 
 export declare const stepReplication: () => void
-type DamageKind = "Normal" | "Heavy" | "Super" | "Lethal"
+type DamageKind = "Normal" | "Double" | "Quadruple" | "Lethal"
 export declare const damageSelfVariable: {
 	fire: (Value: number) => void
 }
 export declare const damageSelf: {
-	fire: (Value: "Normal" | "Heavy" | "Super" | "Lethal") => void
+	fire: (Value: "Normal" | "Double" | "Quadruple" | "Lethal") => void
 }

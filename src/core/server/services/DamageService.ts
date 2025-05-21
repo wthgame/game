@@ -5,8 +5,8 @@ import { createLogger } from "core/shared/logger";
 
 export enum DamageType {
 	Normal = 10,
-	Heavy = 20,
-	Super = 40,
+	Double = 20,
+	Quadruple = 40,
 	Lethal = math.huge,
 }
 
@@ -25,7 +25,7 @@ export class DamageService {
 		const humanoid = player.Character?.FindFirstChildOfClass("Humanoid");
 		if (humanoid) {
 			this.logger.trace("Damaging player", player, "by", kind.lower(), "damage");
-			const damage = DamageType[kind as "Normal" | "Heavy" | "Super" | "Lethal"];
+			const damage = DamageType[kind as "Normal" | "Double" | "Quadruple" | "Lethal"];
 			const difference = humanoid.MaxHealth - humanoid.Health;
 			humanoid.TakeDamage(math.max(-difference, damage));
 			task.wait(DEBOUNCE_DURATION_SECONDS);

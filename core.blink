@@ -7,8 +7,8 @@ option RemoteScope = "WELCOME_TO_HELL_CORE"
 
 enum DamageKind = {
     Normal,
-    Heavy,
-    Super,
+    Double,
+    Quadruple,
     Lethal
 }
 
