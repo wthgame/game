@@ -42,8 +42,15 @@ local CLASS_HIDE_PROPERTIES: std.Map<string, std.Map<string, unknown>> = {
 	},
 }
 
-local self = {} :: std.KitScript
-self.implements = { KitScript = true }
+--- @class Hidden
+--- @tag KitObject
+---
+--- Visually hides the tagged instance. Useful when working with bigger objects
+--- that benefit from being visible while editing, but should be hidden while
+--- playing a tower.
+local Hidden = {}
+type Self = typeof(Hidden)
+Hidden.implements = { KitScript = true }
 
 local HideDescendants = prelude.attribute("HideDescendants", prelude.isBoolean, true)
 
@@ -66,9 +73,8 @@ function hideLoaded(_, target: Instance)
 	end
 end
 
-function self:run(kit: std.Kit)
-	local Hidden = kit:tag("Hidden")
-	Hidden:onLoaded(hideLoaded)
+function Hidden.run(self: Self, kit: std.Kit)
+	kit:tag("Hidden"):onLoaded(hideLoaded)
 end
 
-return self
+return Hidden

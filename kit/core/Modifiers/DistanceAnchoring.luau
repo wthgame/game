@@ -10,18 +10,27 @@ local prelude = std.prelude
 local MinimumDistance = prelude.attribute("MinimumDistance", prelude.isPositiveNumber, 100)
 local MaximumDistance = prelude.attribute("MaximumDistance", prelude.isPositiveNumber, math.huge)
 
-local self = {} :: std.KitScript
-self.implements = { KitScript = true }
+--- @class DistanceAnchoring
+--- @tag KitObject
+---
+--- Anchors an object unless it's in a given distance. Useful for performance
+--- especially with physical moving objects that should be anchored when not
+--- visible.
+---
+--- It is discouraged from using this kit object for tower gameplay.
+local DistanceAnchoring = {}
+type Self = typeof(DistanceAnchoring)
+DistanceAnchoring.implements = { KitScript = true }
 
-function self:run(kit: std.Kit)
-	local DistanceAnchoring = kit:tag("DistanceAnchoring")
+function DistanceAnchoring:run(kit: std.Kit)
+	local tag = kit:tag("DistanceAnchoring")
 
 	local localPlayer = Players.LocalPlayer
 
 	kit:onPhysics(function()
 		debug.profilebegin("DistanceAnchoring")
 
-		for _, toAnchor in DistanceAnchoring:instances() do
+		for _, toAnchor in tag:instances() do
 			if toAnchor:IsA("BasePart") then
 				local distance = localPlayer:DistanceFromCharacter(toAnchor.Position)
 				local shouldAnchor = distance >= MinimumDistance(toAnchor) and distance <= MaximumDistance(toAnchor)
@@ -35,4 +44,4 @@ function self:run(kit: std.Kit)
 	end)
 end
 
-return self
+return DistanceAnchoring
