@@ -5,8 +5,8 @@
 -- https://discord.com/channels/1303215495557943327/1303215496396673076/1363475439884042422
 -- https://discord.com/channels/1303215495557943327/1303215496396673076/1363475483563528202
 
-local CollectionService = game:GetService("CollectionService")
-local Players = game:GetService("Players")
+-- local CollectionService = game:GetService("CollectionService")
+-- local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
@@ -15,8 +15,8 @@ local prelude = std.prelude
 type FollowMode = "LookAt" | "RotationOf" | "PositionOf" | "PivotOf" | "None"
 type FollowTarget = "Character" | "Mouse" | "Camera" | "None"
 
-local MAX_RAY_LENGTH = 2_000
-local mouse = Players.LocalPlayer:GetMouse()
+-- local MAX_RAY_LENGTH = 2_000
+-- local mouse = Players.LocalPlayer:GetMouse()
 
 local FollowMode =
 	prelude.attribute("FollowMode", prelude.t.literal("LookAt", "RotationOf", "PositionOf", "PivotOf", "None"), "None")
@@ -29,7 +29,9 @@ local FollowTarget =
 local Lerp = prelude.attribute("Lerp", prelude.isBoolean, false)
 local LerpAlpha = prelude.attribute("LerpAlpha", prelude.isPositiveNumber, 1)
 
-local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFrame?
+-- TODO: mouse is too laggy
+-- local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFrame?
+local function getTargetCFrame(target: FollowTarget): CFrame?
 	if target == "Character" then
 		local root = prelude.getHumanoidRootPart()
 		if root then
@@ -37,12 +39,12 @@ local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFr
 		end
 	end
 
-	if target == "Mouse" then
-		local raycast = Workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MAX_RAY_LENGTH, params)
-		if raycast then
-			return CFrame.new(raycast.Position)
-		end
-	end
+	-- if target == "Mouse" then
+	-- 	local raycast = Workspace:Raycast(mouse.UnitRay.Origin, mouse.UnitRay.Direction * MAX_RAY_LENGTH, params)
+	-- 	if raycast then
+	-- 		return CFrame.new(raycast.Position)
+	-- 	end
+	-- end
 
 	if target == "Camera" then
 		return Workspace.CurrentCamera.CFrame
@@ -55,45 +57,49 @@ local self = {} :: std.KitScript
 self.implements = { KitScript = true }
 
 function self:run(kit: std.Kit)
-	local Follower = kit:tag("Follower", prelude.t.instanceIsA("PVInstance") :: std.check<PVInstance>)
+	local Follower = kit:tag("Follower", prelude.isBasePart)
 
 	local function updateFollower(trove: std.Trove, dt: number)
 		debug.profilebegin("Follower")
 
-		local params = RaycastParams.new()
-		params:AddToFilter(CollectionService:GetTagged("MouseFollowerIgnored"))
-		params.FilterType = Enum.RaycastFilterType.Exclude
+		-- local params = RaycastParams.new()
+		-- params:AddToFilter(CollectionService:GetTagged("MouseFollowerIgnored"))
+		-- params.FilterType = Enum.RaycastFilterType.Exclude
 
-		for _, pv in Follower:instances() do
-			local mode: FollowMode = FollowMode(pv)
-			local target: FollowTarget = FollowTarget(pv)
+		local bulkInstances, bulkCFrames = {}, {}
 
-			if not prelude.Enabled(pv) or mode == "None" or target == "None" then
+		for _, part in Follower:instances() do
+			local mode: FollowMode = FollowMode(part)
+			local target: FollowTarget = FollowTarget(part)
+
+			if not prelude.Enabled(part) or mode == "None" or target == "None" then
 				continue
 			end
 
-			local targetCFrame = getTargetCFrame(target, params)
+			-- local targetCFrame = getTargetCFrame(target, params)
+			local targetCFrame = getTargetCFrame(target)
 			if targetCFrame then
 				local newCFrame: CFrame
 				if mode == "LookAt" then
-					newCFrame = CFrame.lookAt(pv:GetPivot().Position, targetCFrame.Position)
+					newCFrame = CFrame.lookAt(part:GetPivot().Position, targetCFrame.Position)
 				elseif mode == "RotationOf" then
-					newCFrame = CFrame.new(pv:GetPivot().Position) * targetCFrame.Rotation
+					newCFrame = CFrame.new(part:GetPivot().Position) * targetCFrame.Rotation
 				elseif mode == "PositionOf" then
-					newCFrame = CFrame.new(targetCFrame.Position) * pv:GetPivot().Rotation
+					newCFrame = CFrame.new(targetCFrame.Position) * part:GetPivot().Rotation
 				elseif mode == "PivotOf" then
 					newCFrame = targetCFrame
 				else
 					std.never(mode)
 				end
 
-				local lerp = Lerp(pv)
-				if lerp then
-					pv:PivotTo(pv:GetPivot():Lerp(newCFrame, 1 / LerpAlpha(pv)))
-				else
-					pv:PivotTo(newCFrame)
-				end
+				table.insert(bulkInstances, part)
+				table.insert(
+					bulkCFrames,
+					if Lerp(part) then part.CFrame:Lerp(newCFrame, 1 / LerpAlpha(part)) else newCFrame
+				)
 			end
+
+			Workspace:BulkMoveTo(bulkInstances, bulkCFrames)
 		end
 
 		debug.profileend()

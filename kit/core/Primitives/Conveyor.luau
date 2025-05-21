@@ -38,9 +38,9 @@ function self:run(kit: std.Kit)
 			local speed: number = prelude.Enabled(conveyor) and Speed(conveyor) or 0
 			conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * speed
 			if SynchronizeConveyorBeams(conveyor) then
-				for _, beam in conveyor:GetDescendants() do
+				for _, beam in (conveyor:GetDescendants() :: any) :: { Beam } do
 					if not alreadySynchronized[beam] then
-						if beam.Name == "ConveyorBeam" and beam:IsA("Beam") then
+						if beam.Name == "ConveyorBeam" and beam.ClassName == "Beam" then
 							beam.TextureSpeed = speed / beam.TextureLength
 						end
 						alreadySynchronized[beam] = true
