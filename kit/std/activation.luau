@@ -95,6 +95,7 @@ end
 local function createActivationProximityPrompt(trove: trove.Trove, parent: Instance)
 	local prompt = trove:add(Instance.new("ProximityPrompt"))
 	prompt.Name = "ActivationProximityPrompt"
+	prompt.ActionText = ""
 	prompt.RequiresLineOfSight = false
 	prompt.MaxActivationDistance = math.huge
 	prompt.Parent = parent
