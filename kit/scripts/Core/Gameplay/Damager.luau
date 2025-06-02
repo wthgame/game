@@ -49,13 +49,21 @@ Damager.Damage = prelude.attribute(
 	0
 ) :: std.Attribute<Damage>
 
---- @type DamageMeasurement DamageMeasurement
+--- @prop DamageMeasurement DamageMeasurement
 --- @within Damager
+--- @tag Attribute
 ---
 --- The measurement of damage to be dealt. See the `DamageMeasurement` type.
 Damager.DamageMeasurement = (
 	prelude.attribute("DamageMeasurement", prelude.t.literal("Raw", "RelativeToMaxHealth"), "Raw")
 ) :: std.Attribute<DamageMeasurement>
+
+--- @prop Poison boolean
+--- @within Damager
+--- @tag Attribute
+---
+--- Whether damage should be dealt overtime as poison.
+Damager.Poison = prelude.attribute("Poison", prelude.isBoolean, false)
 
 function Damager.run(self: Self, kit: std.Kit)
 	local tag = kit:tag("Damager", prelude.isBasePart)
