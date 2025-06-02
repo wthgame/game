@@ -52,28 +52,34 @@ local Hidden = {}
 type Self = typeof(Hidden)
 Hidden.implements = { KitScript = true }
 
-local HideDescendants = prelude.attribute("HideDescendants", prelude.isBoolean, true)
+--- @prop HideDescendants boolean
+--- @tag Attribute
+---
+--- Whether descendants should be hidden as well. Turning on `HideDescendants`
+--- on a Model of Folder of objects is more managable than manually tagging
+--- each child.
+Hidden.HideDescendants = prelude.attribute("HideDescendants", prelude.isBoolean, true)
 
-function hide(target: Instance)
-	for class, properties in CLASS_HIDE_PROPERTIES do
-		if target:IsA(class) then
-			for property, value in properties do
-				(target :: any)[property] = value
+function Hidden.run(self: Self, kit: std.Kit)
+	local function hide(target: Instance)
+		for class, properties in CLASS_HIDE_PROPERTIES do
+			if target:IsA(class) then
+				for property, value in properties do
+					(target :: any)[property] = value
+				end
 			end
 		end
 	end
-end
 
-function hideLoaded(_, target: Instance)
-	hide(target)
-	if HideDescendants(target) then
-		for _, descendant in target:GetDescendants() do
-			task.spawn(hide, target)
+	local function hideLoaded(_, target: Instance)
+		hide(target)
+		if self.HideDescendants(target) then
+			for _, descendant in target:GetDescendants() do
+				task.spawn(hide, target)
+			end
 		end
 	end
-end
 
-function Hidden.run(self: Self, kit: std.Kit)
 	kit:tag("Hidden"):onLoaded(hideLoaded)
 end
 
