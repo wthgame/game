@@ -54,6 +54,7 @@ Hidden.implements = { KitScript = true }
 
 --- @prop HideDescendants boolean
 --- @tag Attribute
+--- @within Hidden
 ---
 --- Whether descendants should be hidden as well. Turning on `HideDescendants`
 --- on a Model of Folder of objects is more managable than manually tagging
