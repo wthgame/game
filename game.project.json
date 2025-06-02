@@ -22,20 +22,8 @@
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
             "KitScripts": {
-                "$className": "Folder",
-                "$ignoreUnknownInstances": true,
-                "Core": {
-                    "$path": "kit/core"
-                },
-                "Internal": {
-                    "$path": "kit/internal"
-                },
-                "Template": {
-                    "$path": "kit/Template.luau"
-                },
-                "TemplateNoComment": {
-                    "$path": "kit/TemplateNoComment.luau"
-                }
+                "$path": "kit/scripts",
+                "$ignoreUnknownInstances": true
             },
             "KitStd": {
                 "$path": "kit/std"

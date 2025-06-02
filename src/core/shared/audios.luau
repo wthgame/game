@@ -16,6 +16,8 @@ local audios = {
 	["game/ost/002Prototype"] = "rbxasset://.asphalt-game/game/ost/002Prototype.mp3",
 	["game/ost/003Deathbed"] = "rbxasset://.asphalt-game/game/ost/003Deathbed.mp3",
 	["game/ost/004Beneath"] = "rbxasset://.asphalt-game/game/ost/004Beneath.mp3",
+	["game/ost/005NowhereLeftToRun"] = "rbxasset://.asphalt-game/game/ost/005NowhereLeftToRun.mp3",
+	["game/ost/006CaelumWelcomesYou"] = "rbxasset://.asphalt-game/game/ost/006CaelumWelcomesYou.mp3",
 	["game/ost/007MoltenHeart"] = "rbxasset://.asphalt-game/game/ost/007MoltenHeart.mp3",
 }
 

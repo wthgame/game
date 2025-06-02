@@ -16,6 +16,8 @@ declare const audios: {
 	"game/ost/002Prototype": string
 	"game/ost/003Deathbed": string
 	"game/ost/004Beneath": string
+	"game/ost/005NowhereLeftToRun": string
+	"game/ost/006CaelumWelcomesYou": string
 	"game/ost/007MoltenHeart": string
 }
 
