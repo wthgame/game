@@ -3,10 +3,10 @@ local character = require("./character")
 local isFromMaybeCharacter = character.isFromMaybeCharacter
 local t = require("./packages/t")
 
-local SupportsCharacter = attributes.attribute("SupportsCharacter", t.boolean, false)
-local SupportsBoxes = attributes.attribute("SupportsBoxes", t.boolean, false)
-local BoxesRequiresMatchingId = attributes.attribute("BoxesRequiresMatchingId", t.boolean, false)
-local RequiredBoxId = attributes.attribute("RequiredBoxId", t.string)
+local SupportsCharacter = attributes.Attribute("SupportsCharacter", t.boolean, false)
+local SupportsBoxes = attributes.Attribute("SupportsBoxes", t.boolean, false)
+local BoxesRequiresMatchingId = attributes.Attribute("BoxesRequiresMatchingId", t.boolean, false)
+local RequiredBoxId = attributes.Attribute("RequiredBoxId", t.string)
 
 local function isToucherValid(target: Instance, toucher: BasePart)
 	if SupportsCharacter(target) and isFromMaybeCharacter(toucher) then

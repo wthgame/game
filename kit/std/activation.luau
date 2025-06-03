@@ -27,38 +27,38 @@ local activation = {}
 --- @prop Activatable Attribute<boolean>
 --- @within KitStdActivation
 --- Whether if a kit object can be activated.
-activation.Activatable = attributes.attribute("Activatable", t.boolean, false)
+activation.Activatable = attributes.Attribute("Activatable", t.boolean, false)
 
 --- @prop Enabled Attribute<boolean>
 --- @within KitStdActivation
 --- TBA
-activation.Enabled = attributes.attribute("Enabled", t.boolean, false)
+activation.Enabled = attributes.Attribute("Enabled", t.boolean, false)
 
 --- @prop ActivationBehavior Attribute<ActivationBehavior>
 --- @within KitStdActivation
 --- How to handle activation behavior.
-activation.ActivationBehavior = attributes.attribute("ActivationBehavior", t.string)
+activation.ActivationBehavior = attributes.Attribute("ActivationBehavior", t.string)
 
 --- @prop MaxActivationDistance Attribute<number?>
 --- @within KitStdActivation
 --- TBA
-activation.MaxActivationDistance = attributes.attribute("MaxActivationDistance", t.numberPositive)
+activation.MaxActivationDistance = attributes.Attribute("MaxActivationDistance", t.numberPositive)
 
 --- @prop ActivationKeyCode Attribute<Enum.KeyCode?>
 --- @within KitStdActivation
 --- TBA
-activation.ActivationKeyCode = attributes.attribute("ActivationKeyCode", t.enum(Enum.KeyCode))
+activation.ActivationKeyCode = attributes.Attribute("ActivationKeyCode", t.enum(Enum.KeyCode))
 
 --- @prop ActivationInterval Attribute<number?>
 --- @within KitStdActivation
 --- TBA
-activation.ActivationInterval = attributes.attribute("ActivationInterval", t.numberPositive)
+activation.ActivationInterval = attributes.Attribute("ActivationInterval", t.numberPositive)
 
 --- @prop ActivationHumanoidStateType Attribute<Enum.HumanoidStateType?>
 --- @within KitStdActivation
 --- TBA
 activation.ActivationHumanoidStateType = (
-	attributes.attribute("ActivationHumanoidStateType", t.enum(Enum.HumanoidStateType))
+	attributes.Attribute("ActivationHumanoidStateType", t.enum(Enum.HumanoidStateType))
 )
 
 local function ActivationBehaviorImpl(x: ActivationBehaviorImpl)

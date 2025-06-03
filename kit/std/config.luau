@@ -10,8 +10,8 @@ local t = require("./packages/t")
 
 local isStudio = RunService:IsStudio()
 
-local Debug = attributes.attribute("Debug", t.boolean, isStudio)
-local Typecheck = attributes.attribute("Typecheck", t.boolean, isStudio)
+local Debug = attributes.Attribute("Debug", t.boolean, isStudio)
+local Typecheck = attributes.Attribute("Typecheck", t.boolean, isStudio)
 
 --- @class KitStdConfig
 --- Global and immutable configuration for the Kit.
