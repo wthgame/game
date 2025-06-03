@@ -13,24 +13,24 @@ local DEFAULT_RESPAWN_SOUND = "rbxassetid://12222140"
 export type NoCheckpointBehavior = "ReturnToSpawn" | "None"
 export type TransitionMode = "FadeScreen" | "PivotCharacter" | "Instant"
 
-local EmitCheckpointParticle = prelude.attribute("EmitCheckpointParticle", prelude.isBoolean, false)
-local TeleportOffset = prelude.attribute(
+local EmitCheckpointParticle = prelude.Attribute("EmitCheckpointParticle", prelude.isBoolean, false)
+local TeleportOffset = prelude.Attribute(
 	"TeleportOffset",
 	prelude.t.union(prelude.t.number, prelude.t.Vector3, prelude.t.CFrame),
 	Vector3.new(0, 3, 0)
 )
 
 local _NoCheckpointBehavior: std.Attribute<NoCheckpointBehavior> = (
-	prelude.attribute("NoCheckpointBehavior", prelude.t.literal("ReturnToSpawn", "None"), "ReturnToSpawn")
+	prelude.Attribute("NoCheckpointBehavior", prelude.t.literal("ReturnToSpawn", "None"), "ReturnToSpawn")
 )
 local TransitionMode: std.Attribute<TransitionMode> = (
-	prelude.attribute("TransitionMode", prelude.t.literal("FadeScreen", "PivotCharacter", "Instant"), "Instant")
+	prelude.Attribute("TransitionMode", prelude.t.literal("FadeScreen", "PivotCharacter", "Instant"), "Instant")
 )
-local FadeScreenColor = prelude.attribute("FadeScreenColor", prelude.t.Color3, Color3.new(0, 0, 0))
+local FadeScreenColor = prelude.Attribute("FadeScreenColor", prelude.t.Color3, Color3.new(0, 0, 0))
 
-local PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, false)
-local ActivatedColor = prelude.attribute("ActivatedColor", prelude.t.Color3, Color3.new(0, 1, 0))
-local DefaultColor = prelude.attribute("DefaultColor", prelude.t.Color3, Color3.new(0, 0, 0))
+local PlaySound = prelude.Attribute("PlaySound", prelude.isBoolean, false)
+local ActivatedColor = prelude.Attribute("ActivatedColor", prelude.t.Color3, Color3.new(0, 1, 0))
+local DefaultColor = prelude.Attribute("DefaultColor", prelude.t.Color3, Color3.new(0, 0, 0))
 
 local currentCheckpoint: BasePart? = nil
 local updateCheckpoint = std.packages.createLemonSignal()

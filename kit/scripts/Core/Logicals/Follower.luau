@@ -19,15 +19,15 @@ type FollowTarget = "Character" | "Mouse" | "Camera" | "None"
 -- local mouse = Players.LocalPlayer:GetMouse()
 
 local FollowMode =
-	prelude.attribute("FollowMode", prelude.t.literal("LookAt", "RotationOf", "PositionOf", "PivotOf", "None"), "None")
+	prelude.Attribute("FollowMode", prelude.t.literal("LookAt", "RotationOf", "PositionOf", "PivotOf", "None"), "None")
 local FollowTarget =
-	prelude.attribute("FollowTarget", prelude.t.literal("Character", "Mouse", "Camera", "None"), "None")
--- local UseRelativeTransform = prelude.attribute("UseRelativeTransform", prelude.isBoolean, false)
--- local XAxis = prelude.attribute("XAxis", prelude.isBoolean, true)
--- local YAxis = prelude.attribute("YAxis", prelude.isBoolean, true)
--- local ZAxis = prelude.attribute("ZAxis", prelude.isBoolean, true)
-local Lerp = prelude.attribute("Lerp", prelude.isBoolean, false)
-local LerpAlpha = prelude.attribute("LerpAlpha", prelude.isPositiveNumber, 1)
+	prelude.Attribute("FollowTarget", prelude.t.literal("Character", "Mouse", "Camera", "None"), "None")
+-- local UseRelativeTransform = prelude.Attribute("UseRelativeTransform", prelude.isBoolean, false)
+-- local XAxis = prelude.Attribute("XAxis", prelude.isBoolean, true)
+-- local YAxis = prelude.Attribute("YAxis", prelude.isBoolean, true)
+-- local ZAxis = prelude.Attribute("ZAxis", prelude.isBoolean, true)
+local Lerp = prelude.Attribute("Lerp", prelude.isBoolean, false)
+local LerpAlpha = prelude.Attribute("LerpAlpha", prelude.isPositiveNumber, 1)
 
 -- TODO: mouse is too laggy
 -- local function getTargetCFrame(target: FollowTarget, params: RaycastParams): CFrame?

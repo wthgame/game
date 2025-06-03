@@ -44,7 +44,7 @@ Teleporter.TeleporterId = TeleporterDestination.TeleporterId
 ---
 --- Whether the player should retain the velocity they were at prior to entering
 --- the teleporter.
-Teleporter.KeepVelocity = prelude.attribute("KeepVelocity", prelude.isBoolean, true)
+Teleporter.KeepVelocity = prelude.Attribute("KeepVelocity", prelude.isBoolean, true)
 
 --- @prop Cooldown boolean
 --- @within Teleporter
@@ -52,14 +52,14 @@ Teleporter.KeepVelocity = prelude.attribute("KeepVelocity", prelude.isBoolean, t
 ---
 --- Defines the cooldown period in seconds after a `Teleporter` has been
 --- activated, before it can be used again.
-Teleporter.Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
+Teleporter.Cooldown = prelude.Attribute("Cooldown", prelude.isPositiveNumber, 0)
 
 --- @prop PlaySound boolean
 --- @within Teleporter
 --- @tag Attribute
 ---
 --- Whether this should play a sound effect when teleported.
-Teleporter.PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
+Teleporter.PlaySound = prelude.Attribute("PlaySound", prelude.isBoolean, true)
 
 --- @prop Seamless boolean
 --- @within Teleporter
@@ -69,7 +69,7 @@ Teleporter.PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
 --- teleporter prior to teleporting. For example, if the player activated
 --- the teleporter from the bottom northwest of the teleporter, the player will
 --- end up in the bottom northwest of the destination.
-Teleporter.Seamless = prelude.attribute("Seamless", prelude.isBoolean, false)
+Teleporter.Seamless = prelude.Attribute("Seamless", prelude.isBoolean, false)
 
 --- @prop SeamlessMeasurement SeamlessMeasurement
 --- @within Teleporter
@@ -79,7 +79,7 @@ Teleporter.Seamless = prelude.attribute("Seamless", prelude.isBoolean, false)
 --- Relative proportions use percentage proportions of the `Teleporter` and the
 --- `TeleporterDestination`. World proportions use studs of the `Teleporter` and
 --- the `TeleporterDestination`
-Teleporter.SeamlessMeasurement = prelude.attribute(
+Teleporter.SeamlessMeasurement = prelude.Attribute(
 	"SeamlessMeasurement",
 	prelude.t.literal("Relative", "World"),
 	"Relative"
@@ -91,7 +91,7 @@ Teleporter.SeamlessMeasurement = prelude.attribute(
 ---
 --- Whether a teleport can exceed the bounds of the TeleporterDestination when
 --- `Seamless` is enabled.
-Teleporter.SeamlessOverflow = prelude.attribute("SeamlessOverflow", prelude.isBoolean, false)
+Teleporter.SeamlessOverflow = prelude.Attribute("SeamlessOverflow", prelude.isBoolean, false)
 
 local function calculateTeleportCFrame(teleporter: BasePart, destination: BasePart, root: BasePart)
 	local destinationCFrame = destination.CFrame

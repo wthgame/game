@@ -8,14 +8,14 @@ local prelude = std.prelude
 
 export type ActivatedBy = "Touch" | "Prompt" | "Click" | "Control"
 
-local ButtonId = prelude.attribute("ButtonId", prelude.t.string)
-local ButtonPressed = prelude.attribute("ButtonPressed", prelude.isBoolean, false)
-local HoldDuration = prelude.attribute("HoldDuration", prelude.isPositiveNumber, 0)
-local MaxActivationDistance = prelude.attribute("MaxActivationDistance", prelude.isPositiveNumber, math.huge)
-local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
-local Duration = prelude.attribute("Duration", prelude.isPositiveNumber, 0)
-local PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
-local PressOffset = prelude.attribute(
+local ButtonId = prelude.Attribute("ButtonId", prelude.t.string)
+local ButtonPressed = prelude.Attribute("ButtonPressed", prelude.isBoolean, false)
+local HoldDuration = prelude.Attribute("HoldDuration", prelude.isPositiveNumber, 0)
+local MaxActivationDistance = prelude.Attribute("MaxActivationDistance", prelude.isPositiveNumber, math.huge)
+local Cooldown = prelude.Attribute("Cooldown", prelude.isPositiveNumber, 0)
+local Duration = prelude.Attribute("Duration", prelude.isPositiveNumber, 0)
+local PlaySound = prelude.Attribute("PlaySound", prelude.isBoolean, true)
+local PressOffset = prelude.Attribute(
 	"PressOffset",
 	prelude.t.union(prelude.t.number, prelude.t.Vector3, prelude.t.CFrame),
 	Vector3.new(0, -0.5, 0)

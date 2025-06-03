@@ -23,6 +23,9 @@ local touch = require(script.touch)
 local trove = require(script.packages.trove)
 local types = require(script.types)
 
+export type Attribute<T> = attributes.Attribute<T>
+export type ManyAttribute<T> = attributes.ManyAttribute<T>
+
 export type Map<K, V> = types.Map<K, V>
 export type Set<T> = types.Set<T>
 export type MapSet<K, T> = collections.MapSet<K, T>
@@ -30,7 +33,6 @@ export type MapArray<K, T> = collections.MapArray<K, T>
 export type Kit = types.Kit
 export type KitScript<Self = {}> = types.KitScript<Self>
 export type InstanceTag<I> = types.InstanceTag<I>
-export type Attribute<T> = attributes.Attribute<T>
 export type Character = types.Character
 export type PlaySoundConfig = audio.PlaySoundConfig
 export type TweenConfig = animation.TweenConfig

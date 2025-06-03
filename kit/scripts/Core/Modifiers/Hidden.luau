@@ -59,7 +59,7 @@ Hidden.implements = { KitScript = true }
 --- Whether descendants should be hidden as well. Turning on `HideDescendants`
 --- on a Model of Folder of objects is more managable than manually tagging
 --- each child.
-Hidden.HideDescendants = prelude.attribute("HideDescendants", prelude.isBoolean, true)
+Hidden.HideDescendants = prelude.Attribute("HideDescendants", prelude.isBoolean, true)
 
 function Hidden.run(self: Self, kit: std.Kit)
 	local function hide(target: Instance)

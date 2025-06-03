@@ -43,7 +43,7 @@ Damager.implements = { KitScript = true }
 --- @tag Attribute
 ---
 --- Amount of Damage that should be dealt. See the `Damage` type.
-Damager.Damage = prelude.attribute(
+Damager.Damage = prelude.Attribute(
 	"Damage",
 	prelude.t.union(prelude.isPositiveNumber, prelude.t.literal("Normal", "Heavy", "Super", "Lethal")),
 	0
@@ -55,7 +55,7 @@ Damager.Damage = prelude.attribute(
 ---
 --- The measurement of damage to be dealt. See the `DamageMeasurement` type.
 Damager.DamageMeasurement = (
-	prelude.attribute("DamageMeasurement", prelude.t.literal("Raw", "RelativeToMaxHealth"), "Raw")
+	prelude.Attribute("DamageMeasurement", prelude.t.literal("Raw", "RelativeToMaxHealth"), "Raw")
 ) :: std.Attribute<DamageMeasurement>
 
 --- @prop Poison boolean
@@ -63,7 +63,7 @@ Damager.DamageMeasurement = (
 --- @tag Attribute
 ---
 --- Whether damage should be dealt overtime as poison.
-Damager.Poison = prelude.attribute("Poison", prelude.isBoolean, false)
+Damager.Poison = prelude.Attribute("Poison", prelude.isBoolean, false)
 
 function Damager.run(self: Self, kit: std.Kit)
 	local tag = kit:tag("Damager", prelude.isBasePart)

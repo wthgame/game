@@ -6,7 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local OneWayOffset = prelude.attribute("OneWayOffset", prelude.t.CFrame, CFrame.identity)
+local OneWayOffset = prelude.Attribute("OneWayOffset", prelude.t.CFrame, CFrame.identity)
 
 local self = {} :: std.KitScript
 self.implements = { KitScript = true }

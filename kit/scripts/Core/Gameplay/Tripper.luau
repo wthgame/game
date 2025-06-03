@@ -23,7 +23,7 @@ Tripper.implements = { KitScript = true }
 ---
 --- Defines the cooldown period in seconds after a `Tripper` has been
 --- activated, before it can be used again.
-Tripper.Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
+Tripper.Cooldown = prelude.Attribute("Cooldown", prelude.isPositiveNumber, 0)
 
 local function tripPlayer(trove: std.Trove, tripper: BasePart)
 	if not debounced[tripper] then

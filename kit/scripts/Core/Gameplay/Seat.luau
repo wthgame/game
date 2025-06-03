@@ -12,9 +12,9 @@ local Dismounter = require("./Dismounter")
 local DISTANCE_FROM_ROOT_TO_GROUND = 3
 local OFFSET_CHARACTER_BY = DISTANCE_FROM_ROOT_TO_GROUND / 2
 
-local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
-local JumpOnDismount = prelude.attribute("JumpOnDismount", prelude.isBoolean, true)
--- local Visualize = prelude.attribute("Visualize", prelude.isBoolean, true)
+local Cooldown = prelude.Attribute("Cooldown", prelude.isPositiveNumber, 0)
+local JumpOnDismount = prelude.Attribute("JumpOnDismount", prelude.isBoolean, true)
+-- local Visualize = prelude.Attribute("Visualize", prelude.isBoolean, true)
 
 local seated = false
 local debounced: std.Set<BasePart> = {}

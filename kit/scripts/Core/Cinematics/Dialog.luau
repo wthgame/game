@@ -6,7 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local Button = require("../Logicals/Button")
+local Button = require("../Gameplay/Button")
 local ButtonId = Button.ButtonId
 local idToButtonsPressed = Button.idToButtonsPressed
 
@@ -52,17 +52,17 @@ export type DialogPressButton = {
 
 export type DialogAction = DialogText | DialogPlaySound | DialogChoose | DialogPressButton
 
-local AwaitWriteFinish = prelude.attribute("AwaitWriteFinish", prelude.isBoolean, true)
-local AwaitTextFade = prelude.attribute("AwaitTextFade", prelude.isBoolean, true)
-local DeleteAfter = prelude.attribute("DeleteAfter", prelude.isPositiveNumber, 1)
+local AwaitWriteFinish = prelude.Attribute("AwaitWriteFinish", prelude.isBoolean, true)
+local AwaitTextFade = prelude.Attribute("AwaitTextFade", prelude.isBoolean, true)
+local DeleteAfter = prelude.Attribute("DeleteAfter", prelude.isPositiveNumber, 1)
 local WrapBehavior: std.Attribute<DialogWrapBehavior> = (
-	prelude.attribute("WrapBehavior", prelude.t.literal("NoWrap", "Wrap"), "NoWrap")
+	prelude.Attribute("WrapBehavior", prelude.t.literal("NoWrap", "Wrap"), "NoWrap")
 )
 
-local AwaitFinish = prelude.attribute("AwaitFinish", prelude.isBoolean, true)
-local Sound = prelude.attribute("Sound", prelude.isString)
-local PlayFromGameAssets = prelude.attribute("PlayFromGameAssets", std.audio.isAudioAsset)
-local Spatial = prelude.attribute("Spatial", prelude.isBoolean, false)
+local AwaitFinish = prelude.Attribute("AwaitFinish", prelude.isBoolean, true)
+local Sound = prelude.Attribute("Sound", prelude.isString)
+local PlayFromGameAssets = prelude.Attribute("PlayFromGameAssets", std.audio.isAudioAsset)
+local Spatial = prelude.Attribute("Spatial", prelude.isBoolean, false)
 
 local logger = prelude.createLogger("Dialog")
 

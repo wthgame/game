@@ -16,8 +16,8 @@ export type BoxBehavior = "Unanchoring" | "Draggable" | "Pickupable"
 
 local REVERSE: std.TweenConfig = { reverse = true }
 
-local BoxId = prelude.attribute("BoxId", prelude.isString)
-local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
+local BoxId = prelude.Attribute("BoxId", prelude.isString)
+local Cooldown = prelude.Attribute("Cooldown", prelude.isPositiveNumber, 0)
 
 local spawnBoxTroves: std.Map<BasePart, std.Trove> = {}
 

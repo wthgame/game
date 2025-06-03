@@ -19,7 +19,7 @@ self.implements = { KitScript = true }
 ---
 --- The amount of activations before the limited kit object should not be
 --- activatable.
-local MaxActivations = prelude.attribute("MaxActivations", prelude.isPositiveNumber, math.huge)
+local MaxActivations = prelude.Attribute("MaxActivations", prelude.isPositiveNumber, math.huge)
 
 --- @prop ResetWhenUnactivatable boolean
 --- @within LimitActivations
@@ -27,7 +27,7 @@ local MaxActivations = prelude.attribute("MaxActivations", prelude.isPositiveNum
 ---
 --- If a kit object should reset it's "activations count" when it's
 --- `Activatable` attribute is disabled.
-local ResetWhenUnactivatable = prelude.attribute("ResetWhenUnactivatable", prelude.isBoolean, true)
+local ResetWhenUnactivatable = prelude.Attribute("ResetWhenUnactivatable", prelude.isBoolean, true)
 
 local activations: std.Map<Instance, number> = {}
 

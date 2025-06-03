@@ -26,7 +26,7 @@ TeleporterDestination.idToDestination = std.collections.MapArray() :: std.MapArr
 --- @tag Attribute
 ---
 --- The associated group of teleporters.
-TeleporterDestination.TeleporterId = prelude.attribute("TeleporterId", prelude.isString)
+TeleporterDestination.TeleporterId = prelude.Attribute("TeleporterId", prelude.isString)
 
 --- @prop TeleporterOffset number | Vector3 | CFrame
 --- @within TeleporterDestination
@@ -35,7 +35,7 @@ TeleporterDestination.TeleporterId = prelude.attribute("TeleporterId", prelude.i
 --- How far from the center the player will be teleported to. Can be used to
 --- shift players from clipping into the ground with a `TeleportDestination` on
 --- the ground.
-TeleporterDestination.TeleporterOffset = prelude.attribute(
+TeleporterDestination.TeleporterOffset = prelude.Attribute(
 	"TeleportOffset",
 	prelude.t.union(prelude.t.number, prelude.t.Vector3, prelude.t.CFrame),
 	Vector3.new(0, 3, 0)

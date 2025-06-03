@@ -35,7 +35,8 @@ local t = require("./packages/t")
 local prelude = {}
 prelude.createLogger = logger.createLogger
 
-prelude.attribute = attributes.attribute
+prelude.Attribute = attributes.Attribute
+prelude.ManyAttribute = attributes.ManyAttribute
 prelude.Activatable = activation.Activatable
 prelude.Enabled = activation.Enabled
 prelude.onActivated = activation.onActivated

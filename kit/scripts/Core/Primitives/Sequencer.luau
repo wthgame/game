@@ -11,8 +11,8 @@ type ColorSequencerType = "Color3" | "ColorSequence" | "BrickColor"
 type NumberSequencerType = "number" | "NumberSequence" | "NumberRange"
 type SequencerType = ColorSequencerType | NumberSequencerType
 
-local MinimumDistance = prelude.attribute("MinimumDistance", prelude.isPositiveNumber, -math.huge)
-local MaximumDistance = prelude.attribute("MaximumDistance", prelude.isPositiveNumber, 100)
+local MinimumDistance = prelude.Attribute("MinimumDistance", prelude.isPositiveNumber, -math.huge)
+local MaximumDistance = prelude.Attribute("MaximumDistance", prelude.isPositiveNumber, 100)
 
 local logger = prelude.createLogger("Sequencer")
 local isSequence = prelude.t.union(prelude.t.ColorSequence, prelude.t.NumberSequence)

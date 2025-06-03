@@ -7,8 +7,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local MinimumDistance = prelude.attribute("MinimumDistance", prelude.isPositiveNumber, 100)
-local MaximumDistance = prelude.attribute("MaximumDistance", prelude.isPositiveNumber, math.huge)
+local MinimumDistance = prelude.Attribute("MinimumDistance", prelude.isPositiveNumber, 100)
+local MaximumDistance = prelude.Attribute("MaximumDistance", prelude.isPositiveNumber, math.huge)
 
 --- @class DistanceAnchoring
 --- @tag KitObject

@@ -3,8 +3,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local std = require(ReplicatedStorage:WaitForChild("KitStd"))
 local prelude = std.prelude
 
-local ShouldPrompt = prelude.attribute("ShouldPrompt", prelude.isBoolean, false)
-local TowerName = prelude.attribute("TowerName", prelude.isString)
+local ShouldPrompt = prelude.Attribute("ShouldPrompt", prelude.isBoolean, false)
+local TowerName = prelude.Attribute("TowerName", prelude.isString)
 
 local function promptToLoadTower(towerName: string)
 	std.bindings._callBinding("@game/TowerRunController/promptToLoadTower", towerName)

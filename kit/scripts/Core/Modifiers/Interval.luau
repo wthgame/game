@@ -14,13 +14,13 @@ local Interval = {}
 type Self = typeof(Interval)
 Interval.implements = { KitScript = true }
 
-Interval.EnabledTime = prelude.attribute("EnabledTime", prelude.isPositiveNumber, 1)
-Interval.DisabledTime = prelude.attribute("DisabledTime", prelude.isPositiveNumber, 1)
-Interval.TimeOffset = prelude.attribute("TimeOffset", prelude.isPositiveNumber, 0)
-Interval.Synchronized = prelude.attribute("Synchronized", prelude.isBoolean, true)
-Interval.SetEnabled = prelude.attribute("SetEnabled", prelude.isBoolean, false)
-Interval.Indicate = prelude.attribute("Indicate", prelude.isBoolean, true)
-Interval.IndicateBy = prelude.attribute("IndicateBy", prelude.isPositiveNumber, 0.5)
+Interval.EnabledTime = prelude.Attribute("EnabledTime", prelude.isPositiveNumber, 1)
+Interval.DisabledTime = prelude.Attribute("DisabledTime", prelude.isPositiveNumber, 1)
+Interval.TimeOffset = prelude.Attribute("TimeOffset", prelude.isPositiveNumber, 0)
+Interval.Synchronized = prelude.Attribute("Synchronized", prelude.isBoolean, true)
+Interval.SetEnabled = prelude.Attribute("SetEnabled", prelude.isBoolean, false)
+Interval.Indicate = prelude.Attribute("Indicate", prelude.isBoolean, true)
+Interval.IndicateBy = prelude.Attribute("IndicateBy", prelude.isPositiveNumber, 0.5)
 
 local function setPropertyUnsafe(instance: Instance, property: string, value: unknown)
 	(instance :: any)[property] = value

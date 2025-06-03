@@ -45,14 +45,14 @@ Box.idToBox = idToBox
 --- @tag Attribute
 ---
 --- TBA
-Box.BoxId = prelude.attribute("BoxId", prelude.isString)
+Box.BoxId = prelude.Attribute("BoxId", prelude.isString)
 
 --- @prop BoxSpawnBehavior std.Attribute<string?>
 --- @within Box
 --- @tag Attribute
 ---
 --- TBA
-Box.BoxSpawnBehavior = prelude.attribute("BoxSpawnBehavior", prelude.isString)
+Box.BoxSpawnBehavior = prelude.Attribute("BoxSpawnBehavior", prelude.isString)
 
 function Box.implementSpawnBehavior(self: Self, behavior: BoxSpawnBehavior)
 	logger:assert(self.isBoxSpawnBehavior(behavior))

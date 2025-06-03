@@ -14,12 +14,12 @@ export type VineInstance = BasePart & {
 	Top: BasePart,
 }
 
-local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 0)
-local KeepVelocity = prelude.attribute("KeepVelocity", prelude.t.boolean, true)
-local AllowJumpDismount = prelude.attribute("AllowJumpDismount", prelude.t.boolean, true)
-local JumpOnDismount = prelude.attribute("JumpOnDismount", prelude.t.boolean, true)
-local PlayGrabSound = prelude.attribute("PlayGrabSound", prelude.t.boolean, true)
-local PlayJumpSound = prelude.attribute("PlayJumpSound", prelude.t.boolean, true)
+local Cooldown = prelude.Attribute("Cooldown", prelude.isPositiveNumber, 0)
+local KeepVelocity = prelude.Attribute("KeepVelocity", prelude.t.boolean, true)
+local AllowJumpDismount = prelude.Attribute("AllowJumpDismount", prelude.t.boolean, true)
+local JumpOnDismount = prelude.Attribute("JumpOnDismount", prelude.t.boolean, true)
+local PlayGrabSound = prelude.Attribute("PlayGrabSound", prelude.t.boolean, true)
+local PlayJumpSound = prelude.Attribute("PlayJumpSound", prelude.t.boolean, true)
 
 local debounced: std.Set<VineInstance> = {}
 

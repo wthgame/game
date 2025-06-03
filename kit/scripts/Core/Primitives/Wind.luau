@@ -8,9 +8,9 @@ local prelude = std.prelude
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
-local Power = prelude.attribute("Power", prelude.isPositiveNumber, 0)
-local MaxForce = prelude.attribute("MaxForce", prelude.isPositiveNumber, math.huge)
-local Vector: std.Attribute<Vector> = (prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up"))
+local Power = prelude.Attribute("Power", prelude.isPositiveNumber, 0)
+local MaxForce = prelude.Attribute("MaxForce", prelude.isPositiveNumber, math.huge)
+local Vector: std.Attribute<Vector> = (prelude.Attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up"))
 
 local function wind(trove: std.Trove, parent: BasePart, power: number, maxAxesForce: Vector3, vector: Vector3)
 	local velocityAttachment = trove:add(Instance.new("Attachment"))

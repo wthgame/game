@@ -28,7 +28,7 @@ self.implements = { KitScript = true }
 ---
 --- If specified, this attribute overrides any Sound attribute or Sound instance
 --- parented under the SoundPlayer.
-local PlayFromAssets = prelude.attribute("PlayFromAssets", prelude.t.keyOf(prelude.AUDIO_ASSETS) :: std.check<string>)
+local PlayFromAssets = prelude.Attribute("PlayFromAssets", prelude.t.keyOf(prelude.AUDIO_ASSETS) :: std.check<string>)
 
 --- @prop Spatial boolean
 --- @within SoundPlayer
@@ -36,7 +36,7 @@ local PlayFromAssets = prelude.attribute("PlayFromAssets", prelude.t.keyOf(prelu
 ---
 --- Toggles if the sound should be parented to the part, so played "spatially",
 --- or parented to nil, so played "globally".
-local Spatial = prelude.attribute("Spatial", prelude.t.boolean, false)
+local Spatial = prelude.Attribute("Spatial", prelude.t.boolean, false)
 
 --- @prop Volume number?
 --- @within SoundPlayer
@@ -44,7 +44,7 @@ local Spatial = prelude.attribute("Spatial", prelude.t.boolean, false)
 ---
 --- How loud should the sound be. If specified, this overrides the `Volume`
 --- property in any Sound instance.
-local Volume = prelude.attribute("Volume", prelude.t.numberPositive)
+local Volume = prelude.Attribute("Volume", prelude.t.numberPositive)
 
 --- @prop Speed number?
 --- @within SoundPlayer
@@ -54,7 +54,7 @@ local Volume = prelude.attribute("Volume", prelude.t.numberPositive)
 --- of 2 means double speed, value of 0.5 means half speed. If specified, this
 --- overrides the `PlaybackSpeed` property in any Sound instance.
 
-local Speed = prelude.attribute("Speed", prelude.t.numberPositive)
+local Speed = prelude.Attribute("Speed", prelude.t.numberPositive)
 
 --- @prop Sound string?
 --- @within SoundPlayer

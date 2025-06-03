@@ -9,12 +9,12 @@ local prelude = std.prelude
 
 type Vector = "Up" | "Right" | "Look" | "Z"
 
-local EmitLauncherParticle = prelude.attribute("EmitLauncherParticle", prelude.isBoolean, true)
-local Cooldown = prelude.attribute("Cooldown", prelude.isPositiveNumber, 1)
-local Power = prelude.attribute("Power", prelude.isPositiveNumber, 0)
-local MaxForce = prelude.attribute("MaxForce", prelude.isPositiveNumber, math.huge)
-local Vector = prelude.attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up")
-local PlaySound = prelude.attribute("PlaySound", prelude.isBoolean, true)
+local EmitLauncherParticle = prelude.Attribute("EmitLauncherParticle", prelude.isBoolean, true)
+local Cooldown = prelude.Attribute("Cooldown", prelude.isPositiveNumber, 1)
+local Power = prelude.Attribute("Power", prelude.isPositiveNumber, 0)
+local MaxForce = prelude.Attribute("MaxForce", prelude.isPositiveNumber, math.huge)
+local Vector = prelude.Attribute("Vector", prelude.t.literal("Up", "Right", "Look", "Z"), "Up")
+local PlaySound = prelude.Attribute("PlaySound", prelude.isBoolean, true)
 
 local debounced: std.Set<BasePart> = {}
 

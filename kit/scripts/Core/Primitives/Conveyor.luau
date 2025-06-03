@@ -17,7 +17,7 @@ self.implements = { KitScript = true }
 --- @tag Attribute
 ---
 --- The speed in studs per second that objects move along the conveyor.
-local Speed = prelude.attribute("Speed", prelude.isPositiveNumber, 0)
+local Speed = prelude.Attribute("Speed", prelude.isPositiveNumber, 0)
 
 --- @prop SynchronizeConveyorBeams boolean
 --- @within Conveyor
@@ -25,7 +25,7 @@ local Speed = prelude.attribute("Speed", prelude.isPositiveNumber, 0)
 ---
 --- If true, the conveyor will update all Beam objects named "ConveyorBeam" to
 --- move at the same pace as the `Speed` attribute.
-local SynchronizeConveyorBeams = prelude.attribute("SynchronizeConveyorBeams", prelude.isBoolean, true)
+local SynchronizeConveyorBeams = prelude.Attribute("SynchronizeConveyorBeams", prelude.isBoolean, true)
 
 function self:run(kit: std.Kit)
 	local Conveyor = kit:tag("Conveyor", prelude.isBasePart)

@@ -13,9 +13,9 @@ export type PhysicMoverInstance = BasePart & {
 	AlignOrientation: AlignOrientation,
 }
 
-local PhysicMoverId = prelude.attribute("PhysicMoverId", prelude.isString)
-local PhysicMoverIndex = prelude.attribute("PhysicMoverIndex", prelude.t.integer)
-local Interval = prelude.attribute("Interval", prelude.isPositiveNumber)
+local PhysicMoverId = prelude.Attribute("PhysicMoverId", prelude.isString)
+local PhysicMoverIndex = prelude.Attribute("PhysicMoverIndex", prelude.t.integer)
+local Interval = prelude.Attribute("Interval", prelude.isPositiveNumber)
 
 local idToDestination: std.MapSet<string, BasePart> = std.collections.MapSet()
 

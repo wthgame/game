@@ -23,18 +23,18 @@ Pickupable.implements = { BoxSpawnBehavior = true }
 Pickupable.name = "Pickupable"
 
 local PickupPivot: std.Attribute<PickupPivot> = (
-	prelude.attribute("PickupPivot", prelude.t.literal("Player", "Box"), "Player")
+	prelude.Attribute("PickupPivot", prelude.t.literal("Player", "Box"), "Player")
 )
-local Pickup: std.Attribute<Pickup> = prelude.attribute(
+local Pickup: std.Attribute<Pickup> = prelude.Attribute(
 	"Pickup",
 	prelude.t.union(prelude.t.literal("Overhead", "Front"), prelude.t.Vector3, prelude.t.CFrame),
 	"Overhead"
 )
-local Stackable = prelude.attribute("Stackable", prelude.isBoolean, true)
+local Stackable = prelude.Attribute("Stackable", prelude.isBoolean, true)
 -- TODO: generalized activation so we can also have ThrowableActivationBehavior?
-local Throwable = prelude.attribute("Throwable", prelude.isBoolean, true)
+local Throwable = prelude.Attribute("Throwable", prelude.isBoolean, true)
 local ThrowForce = (
-	prelude.attribute("ThrowForce", prelude.t.union(prelude.isPositiveNumber, prelude.t.Vector3, prelude.t.CFrame), 0)
+	prelude.Attribute("ThrowForce", prelude.t.union(prelude.isPositiveNumber, prelude.t.Vector3, prelude.t.CFrame), 0)
 )
 
 local logger = prelude.createLogger("Box.Pickupable")

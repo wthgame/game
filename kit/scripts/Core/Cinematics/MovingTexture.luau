@@ -20,7 +20,7 @@ self.implements = { KitScript = true }
 ---
 --- The initial or current horizontal offset, or the U-coordinate, of the
 --- texture. Defaults to the Texture's `OffsetStudsU` when loaded.
-local HorizontalOffset = prelude.attribute("HorizontalSpeed", prelude.t.number)
+local HorizontalOffset = prelude.Attribute("HorizontalSpeed", prelude.t.number)
 
 --- @prop VerticalOffset number
 --- @within MovingTexture
@@ -28,7 +28,7 @@ local HorizontalOffset = prelude.attribute("HorizontalSpeed", prelude.t.number)
 ---
 --- The initial or current vertical offset, or the V-coordinate, of the texture.
 --- Defaults to the Texture's `OffsetStudsV` when loaded.
-local VerticalOffset = prelude.attribute("VerticalSpeed", prelude.t.number)
+local VerticalOffset = prelude.Attribute("VerticalSpeed", prelude.t.number)
 
 --- @prop HorizontalSpeed number
 --- @within MovingTexture
@@ -37,7 +37,7 @@ local VerticalOffset = prelude.attribute("VerticalSpeed", prelude.t.number)
 --- The speed, in studs per second, at which the texture moves horizontally
 --- along its U-coordinate. A positive value moves it right, a negative value
 --- moves it left.
-local HorizontalSpeed = prelude.attribute("HorizontalSpeed", prelude.t.number, 0)
+local HorizontalSpeed = prelude.Attribute("HorizontalSpeed", prelude.t.number, 0)
 
 --- @prop VerticalSpeed number
 --- @within MovingTexture
@@ -46,7 +46,7 @@ local HorizontalSpeed = prelude.attribute("HorizontalSpeed", prelude.t.number, 0
 --- The speed, in studs per second, at which the texture moves vertically
 --- along its V-coordinate. A positive value moves it up, a negative value
 --- moves it down.
-local VerticalSpeed = prelude.attribute("VerticalSpeed", prelude.t.number, 0)
+local VerticalSpeed = prelude.Attribute("VerticalSpeed", prelude.t.number, 0)
 
 --- @prop HorizontalLoop boolean
 --- @within MovingTexture
@@ -55,7 +55,7 @@ local VerticalSpeed = prelude.attribute("VerticalSpeed", prelude.t.number, 0)
 --- If enabled, the MovingTexture will loop back to it's `HorizontalOffset` once
 --- it exceeds the `StudsPerTileU` value. May help prevent floating point
 --- errors.
-local HorizontalLoop = prelude.attribute("HorizontalLoop", prelude.isBoolean, true)
+local HorizontalLoop = prelude.Attribute("HorizontalLoop", prelude.isBoolean, true)
 
 --- @prop VerticalLoop boolean
 --- @within MovingTexture
@@ -64,7 +64,7 @@ local HorizontalLoop = prelude.attribute("HorizontalLoop", prelude.isBoolean, tr
 --- If enabled, the MovingTexture will loop back to it's `VerticalOffset` once
 --- it exceeds the `StudsPerTileV` value. May help prevent floating point
 --- errors.
-local VerticalLoop = prelude.attribute("VerticalLoop", prelude.isBoolean, true)
+local VerticalLoop = prelude.Attribute("VerticalLoop", prelude.isBoolean, true)
 
 --- @prop Synchronized boolean
 --- @within MovingTexture
@@ -80,7 +80,7 @@ local VerticalLoop = prelude.attribute("VerticalLoop", prelude.isBoolean, true)
 --- Synchronized should not be used when the speed of MovingTextures
 --- will change, or else it looks jittery. Disabling Synchronized will allow the
 --- MovingTexture to adopt the new texture speed.
-local Synchronized = prelude.attribute("Synchronized", prelude.isBoolean, true)
+local Synchronized = prelude.Attribute("Synchronized", prelude.isBoolean, true)
 
 function self:run(kit: std.Kit)
 	local MovingTexture = kit:tag("MovingTexture", prelude.t.instanceIsA("Texture") :: std.check<Texture>)
