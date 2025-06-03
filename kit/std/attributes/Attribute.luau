@@ -12,7 +12,6 @@ export type Attribute<T> =
 type AttributeImpl = {
 	__index: AttributeImpl,
 	__tostring: <T>(self: Attribute<T>) -> string,
-	__call: <T>(self: Attribute<T>, instance: Instance) -> T,
 	get: <T>(self: Attribute<T>, instance: Instance) -> T,
 	assert: <T>(self: Attribute<T>, instance: Instance) -> typeof(assert((nil :: any) :: T, "Luau")),
 	set: <T>(self: Attribute<T>, instance: Instance, value: T?) -> T,
@@ -34,7 +33,7 @@ function mt:get<T>(instance: Instance)
 	return value :: any
 end
 
-mt.__call = mt.get
+(mt :: any).__call = mt.get
 
 function mt:assert<T>(instance: Instance)
 	return assert(mt.get(self :: any, instance), `No attribute "{self.name}" set in {instance:GetFullName()}.`)

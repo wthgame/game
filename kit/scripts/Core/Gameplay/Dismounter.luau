@@ -18,11 +18,12 @@ local onDismount: std.LemonSignal<std.Set<string>> = std.packages.createLemonSig
 local Dismounter = {}
 Dismounter.implements = { KitScript = true }
 
---- @prop Dismount_X boolean
+--- @prop Dismounts std.ManyAttribute<boolean>
 --- @within Dismounter
 --- @tag Attribute
 ---
 --- When activated, dismounts the "X" object.
+Dismounter.Dismounts = prelude.ManyAttribute("Dismounts", prelude.isBoolean)
 
 --- @prop onDismount std.LemonSignal<std.Set<string>>
 --- @within Dismounter
@@ -49,18 +50,9 @@ Dismounter.implements = { KitScript = true }
 --- ```
 Dismounter.onDismount = onDismount
 
-local logger = prelude.createLogger("Dismounter")
-
 local function dismount(_, dismounter: Instance)
-	local targets: std.Set<string> = {}
-	for attribute, value in dismounter:GetAttributes() do
-		local targetForAttribute = attribute:match("^Dismounts_(%w+)")
-		if targetForAttribute and value then
-			logger:trace("Dismounting", targetForAttribute)
-			targets[targetForAttribute] = true
-		end
-	end
-	onDismount:Fire(targets)
+	-- TODO: this returns Map<string, any>, is it worth perf for Set<string>?
+	onDismount:Fire(Dismounter.Dismounts(dismounter) :: any)
 end
 
 function Dismounter:run(kit: std.Kit)

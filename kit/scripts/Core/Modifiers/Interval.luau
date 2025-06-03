@@ -22,6 +22,9 @@ Interval.SetEnabled = prelude.Attribute("SetEnabled", prelude.isBoolean, false)
 Interval.Indicate = prelude.Attribute("Indicate", prelude.isBoolean, true)
 Interval.IndicateBy = prelude.Attribute("IndicateBy", prelude.isPositiveNumber, 0.5)
 
+Interval.EnabledProperties = prelude.ManyAttribute("Enabled", prelude.t.any)
+Interval.DisabledProperties = prelude.ManyAttribute("Disabled", prelude.t.any)
+
 local function setPropertyUnsafe(instance: Instance, property: string, value: unknown)
 	(instance :: any)[property] = value
 end
@@ -49,20 +52,7 @@ function Interval.run(self: Self, kit: std.Kit)
 				prelude.Enabled:set(interval, enabled)
 			end
 
-			local enabledProps, disabledProps = {}, {}
-			for attributeName, value in interval:GetAttributes() do
-				local enabledProp = attributeName:match("^Enabled_(%w+)")
-				if enabledProp then
-					enabledProps[enabledProp] = value :: any
-					continue
-				end
-
-				local disabledProp = attributeName:match("^Disabled_(%w+)")
-				if disabledProp then
-					disabledProps[disabledProp] = value :: any
-					continue
-				end
-			end
+			local enabledProps, disabledProps = self.EnabledProperties(interval), self.DisabledProperties(interval)
 
 			if enabled then
 				for prop, value in enabledProps do

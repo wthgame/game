@@ -20,21 +20,26 @@ local isColorSequencerType: std.check<SequencerType> = prelude.t.literal("Color3
 local isNumberSequencerType: std.check<SequencerType> = prelude.t.literal("number", "NumberSequence", "NumberRange")
 local isSequencerType: std.check<SequencerType> = prelude.t.union(isColorSequencerType, isNumberSequencerType)
 
-local self = {} :: std.KitScript
-self.implements = { KitScript = true }
+local Sequencer = {}
+type Self = typeof(Sequencer)
+Sequencer.implements = { KitScript = true }
+
+Sequencer.Property = prelude.ManyAttribute("Property", isSequence)
+Sequencer.SequencerOffset = prelude.ManyAttribute("SequencerOffset", prelude.t.number)
+Sequencer.SequencerDuration = prelude.ManyAttribute("SequencerDuration", prelude.isPositiveNumber)
+Sequencer.SequencerType = prelude.ManyAttribute("SequencerType", isSequencerType)
 
 local function setPropertyUnsafe(instance: Instance, property: string, value: unknown)
 	(instance :: any)[property] = value
 end
 
-function self:run(kit: std.Kit)
-	local Sequencer = kit:tag("Sequencer")
-
+function Sequencer.run(self: Self, kit: std.Kit)
+	local tag = kit:tag("Sequencer")
 	local localPlayer = Players.LocalPlayer
 
 	kit:onRender(function()
 		local loadedLifetime = kit:loadedLifetime()
-		for _, toUpdate in Sequencer:instances() do
+		for _, toUpdate in tag:instances() do
 			if not prelude.Enabled(toUpdate) then
 				continue
 			end
@@ -56,40 +61,10 @@ function self:run(kit: std.Kit)
 				end
 			end
 
-			local propertySequences: std.Map<string, ColorSequence | NumberSequence> = {}
-			local offsets: std.Map<string, number> = {}
-			local durations: std.Map<string, number> = {}
-			local types: std.Map<string, SequencerType> = {}
-
-			for attributeName, value in toUpdate:GetAttributes() do
-				local property = attributeName:match("^Property_(%w+)")
-				if property then
-					assert(isSequence(value))
-					propertySequences[property] = value :: any
-					continue
-				end
-
-				local offsetForProperty = attributeName:match("^SequencerOffset_(%w+)")
-				if offsetForProperty then
-					assert(prelude.t.number(value))
-					offsets[offsetForProperty] = value :: any
-					continue
-				end
-
-				local durationForProperty = attributeName:match("^SequencerDuration_(%w+)")
-				if durationForProperty then
-					assert(prelude.isPositiveNumber(value))
-					durations[durationForProperty] = value :: any
-					continue
-				end
-
-				local typeForProperty = attributeName:match("^SequencerType_(%w+)")
-				if typeForProperty then
-					assert(isSequencerType(value))
-					types[typeForProperty] = value :: any
-					continue
-				end
-			end
+			local propertySequences = self.Property(toUpdate)
+			local offsets = self.SequencerOffset(toUpdate)
+			local durations = self.SequencerDuration(toUpdate)
+			local types: std.Map<string, SequencerType> = self.SequencerType(toUpdate) :: any
 
 			for property, sequence in propertySequences do
 				local duration = durations[property] or 1
@@ -153,4 +128,4 @@ function self:run(kit: std.Kit)
 	end)
 end
 
-return self
+return Sequencer

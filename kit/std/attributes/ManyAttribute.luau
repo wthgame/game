@@ -7,13 +7,12 @@ local types = require("../types")
 
 -- Peak Luau
 export type ManyAttribute<T> =
-	& (() -> types.Map<string, T>)
+	& ((instance: Instance) -> types.Map<string, T>)
 	& typeof(setmetatable({} :: { prefix: string, pattern: string, check: t.check<T>? }, {} :: ManyAttributeMt))
 
 type ManyAttributeMt = {
 	__index: ManyAttributeMt,
 	__tostring: <T>(self: ManyAttribute<T>) -> string,
-	__call: <T>(self: ManyAttribute<T>, instance: Instance) -> types.Map<string, T>,
 	get: <T>(self: ManyAttribute<T>, instance: Instance) -> types.Map<string, T>,
 	changed: <T>(
 		self: ManyAttribute<T>,
@@ -56,7 +55,7 @@ function mt:changed<T>(instance, callback)
 	end)
 end
 
-mt.__call = mt.get
+(mt :: any).__call = mt.get
 
 table.freeze(mt)
 
