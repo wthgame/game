@@ -36,7 +36,7 @@ local prelude = {}
 prelude.createLogger = logger.createLogger
 
 prelude.Attribute = attributes.Attribute
-prelude.ManyAttribute = attributes.ManyAttribute
+prelude.AttributeGroup = attributes.AttributeGroup
 prelude.Activatable = activation.Activatable
 prelude.Enabled = activation.Enabled
 prelude.onActivated = activation.onActivated

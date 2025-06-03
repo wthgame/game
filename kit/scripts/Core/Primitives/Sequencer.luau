@@ -24,10 +24,10 @@ local Sequencer = {}
 type Self = typeof(Sequencer)
 Sequencer.implements = { KitScript = true }
 
-Sequencer.Property = prelude.ManyAttribute("Property", isSequence)
-Sequencer.SequencerOffset = prelude.ManyAttribute("SequencerOffset", prelude.t.number)
-Sequencer.SequencerDuration = prelude.ManyAttribute("SequencerDuration", prelude.isPositiveNumber)
-Sequencer.SequencerType = prelude.ManyAttribute("SequencerType", isSequencerType)
+Sequencer.Property = prelude.AttributeGroup("Property", isSequence)
+Sequencer.SequencerOffset = prelude.AttributeGroup("SequencerOffset", prelude.t.number)
+Sequencer.SequencerDuration = prelude.AttributeGroup("SequencerDuration", prelude.isPositiveNumber)
+Sequencer.SequencerType = prelude.AttributeGroup("SequencerType", isSequencerType)
 
 local function setPropertyUnsafe(instance: Instance, property: string, value: unknown)
 	(instance :: any)[property] = value

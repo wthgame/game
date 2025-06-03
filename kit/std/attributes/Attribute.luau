@@ -26,7 +26,7 @@ mt.__index = mt
 --- @function __tostring
 --- @within Attribute
 ---
---- Metamethod to transform the option into a string.
+--- Metamethod to transform the attribute into a string.
 ---
 --- @param self Attribute<T> -- The attribute to stringify.
 --- @return string -- The string representation of the attribute.

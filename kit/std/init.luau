@@ -24,7 +24,7 @@ local trove = require(script.packages.trove)
 local types = require(script.types)
 
 export type Attribute<T> = attributes.Attribute<T>
-export type ManyAttribute<T> = attributes.ManyAttribute<T>
+export type AttributeGroup<T> = attributes.AttributeGroup<T>
 
 export type Map<K, V> = types.Map<K, V>
 export type Set<T> = types.Set<T>

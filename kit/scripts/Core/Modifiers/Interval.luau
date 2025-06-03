@@ -22,8 +22,8 @@ Interval.SetEnabled = prelude.Attribute("SetEnabled", prelude.isBoolean, false)
 Interval.Indicate = prelude.Attribute("Indicate", prelude.isBoolean, true)
 Interval.IndicateBy = prelude.Attribute("IndicateBy", prelude.isPositiveNumber, 0.5)
 
-Interval.EnabledProperties = prelude.ManyAttribute("Enabled", prelude.t.any)
-Interval.DisabledProperties = prelude.ManyAttribute("Disabled", prelude.t.any)
+Interval.EnabledProperties = prelude.AttributeGroup("Enabled", prelude.t.any)
+Interval.DisabledProperties = prelude.AttributeGroup("Disabled", prelude.t.any)
 
 local function setPropertyUnsafe(instance: Instance, property: string, value: unknown)
 	(instance :: any)[property] = value

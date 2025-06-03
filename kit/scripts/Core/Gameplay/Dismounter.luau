@@ -18,12 +18,12 @@ local onDismount: std.LemonSignal<std.Set<string>> = std.packages.createLemonSig
 local Dismounter = {}
 Dismounter.implements = { KitScript = true }
 
---- @prop Dismounts std.ManyAttribute<boolean>
+--- @prop Dismounts std.AttributeGroup<boolean>
 --- @within Dismounter
 --- @tag Attribute
 ---
 --- When activated, dismounts the "X" object.
-Dismounter.Dismounts = prelude.ManyAttribute("Dismounts", prelude.isBoolean)
+Dismounter.Dismounts = prelude.AttributeGroup("Dismounts", prelude.isBoolean)
 
 --- @prop onDismount std.LemonSignal<std.Set<string>>
 --- @within Dismounter
