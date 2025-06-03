@@ -58,6 +58,8 @@ end
 
 mt.__call = mt.get
 
+table.freeze(mt)
+
 local function ManyAttribute<T>(prefix: string, check: t.check<T>, pattern: string?): ManyAttribute<T>
 	return table.freeze(setmetatable({
 		prefix = prefix,
