@@ -104,9 +104,9 @@ table.freeze(mt)
 --- Creates a new `AttributeGroup` object with the name, an optional typechecker,
 --- and an optional pattern.
 ---
---- @param prefix --The common prefix for all attributes in this group (e.g., "Property", "Dismounts").
+--- @param prefix string -- The common prefix for all attributes in this group (e.g., "Property", "Dismounts").
 --- @param check t.check<T> -- An optional `t.check` function to validate the type of each attribute's value within this group.
---- @param pattern -- An optional string pattern to extract a unique key from the attribute name. Defaults to `^{prefix}_(%w+)`, which captures word characters after the prefix and an underscore.
+--- @param pattern string? -- An optional string pattern to extract a unique key from the attribute name. Defaults to `^{prefix}_(%w+)`, which captures word characters after the prefix and an underscore.
 --- @return AttributeGroup<T> -- A new `AttributeGroup` object.
 local function AttributeGroup<T>(prefix: string, check: t.check<T>, pattern: string?): AttributeGroup<T>
 	return table.freeze(setmetatable({
