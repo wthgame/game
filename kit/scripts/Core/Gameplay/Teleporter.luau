@@ -19,7 +19,6 @@ export type SeamlessMeasurement = "Relative" | "World"
 
 local debounce = false
 local debouncedTeleporters: std.Set<BasePart> = {}
-local logger = prelude.createLogger("Teleporter")
 
 --- @class Teleporter
 --- @tag KitObject

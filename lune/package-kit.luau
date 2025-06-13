@@ -1,7 +1,8 @@
-local comments = require("./lib/comments")
-local remodel = require("./remodel")
+local comments = require("@lib/comments")
+local remodel = require("@lib/remodel")
 local roblox = require("@lune/roblox")
 local stdio = require("@lune/stdio")
+
 local Instance = roblox.Instance
 
 local KIT_DEVELOPMENT_PLACE_ID = 113552277431105
