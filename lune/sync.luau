@@ -44,7 +44,7 @@ print()
 stdio.write(stdio.style("reset"))
 
 stdio.write(stdio.style("bold"))
-print("Syncing Welcome To Hell to", gameName)
+print("Syncing to", gameName)
 print(`Open Roblox Studio > Group Experiences > Select 'Team Fireworks' > '{gameName}'`)
 print("Then, Plugins > Rojo > Connect > Accept sync if necessary")
 stdio.write(stdio.style("reset"))
