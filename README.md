@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="/assets/logo.png" alt="Welcome To Hell Logo" />
+    <img src="/assets/images/logo.png" alt="Welcome To Hell Logo" />
     <h1>Welcome To Hell</h1>
 </div>
 
