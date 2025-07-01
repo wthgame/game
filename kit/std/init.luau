@@ -2,10 +2,11 @@
 
 -- WELCOME TO HELL: COMMENT CORE SCRIPT WARNING
 
-local activation = require(script.activation)
-local animation = require(script.animation)
-local assets = require(script.assets)
-local attributes = require(script.attributes)
+local CatRom = require("@self/packages/CatRom")
+local activation = require("@self/activation")
+local animation = require("@self/animation")
+local assets = require("@self/assets")
+local attributes = require("@self/attributes")
 local audio = require(script.audio)
 local bindings = require(script.bindings)
 local character = require(script.character)
@@ -37,6 +38,7 @@ export type Character = types.Character
 export type PlaySoundConfig = audio.PlaySoundConfig
 export type TweenConfig = animation.TweenConfig
 
+export type CatRom = CatRom.CatRom
 export type check<T> = t.check<T>
 export type Trove = trove.Trove
 export type LemonConnection<U...> = lemonSignal.Connection<U...>
@@ -134,6 +136,7 @@ std.packages = table.freeze({
 	createTrove = trove.Trove.new,
 	sift = sift,
 	createLemonSignal = lemonSignal.Signal.new,
+	CatRom = CatRom,
 })
 
 return table.freeze(std)

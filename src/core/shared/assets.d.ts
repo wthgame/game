@@ -1,4 +1,5 @@
 declare const assets: {
+	"images/logo": string
 	"ui/borderGlow": string
 	"ui/fill": string
 	"ui/halfBorderCircle": string

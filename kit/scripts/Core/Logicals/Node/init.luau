@@ -9,12 +9,11 @@ local prelude = std.prelude
 local NodeTypes = require(script:WaitForChild("NodeTypes"))
 local NodeUtils = require(script:WaitForChild("NodeUtils"))
 
-local NodeType: std.Attribute<string> = prelude.Attribute("NodeType", prelude.t.keyOf(NodeTypes)) :: any
+local Node = {}
+Node.implements = { KitScript = true }
+Node.NodeType = prelude.Attribute("NodeType", prelude.t.keyOf(NodeTypes)) :: std.Attribute<string>
 
-local self = {} :: std.KitScript
-self.implements = { KitScript = true }
-
-function self:run(kit: std.Kit)
+function Node:run(kit: std.Kit)
 	local Node = kit:tag("Node")
 
 	local nodeVariables: std.Map<string, unknown> = {}
@@ -22,4 +21,4 @@ function self:run(kit: std.Kit)
 	Node:onLoaded(function(trove, node) end)
 end
 
-return self
+return Node

@@ -1,4 +1,5 @@
 local assets = {
+	["images/logo"] = "rbxasset://.asphalt-game/images/logo.png",
 	["ui/borderGlow"] = "rbxasset://.asphalt-game/ui/borderGlow.png",
 	["ui/fill"] = "rbxasset://.asphalt-game/ui/fill.png",
 	["ui/halfBorderCircle"] = "rbxasset://.asphalt-game/ui/halfBorderCircle.png",

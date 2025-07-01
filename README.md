@@ -1,3 +1,5 @@
+# WELCOME TO HELL IS GOING THROUGH AN ORGANIZATIONAL REWRITE. WE DO NOT PLAN ON SUPPORTING THIS KIT, BUT WOULD RATHER LIKE TO SHOW THE WORLD WHAT WE HAVE COOKED. WELCOME TO HELL ON TOP
+
 <div align="center">
     <img src="/assets/images/logo.png" alt="Welcome To Hell Logo" />
     <h1>Welcome To Hell</h1>
